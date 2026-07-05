@@ -1,0 +1,2620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Dream Legacy RolePlay - DreamOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<style>
+@font-face { font-family: 'Pricedown'; src: url('Pricedown.otf') format('opentype'); font-weight: normal; font-style: normal; }
+:root {
+    --bg: #0a0715;
+    --bg-raised: #120d24;
+    --surface: rgba(30, 22, 60, 0.78);
+    --surface-soft: rgba(255, 255, 255, 0.04);
+    --line: rgba(255, 255, 255, 0.08);
+    --text: #f0edf8;
+    --muted: #a89fc8;
+    --dim: #6a6188;
+    --purple: #7c3aed;
+    --purple-dark: #5b21b6;
+    --purple-glow: rgba(124, 58, 237, 0.25);
+    --purple-bg: rgba(124, 58, 237, 0.12);
+    --cyan: #22d3ee;
+    --cyan-dark: #0891b2;
+    --cyan-glow: rgba(34, 211, 238, 0.2);
+    --cyan-bg: rgba(34, 211, 238, 0.08);
+    --orange: #f97316;
+    --orange-dark: #c2410c;
+    --orange-glow: rgba(249, 115, 22, 0.2);
+    --orange-bg: rgba(249, 115, 22, 0.08);
+    --mint: #59f0a7;
+    --red: #ef4444;
+    --shadow: 0 24px 80px rgba(0,0,0,0.5);
+    --radius: 10px;
+    --ease: cubic-bezier(.22,1,.36,1);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    background: linear-gradient(145deg, #0a0715 0%, #120d24 50%, #1a1130 100%);
+    color: var(--text); font-family: 'Inter', sans-serif;
+    min-height: 100vh; line-height: 1.6; overflow-x: hidden;
+}
+body::before {
+    content: ""; position: fixed; inset: 0;
+    background: radial-gradient(ellipse at 15% 50%, rgba(124,58,237,0.1) 0%, transparent 60%),
+                radial-gradient(ellipse at 85% 20%, rgba(34,211,238,0.06) 0%, transparent 50%);
+    pointer-events: none; z-index: 0;
+}
+.topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: linear-gradient(135deg, rgba(10,7,21,0.94) 0%, rgba(18,13,36,0.94) 100%);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(124,58,237,0.15);
+    display: flex; align-items: center; gap: 16px; padding: 0 24px; height: 58px;
+}
+.topbar .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.topbar .brand img { height: 28px; width: auto; }
+.topbar .brand-title { font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: .06em; color: var(--text); }
+.topbar .brand-title span { color: var(--cyan); }
+.tabs { display: flex; gap: 4px; }
+.tab-btn {
+    background: transparent; border: none; color: var(--muted); font-family: 'Rajdhani', sans-serif;
+    font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    padding: 6px 14px; border-radius: 6px; cursor: pointer; transition: .2s;
+}
+.tab-btn:hover { color: var(--text); background: var(--surface-soft); }
+.tab-btn.active { color: #fff; background: linear-gradient(135deg, var(--purple), var(--purple-dark)); box-shadow: 0 0 20px var(--purple-glow); }
+
+.main-wrap { max-width: 1100px; margin: 0 auto; padding: 82px 20px 40px; position: relative; z-index: 1; }
+.tab-panel { animation: fadeIn .35s var(--ease); }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.hidden { display: none !important; }
+
+.hero { text-align: center; margin-bottom: 28px; }
+.hero .eyebrow { font-family: 'Rajdhani', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+.hero-title { font-family: 'Rajdhani', sans-serif; font-size: clamp(32px,5vw,60px); font-weight: 700; letter-spacing: .02em; line-height: 1.1; }
+.hero .lead { color: var(--muted); font-size: 14px; max-width: 520px; margin: 0 auto; }
+
+.card {
+    background: var(--surface); border: 1px solid rgba(124,58,237,0.1);
+    border-radius: var(--radius); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+}
+.card-inner { padding: 28px; }
+
+.actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    padding: 10px 22px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface-soft);
+    color: var(--text); cursor: pointer; transition: .2s; text-decoration: none; white-space: nowrap;
+}
+.btn:hover { border-color: var(--purple); background: var(--purple-bg); }
+.btn.primary { background: linear-gradient(135deg, var(--purple), var(--purple-dark)); border: none; color: #fff; box-shadow: 0 0 24px var(--purple-glow); }
+.btn.primary:hover { filter: brightness(1.15); }
+.btn.small { padding: 5px 12px; font-size: 11px; min-height: 28px; }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+.btn.ghost { background: transparent; border-color: transparent; }
+
+/* ---- Shop ---- */
+.shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; max-width: 960px; margin: 0 auto; }
+.phone-card {
+    background: rgba(255,255,255,.03); border: 1px solid rgba(124,58,237,0.08);
+    border-radius: var(--radius); padding: 20px; display: grid; gap: 6px; transition: .25s var(--ease);
+}
+.phone-card:hover { border-color: var(--purple); transform: translateY(-3px); box-shadow: 0 8px 30px var(--purple-glow); }
+.phone-card-header { display: flex; align-items: center; gap: 8px; }
+.phone-brand-icon { font-size: 22px; }
+.phone-brand-name { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; font-weight: 600; }
+.phone-model { font-size: 18px; font-weight: 700; color: #fff; }
+.phone-tier { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; }
+.phone-desc { font-size: 12px; color: var(--dim); line-height: 1.5; }
+.phone-price { font-size: 20px; font-weight: 800; color: var(--mint); }
+.brand-filters { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
+.brand-filters .btn.active { background: linear-gradient(135deg, var(--purple), var(--purple-dark)); color: #fff; border: none; }
+
+/* ---- Money HUD ---- */
+.money-hud {
+    position: fixed; top: 70px; left: 16px; z-index: 99;
+    font-family: 'Pricedown', sans-serif; text-align: left; line-height: 1;
+    pointer-events: none; user-select: none;
+}
+.money-hud .hud-label { font-size: 11px; color: rgba(255,255,255,.45); letter-spacing: .12em; margin-right: 6px; font-family: 'Inter', sans-serif; }
+.money-hud .hud-cash { font-size: 24px; color: #fff; text-shadow: 1px 1px 3px rgba(0,0,0,.6); }
+.money-hud .hud-bank { font-size: 20px; color: var(--cyan); text-shadow: 1px 1px 3px rgba(0,0,0,.6); }
+.money-hud.hidden { display: none; }
+
+/* ---- Overlays ---- */
+.overlay {
+    position: fixed; inset: 0; z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+}
+.overlay-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.7); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.overlay-card { position: relative; width: 100%; max-width: 380px; margin: 20px; }
+
+/* ---- Forms ---- */
+.form-card { max-width: 400px; margin: 40px auto; }
+.form-card .brand-icon { text-align: center; margin-bottom: 16px; }
+.form-card .brand-icon img { height: 48px; width: auto; }
+.form-card h1 { font-family: 'Rajdhani', sans-serif; font-size: 28px; font-weight: 700; text-align: center; margin-bottom: 4px; }
+.form-card .sub { color: var(--muted); font-size: 13px; text-align: center; margin-bottom: 24px; }
+.form-field { margin-bottom: 14px; }
+.form-field label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); margin-bottom: 5px; letter-spacing: .06em; text-transform: uppercase; }
+.form-field input {
+    width: 100%; padding: 11px 14px; border-radius: 8px; border: 1px solid rgba(124,58,237,0.15);
+    background: rgba(255,255,255,.05); color: var(--text); font-size: 14px; font-family: inherit;
+    outline: none; transition: .2s;
+}
+.form-field input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(124,58,237,0.12); }
+.form-field input::placeholder { color: var(--dim); }
+.form-error { color: var(--red); font-size: 13px; margin-top: 6px; }
+.form-link { text-align: center; margin-top: 14px; font-size: 13px; color: var(--muted); }
+.form-link a { color: var(--cyan); cursor: pointer; text-decoration: none; }
+.form-link a:hover { text-decoration: underline; }
+
+/* ---- Profile Bar ---- */
+.profile-bar { display: flex; align-items: center; gap: 14px; background: var(--surface); border: 1px solid rgba(124,58,237,0.1); border-radius: var(--radius); padding: 14px 20px; margin-bottom: 28px; flex-wrap: wrap; }
+.profile-bar .rp-name { font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; }
+.profile-bar .stat { font-size: 12px; color: var(--muted); }
+.profile-bar .stat strong { color: var(--text); }
+.logout-btn { margin-left: auto; font-size: 11px; padding: 5px 12px; cursor: pointer; background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 6px; font-family: 'Rajdhani', sans-serif; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; transition: .2s; }
+.logout-btn:hover { border-color: var(--red); color: var(--red); }
+
+/* ---- Notifications ---- */
+#notif-container { position: fixed; top: 72px; right: 20px; z-index: 300; display: grid; gap: 8px; max-width: 340px; }
+.notif {
+    background: linear-gradient(135deg, rgba(30,22,60,.95), rgba(18,13,36,.95));
+    border: 1px solid rgba(124,58,237,0.15); border-radius: 10px;
+    padding: 14px 16px; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 8px 32px rgba(0,0,0,.4); animation: slideIn .35s var(--ease);
+}
+.notif strong { display: block; font-size: 13px; color: var(--text); margin-bottom: 2px; }
+.notif span { font-size: 12px; color: var(--muted); }
+@keyframes slideIn { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
+
+/* ================ DREAMOS PHONE ================ */
+.phone-container {
+    position: fixed; inset: 0; z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+}
+.phone-container .backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.phone-frame {
+    position: relative; width: 370px; height: 740px;
+    background: #05020d; border-radius: 48px;
+    border: 2px solid rgba(124,58,237,0.2); box-shadow: 0 0 80px rgba(124,58,237,0.15), inset 0 0 0 1px rgba(255,255,255,.06);
+    overflow: hidden; display: flex; flex-direction: column;
+}
+.phone-notch {
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 130px; height: 28px; background: #05020d;
+    border-radius: 0 0 16px 16px; z-index: 30;
+}
+.phone-screen { flex: 1; position: relative; overflow: hidden; background: #0f0920; color: var(--text); display: flex; flex-direction: column; }
+.phone-screen .wallpaper { position: absolute; inset: 0; background: linear-gradient(160deg, #1a1040 0%, #0f0920 40%, #0a0715 100%); z-index: 0; }
+.phone-screen .wallpaper.has-image { background-size: cover; background-position: center; }
+
+/* Status Bar */
+.dreamos-status {
+    position: relative; z-index: 20; display: flex; justify-content: space-between;
+    padding: 8px 20px 4px; font-size: 11px; font-weight: 600; color: rgba(255,255,255,.8);
+}
+.dreamos-status .time { font-weight: 700; }
+.dreamos-status .icons { display: flex; gap: 6px; align-items: center; }
+
+/* ---- Boot ---- */
+.boot-screen { position: absolute; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #05020d; }
+.boot-screen .logo { margin-bottom: 16px; }
+.boot-screen .logo img { height: 56px; width: auto; }
+.boot-screen .name { font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: .08em; margin-bottom: 32px; }
+.boot-screen .name span { color: var(--cyan); }
+.boot-screen .loader { position: relative; width: 160px; height: 3px; background: rgba(255,255,255,.08); border-radius: 2px; overflow: hidden; }
+.boot-screen .loader-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--purple), var(--cyan)); border-radius: 2px; transition: width .3s; }
+.boot-screen .loader-text { font-size: 11px; color: var(--muted); margin-top: 12px; letter-spacing: .06em; }
+
+/* ---- Lock Screen ---- */
+.lock-screen { position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 40px 24px 60px; cursor: pointer; padding-top: 68px; }
+.lock-screen .lock-time { font-size: 68px; font-weight: 200; letter-spacing: 3px; line-height: 1; margin-bottom: 4px; }
+.lock-screen .lock-date { font-size: 15px; color: rgba(255,255,255,.5); margin-bottom: 32px; }
+.lock-screen .lock-notifs { width: 100%; max-width: 300px; display: grid; gap: 8px; }
+.lock-screen .lock-notif {
+    background: rgba(255,255,255,.06); border-radius: 12px;
+    padding: 10px 14px; text-align: left; font-size: 12px; line-height: 1.4;
+}
+.lock-screen .lock-notif strong { display: block; font-size: 10px; color: var(--cyan); margin-bottom: 1px; text-transform: uppercase; letter-spacing: .06em; }
+.lock-screen .lock-hint { font-size: 12px; color: rgba(255,255,255,.25); margin-top: 24px; }
+.lock-screen .swipe-up { width: 36px; height: 36px; border: 2px solid rgba(255,255,255,.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; margin-top: 8px; animation: bobUp 2s infinite; }
+@keyframes bobUp { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+/* ---- Home Screen ---- */
+.home-screen { position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; padding-top: 28px; }
+.home-screen .home-top { position: relative; z-index: 5; padding: 8px 20px 0; display: flex; justify-content: space-between; align-items: center; }
+.home-screen .home-top .time { font-size: 13px; font-weight: 600; color: rgba(255,255,255,.8); }
+.home-screen .home-indicator { position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); width: 110px; height: 4px; background: rgba(255,255,255,.2); border-radius: 2px; z-index: 20; cursor: pointer; }
+
+.app-grid-wrap { flex: 1; position: relative; overflow: hidden; user-select: none; -webkit-user-select: none; touch-action: none; }
+.app-grid-page { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 12px 16px; align-content: start; transition: transform .35s var(--ease); }
+.app-icon { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 8px 0; border-radius: 12px; transition: .15s; }
+.app-icon:active { transform: scale(.9); }
+.app-icon .icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,.3);
+    transition: .2s;
+}
+.app-icon:hover .icon { transform: scale(1.05); }
+.app-icon span { font-size: 10px; color: rgba(255,255,255,.65); text-align: center; line-height: 1.2; max-width: 60px; }
+
+.app-icon .badge {
+    position: absolute; top: -2px; right: -2px;
+    min-width: 16px; height: 16px; border-radius: 8px;
+    background: var(--red); color: #fff; font-size: 9px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; padding: 0 4px;
+}
+.app-icon .icon-wrap { position: relative; }
+
+.page-dots { display: flex; justify-content: center; gap: 6px; padding: 4px 0 16px; z-index: 5; position: relative; }
+.page-dots .dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,.15); transition: .2s; cursor: pointer; }
+.page-dots .dot.active { background: var(--purple); width: 18px; border-radius: 3px; }
+
+/* ---- App Views ---- */
+.app-view { position: absolute; inset: 0; z-index: 15; display: flex; flex-direction: column; background: #0f0920; animation: appOpen .3s var(--ease); padding-top: 28px; }
+@keyframes appOpen { from { opacity: 0; transform: scale(.92) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+.app-view .app-header {
+    display: flex; align-items: center; padding: 8px 12px; gap: 8px;
+    border-bottom: 1px solid rgba(124,58,237,0.1); min-height: 44px;
+}
+.app-view .app-header .back { background: none; border: none; color: var(--purple); font-size: 20px; cursor: pointer; padding: 4px; }
+.app-view .app-header .title { font-size: 15px; font-weight: 600; flex: 1; }
+.app-view .app-header .header-action { background: none; border: none; color: var(--purple); font-size: 20px; cursor: pointer; padding: 4px; }
+.app-view .app-body { flex: 1; overflow-y: auto; padding: 12px 16px; }
+
+/* ---- Dialer ---- */
+.dialer-display { text-align: center; padding: 16px 0 8px; }
+.dialer-display .number { font-size: 28px; font-weight: 300; letter-spacing: 4px; color: #fff; min-height: 40px; }
+.dialer-display .contact-name { font-size: 13px; color: var(--muted); }
+.dialer-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 260px; margin: 0 auto; }
+.dialer-key {
+    height: 56px; border-radius: 50%; border: none; background: rgba(255,255,255,.06);
+    color: #fff; font-size: 22px; font-weight: 400; cursor: pointer; transition: .15s;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1;
+}
+.dialer-key:hover { background: rgba(255,255,255,.12); }
+.dialer-key:active { transform: scale(.92); }
+.dialer-key .sub { font-size: 8px; color: var(--muted); letter-spacing: .04em; }
+.dialer-key.call { background: linear-gradient(135deg, var(--mint), #2ecc71); font-size: 18px; }
+.dialer-key.call:hover { filter: brightness(1.1); }
+.dialer-key.del { background: none; font-size: 18px; color: var(--muted); }
+
+/* ---- Contacts ---- */
+.contact-entry { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.04); }
+.contact-entry:last-child { border-bottom: none; }
+.contact-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.contact-info { flex: 1; min-width: 0; }
+.contact-name { font-size: 14px; font-weight: 500; color: #fff; }
+.contact-num { font-size: 11px; color: var(--muted); }
+.contact-badge { font-size: 8px; color: var(--orange); margin-left: 6px; font-weight: 700; letter-spacing: .06em; }
+.contact-del { background: none; border: none; color: rgba(255,255,255,.2); cursor: pointer; font-size: 14px; padding: 4px; }
+.contact-form { display: grid; gap: 8px; padding: 12px 0; }
+.contact-form-btns { display: flex; gap: 8px; }
+
+/* ---- Messages ---- */
+.msg-thread { padding: 8px 0; }
+.msg-bubble { max-width: 80%; padding: 10px 14px; border-radius: 14px; margin-bottom: 6px; font-size: 13px; line-height: 1.4; }
+.msg-bubble.sent { background: linear-gradient(135deg, var(--purple), var(--purple-dark)); color: #fff; margin-left: auto; border-bottom-right-radius: 4px; }
+.msg-bubble.received { background: rgba(255,255,255,.06); color: var(--text); margin-right: auto; border-bottom-left-radius: 4px; }
+.msg-bubble .time { font-size: 9px; color: rgba(255,255,255,.3); margin-top: 4px; display: block; }
+.msg-input-row { display: flex; gap: 8px; padding: 8px 0; }
+.msg-input-row input { flex: 1; padding: 10px 14px; border-radius: 20px; border: 1px solid rgba(124,58,237,0.15); background: rgba(255,255,255,.05); color: #fff; font-size: 13px; font-family: inherit; outline: none; }
+.msg-input-row input:focus { border-color: var(--purple); }
+.msg-input-row button { width: 40px; height: 40px; border-radius: 50%; border: none; background: linear-gradient(135deg, var(--purple), var(--purple-dark)); color: #fff; font-size: 16px; cursor: pointer; }
+.msg-list-item { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.04); cursor: pointer; }
+.msg-list-item:active { opacity: .7; }
+
+/* ---- Bank ---- */
+.bank-balance-card {
+    text-align: center; padding: 24px 16px;
+    background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(34,211,238,0.05));
+    border: 1px solid rgba(124,58,237,0.1); border-radius: 14px; margin-bottom: 16px;
+}
+.bank-balance-card .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 4px; }
+.bank-balance-card .amount { font-size: 36px; font-weight: 700; color: var(--cyan); }
+.bank-split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.bank-split .box { background: rgba(255,255,255,.03); border: 1px solid rgba(124,58,237,0.08); border-radius: 10px; padding: 14px; text-align: center; }
+.bank-split .box .label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.bank-split .box .value { font-size: 18px; font-weight: 700; margin-top: 4px; }
+.bank-split .box .value.cash { color: #fff; }
+.bank-split .box .value.bank { color: var(--cyan); }
+.bank-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+.bank-action-btn {
+    padding: 12px; border-radius: 10px; border: 1px solid rgba(124,58,237,0.08);
+    background: rgba(255,255,255,.03); color: var(--text); cursor: pointer;
+    text-align: center; transition: .2s; font-size: 12px;
+}
+.bank-action-btn:hover { border-color: var(--purple); background: var(--purple-bg); }
+.bank-action-btn .icon { display: block; font-size: 20px; margin-bottom: 4px; }
+.bank-tx { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.03); display: flex; align-items: center; gap: 10px; }
+.bank-tx .tx-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.bank-tx .tx-info { flex: 1; }
+.bank-tx .tx-info .tx-desc { font-size: 13px; color: var(--text); }
+.bank-tx .tx-info .tx-time { font-size: 10px; color: var(--muted); }
+.bank-tx .tx-amount { font-size: 14px; font-weight: 600; }
+
+/* ---- Settings ---- */
+.setting-group { margin-bottom: 20px; }
+.setting-group .group-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+.setting-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.04); }
+.setting-row .s-left { display: flex; align-items: center; gap: 10px; }
+.setting-row .s-left .s-icon { font-size: 16px; width: 24px; text-align: center; }
+.setting-row .s-left .s-label { font-size: 13px; }
+.setting-row .s-right { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.bg-options { display: flex; gap: 6px; flex-wrap: wrap; }
+.bg-opt {
+    width: 40px; height: 40px; border-radius: 10px; border: 2px solid transparent;
+    cursor: pointer; transition: .15s;
+}
+.bg-opt.active { border-color: var(--purple); box-shadow: 0 0 12px var(--purple-glow); }
+
+/* ---- Emergency ---- */
+.emergency-btn { width: 100%; padding: 14px; font-size: 16px; font-weight: 700; border: none; border-radius: 10px; cursor: pointer; background: linear-gradient(135deg, var(--red), #dc2626); color: #fff; transition: .2s; }
+.emergency-btn:hover { filter: brightness(1.1); }
+.emergency-btn:active { transform: scale(.97); }
+
+/* ---- Dialer Contacts ---- */
+.dialer-contacts { max-height: 120px; overflow-y: auto; margin-bottom: 8px; border-bottom: 1px solid rgba(124,58,237,0.08); padding-bottom: 8px; }
+.dialer-contact { display: flex; align-items: center; gap: 8px; padding: 6px 0; cursor: pointer; transition: .1s; }
+.dialer-contact:active { opacity: .6; }
+.dialer-contact .dc-avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--purple), var(--purple-dark)); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.dialer-contact .dc-name { font-size: 12px; color: var(--text); flex: 1; }
+.dialer-contact .dc-num { font-size: 11px; color: var(--dim); }
+
+/* ---- Messages Contact List ---- */
+.msg-contact { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.04); cursor: pointer; }
+.msg-contact:active { opacity: .6; }
+.msg-contact .mc-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--purple), var(--purple-dark)); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.msg-contact .mc-info { flex: 1; min-width: 0; }
+.msg-contact .mc-name { font-size: 14px; font-weight: 500; color: #fff; }
+.msg-contact .mc-num { font-size: 11px; color: var(--muted); }
+.msg-contact .mc-preview { font-size: 11px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+.msg-thread-view { display: flex; flex-direction: column; height: 100%; }
+.msg-thread-header { display: flex; align-items: center; gap: 8px; padding: 8px 0 12px; border-bottom: 1px solid rgba(124,58,237,0.08); margin-bottom: 8px; }
+.msg-thread-header .mth-back { background: none; border: none; color: var(--purple); font-size: 18px; cursor: pointer; padding: 2px; }
+.msg-thread-header .mth-name { font-size: 14px; font-weight: 600; color: #fff; }
+.msg-thread-messages { flex: 1; overflow-y: auto; padding: 8px 0; }
+.msg-thread-input { display: flex; gap: 8px; padding: 8px 0; border-top: 1px solid rgba(124,58,237,0.08); }
+.msg-thread-input input { flex: 1; padding: 10px 14px; border-radius: 20px; border: 1px solid rgba(124,58,237,0.15); background: rgba(255,255,255,.05); color: #fff; font-size: 13px; font-family: inherit; outline: none; }
+.msg-thread-input input:focus { border-color: var(--purple); }
+.msg-thread-input button { width: 40px; height: 40px; border-radius: 50%; border: none; background: linear-gradient(135deg, var(--purple), var(--purple-dark)); color: #fff; font-size: 16px; cursor: pointer; flex-shrink: 0; }
+
+/* ---- Purchase ---- */
+.purchase-preview { text-align: center; padding: 12px 0; }
+.purchase-preview .pp-icon { font-size: 34px; margin-bottom: 8px; }
+.purchase-preview .pp-name { font-size: 18px; font-weight: 700; color: #fff; }
+.purchase-preview .pp-price { font-size: 24px; font-weight: 800; color: var(--mint); margin-top: 6px; }
+.purchase-preview .pp-balance { font-size: 13px; color: var(--muted); margin-top: 4px; }
+.purchase-preview .pp-error { font-size: 12px; color: var(--red); margin-top: 8px; }
+
+.phone-container.hidden { display: none; }
+.font-small { font-size: 12px; }
+.font-large { font-size: 16px; }
+
+/* ---- Jobs ---- */
+.job-card { background: rgba(255,255,255,.03); border: 1px solid rgba(124,58,237,0.08); border-radius: 10px; padding: 14px; margin-bottom: 10px; transition: .2s; }
+.job-card:hover { border-color: var(--purple); }
+.job-card .job-name { font-size: 15px; font-weight: 600; color: #fff; }
+.job-card .job-pay { font-size: 13px; color: var(--mint); margin-top: 4px; }
+.job-card .job-desc { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.job-card .job-status { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 4px; margin-top: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+.job-card .job-status.hired { background: rgba(34,211,238,.15); color: var(--cyan); }
+.job-card .job-status.open { background: rgba(124,58,237,.15); color: var(--purple); }
+.job-current { background: rgba(34,211,238,.05); border: 1px solid rgba(34,211,238,.15); border-radius: 10px; padding: 14px; margin-bottom: 14px; text-align: center; }
+.job-current .jct-name { font-size: 18px; font-weight: 700; color: var(--cyan); }
+.job-current .jct-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+
+/* ---- Vehicles ---- */
+.vehicle-card { background: rgba(255,255,255,.03); border: 1px solid rgba(124,58,237,0.08); border-radius: 10px; padding: 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; }
+.vehicle-card .v-icon { font-size: 28px; width: 44px; text-align: center; }
+.vehicle-card .v-info { flex: 1; }
+.vehicle-card .v-name { font-size: 15px; font-weight: 600; color: #fff; }
+.vehicle-card .v-detail { font-size: 11px; color: var(--muted); }
+.vehicle-card .v-plate { font-size: 12px; font-weight: 700; color: var(--cyan); margin-top: 2px; }
+.vehicle-card .v-badge { font-size: 9px; padding: 2px 8px; border-radius: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+.vehicle-card .v-badge.insured { background: rgba(34,211,238,.15); color: var(--cyan); }
+.vehicle-card .v-badge.uninsured { background: rgba(239,68,68,.15); color: var(--red); }
+
+/* ---- Property ---- */
+.property-card { background: rgba(255,255,255,.03); border: 1px solid rgba(124,58,237,0.08); border-radius: 10px; padding: 14px; margin-bottom: 10px; }
+.property-card .p-name { font-size: 15px; font-weight: 600; color: #fff; }
+.property-card .p-loc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.property-card .p-price { font-size: 16px; font-weight: 700; color: var(--mint); margin-top: 4px; }
+.property-card .p-status { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 4px; margin-top: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+.property-card .p-status.owned { background: rgba(34,211,238,.15); color: var(--cyan); }
+.property-card .p-status.available { background: rgba(249,115,22,.15); color: var(--orange); }
+
+/* ---- Businesses ---- */
+.business-card { background: rgba(255,255,255,.03); border: 1px solid rgba(124,58,237,0.08); border-radius: 10px; padding: 14px; margin-bottom: 10px; }
+.business-card .b-name { font-size: 15px; font-weight: 600; color: #fff; }
+.business-card .b-type { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.business-card .b-profit { font-size: 13px; color: var(--mint); margin-top: 6px; }
+.business-card .b-status { font-size: 10px; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-top: 6px; background: rgba(34,211,238,.15); color: var(--cyan); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+
+/* ---- Marketplace ---- */
+.market-section { margin-bottom: 16px; }
+.market-section .ms-title { font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .06em; }
+.market-item { background: rgba(255,255,255,.03); border: 1px solid rgba(124,58,237,0.08); border-radius: 10px; padding: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+.market-item .mi-icon { font-size: 24px; width: 36px; text-align: center; }
+.market-item .mi-info { flex: 1; }
+.market-item .mi-name { font-size: 14px; font-weight: 500; color: #fff; }
+.market-item .mi-desc { font-size: 11px; color: var(--muted); }
+.market-item .mi-qty { font-size: 12px; color: var(--dim); }
+.market-item .mi-price { font-size: 14px; font-weight: 700; color: var(--mint); }
+
+/* ---- Government ---- */
+.gov-section { margin-bottom: 16px; }
+.gov-section .gs-title { font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .06em; }
+.gov-info { background: rgba(255,255,255,.03); border: 1px solid rgba(124,58,237,0.08); border-radius: 10px; padding: 14px; margin-bottom: 8px; font-size: 13px; color: var(--text); line-height: 1.6; }
+.id-card { background: linear-gradient(135deg, rgba(124,58,237,.12), rgba(34,211,238,.05)); border: 1px solid rgba(124,58,237,0.15); border-radius: 14px; padding: 20px; text-align: center; margin-bottom: 12px; }
+.id-card .id-avatar { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--purple), var(--cyan)); margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; color: #fff; }
+.id-card .id-name { font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700; color: #fff; }
+.id-card .id-detail { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.id-card .id-badge { font-size: 10px; padding: 2px 10px; border-radius: 4px; background: rgba(34,211,238,.15); color: var(--cyan); display: inline-block; margin-top: 8px; font-weight: 600; letter-spacing: .06em; }
+/* ---- Browser ---- */
+.browser-bar { display: flex; gap: 6px; padding: 8px 0; }
+.browser-bar input { flex: 1; padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(124,58,237,0.15); background: rgba(255,255,255,.05); color: #fff; font-size: 12px; font-family: inherit; outline: none; }
+.browser-bar input:focus { border-color: var(--purple); }
+.browser-bar button { padding: 8px 14px; border-radius: 8px; border: none; background: var(--purple); color: #fff; font-size: 12px; cursor: pointer; font-family: 'Rajdhani', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.browser-bar button:hover { filter: brightness(1.1); }
+.browser-frame { flex: 1; border: none; border-radius: 8px; background: #fff; width: 100%; margin-top: 8px; min-height: 300px; }
+
+/* ---- DreamGram ---- */
+.gram-tabs { display: flex; border-bottom: 1px solid rgba(124,58,237,0.1); margin-bottom: 12px; }
+.gram-tab { flex: 1; text-align: center; padding: 8px; font-size: 11px; font-weight: 600; color: var(--muted); cursor: pointer; text-transform: uppercase; letter-spacing: .06em; border-bottom: 2px solid transparent; transition: .2s; }
+.gram-tab:hover { color: var(--text); }
+.gram-tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+.gram-post { background: rgba(255,255,255,.03); border: 1px solid rgba(124,58,237,0.08); border-radius: 12px; margin-bottom: 14px; overflow: hidden; }
+.gram-post .gram-hdr { display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; }
+.gram-post .gram-hdr:active { opacity: .7; }
+.gram-avatar-img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(124,58,237,0.15); display: block; }
+.gram-avatar-initial { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--purple), var(--cyan)); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.gram-post .gram-user { font-size: 13px; font-weight: 600; color: #fff; }
+.gram-post .gram-time { font-size: 10px; color: var(--dim); margin-left: auto; }
+.gram-post .gram-img { width: 100%; height: 220px; background: rgba(255,255,255,.02); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.gram-post .gram-img img { width: 100%; height: 100%; object-fit: cover; }
+.gram-post .gram-body { padding: 8px 14px 4px; font-size: 13px; color: var(--text); line-height: 1.5; }
+.gram-post .gram-actions { display: flex; gap: 16px; padding: 6px 14px 10px; }
+.gram-post .gram-action { background: none; border: none; color: var(--muted); font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 4px; }
+.gram-post .gram-action:hover { color: var(--purple); }
+.gram-post .gram-action.liked { color: var(--red); }
+.gram-profile-header { text-align: center; padding: 16px 0 12px; border-bottom: 1px solid rgba(124,58,237,0.08); margin-bottom: 12px; }
+.gram-profile-header .gph-avatar { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; margin: 0 auto 8px; display: block; border: 2px solid rgba(124,58,237,0.2); }
+.gram-profile-header .gph-avatar-fallback { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, var(--purple), var(--cyan)); margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; color: #fff; }
+.gram-profile-header .gph-name { font-size: 18px; font-weight: 700; color: #fff; }
+.gram-profile-header .gph-bio { font-size: 12px; color: var(--muted); margin-top: 4px; max-width: 280px; margin-left: auto; margin-right: auto; }
+.gram-profile-header .gph-edit { margin-top: 10px; }
+.gram-profile-header .gph-back { background: none; border: none; color: var(--purple); font-size: 13px; cursor: pointer; font-family: 'Rajdhani', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; display: block; margin-bottom: 8px; }
+.gram-create-post { border-bottom: 1px solid rgba(124,58,237,0.1); margin-bottom: 12px; padding-bottom: 10px; }
+.gram-create-post textarea { width:100%; padding:8px 12px; border-radius:8px; border:1px solid rgba(124,58,237,0.15); background:rgba(255,255,255,.05); color:#fff; font-size:12px; font-family:inherit; outline:none; resize:none; min-height:50px; }
+.gram-create-post textarea:focus { border-color: var(--purple); }
+.gram-create-post .gcp-actions { display: flex; gap: 8px; margin-top: 8px; align-items: center; }
+.gram-create-post .gcp-actions button { padding: 6px 14px; border-radius: 8px; border: none; background: linear-gradient(135deg, var(--purple), var(--purple-dark)); color: #fff; font-size: 11px; cursor: pointer; font-family: 'Rajdhani', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.gram-create-post .gcp-actions button:hover { filter: brightness(1.1); }
+.gram-create-post .gcp-actions .img-btn { background: rgba(255,255,255,.06); color: var(--muted); }
+.gram-create-post .gcp-preview { margin-top: 8px; position: relative; display: inline-block; }
+.gram-create-post .gcp-preview img { max-height: 120px; border-radius: 8px; border: 1px solid rgba(124,58,237,0.1); }
+.gram-create-post .gcp-preview .remove-img { position: absolute; top: -6px; right: -6px; width: 20px; height: 20px; border-radius: 50%; background: var(--red); color: #fff; border: none; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+/* DreamGram DM */
+.gram-dm-list { }
+.gram-dm-item { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.04); cursor: pointer; }
+.gram-dm-item:active { opacity: .6; }
+.gram-dm-item .dm-avatar { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.gram-dm-item .dm-avatar-fallback { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--purple), var(--purple-dark)); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.gram-dm-item .dm-info { flex: 1; min-width: 0; }
+.gram-dm-item .dm-name { font-size: 14px; font-weight: 500; color: #fff; }
+.gram-dm-item .dm-last { font-size: 11px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gram-dm-chat { display: flex; flex-direction: column; height: 100%; }
+.gram-dm-chat .dmc-header { display: flex; align-items: center; gap: 8px; padding: 8px 0 12px; border-bottom: 1px solid rgba(124,58,237,0.08); margin-bottom: 8px; }
+.gram-dm-chat .dmc-back { background: none; border: none; color: var(--purple); font-size: 18px; cursor: pointer; padding: 2px; }
+.gram-dm-chat .dmc-name { font-size: 14px; font-weight: 600; color: #fff; }
+.gram-dm-messages { flex: 1; overflow-y: auto; padding: 8px 0; }
+.gram-dm-input { display: flex; gap: 8px; padding: 8px 0; border-top: 1px solid rgba(124,58,237,0.08); }
+.gram-dm-input input { flex: 1; padding: 10px 14px; border-radius: 20px; border: 1px solid rgba(124,58,237,0.15); background: rgba(255,255,255,.05); color: #fff; font-size: 13px; font-family: inherit; outline: none; }
+.gram-dm-input input:focus { border-color: var(--purple); }
+.gram-dm-input button { width: 40px; height: 40px; border-radius: 50%; border: none; background: linear-gradient(135deg, var(--purple), var(--purple-dark)); color: #fff; font-size: 16px; cursor: pointer; flex-shrink: 0; }
+.gram-posts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-top: 8px; }
+.gram-posts-grid .gpg-item { aspect-ratio: 1; background: rgba(255,255,255,.02); border-radius: 4px; overflow: hidden; cursor: pointer; position: relative; }
+.gram-posts-grid .gpg-item img { width: 100%; height: 100%; object-fit: cover; }
+.gram-posts-grid .gpg-item .gpg-overlay { position: absolute; inset: 0; background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 11px; opacity: 0; transition: .2s; }
+.gram-posts-grid .gpg-item:hover .gpg-overlay { opacity: 1; }
+
+@media (max-width: 720px) {
+    .tabs { width: 100%; justify-content: center; }
+    .topbar { flex-wrap: wrap; height: auto; padding: 10px 16px; }
+    .main-wrap { padding-top: 90px; }
+    .profile-bar { flex-direction: column; align-items: stretch; text-align: center; }
+    .logout-btn { margin-left: 0; }
+    .money-hud { top: 80px; left: 8px; }
+    .money-hud .hud-cash { font-size: 18px; }
+    .money-hud .hud-bank { font-size: 16px; }
+    .phone-frame { width: 100%; height: 100vh; border-radius: 0; border: none; }
+    .phone-notch { display: none; }
+}
+.gram-stories-bar { display:flex; gap:10px; padding:8px 0 12px; overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none; }
+.gram-stories-bar::-webkit-scrollbar { display:none; }
+.gs-item { display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; min-width:60px; }
+.gs-avatar { width:50px; height:50px; border-radius:50%; overflow:hidden; border:2px solid var(--purple); padding:2px; }
+.gs-name { font-size:10px; color:var(--muted); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:60px; }
+.story-media { display:flex; align-items:center; justify-content:center; flex:1; width:100%; }
+.story-media img { max-width:100%; max-height:60vh; border-radius:12px; object-fit:contain; }
+.story-text { padding:14px; font-size:15px; text-align:center; color:var(--text); line-height:1.5; }
+.story-header { display:flex; align-items:center; padding:10px 14px; width:100%; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+    <a class="brand" href="#">
+        <img src="logo.png" alt="DLRP" onerror="this.style.display='none'">
+        <span class="brand-title">Dream <span>Legacy</span> RolePlay</span>
+    </a>
+    <div id="nav-tabs" class="tabs hidden" role="tablist">
+        <button id="btn-shop" class="tab-btn active" onclick="setTab('shop')">Shop</button>
+        <button id="btn-dreamos" class="tab-btn" onclick="setTab('dreamos')">DreamOS</button>
+    </div>
+</div>
+
+<div id="money-hud" class="money-hud hidden">
+    <div class="hud-cash"><span class="hud-label">CASH</span> <span id="hud-cash-amt">0</span></div>
+    <div class="hud-bank"><span class="hud-label">BANK</span> <span id="hud-bank-amt">0</span></div>
+</div>
+
+<div class="main-wrap">
+    <div id="profile-bar" class="profile-bar hidden">
+        <img id="prof-pfp" src="" style="width:36px;height:36px;border-radius:50%;object-fit:cover;display:none;border:2px solid rgba(124,58,237,0.2);">
+        <span class="rp-name" id="prof-rpname">-</span>
+        <span class="stat">Phone: <strong id="prof-phone">None</strong></span>
+        <span class="stat">Number: <strong id="prof-num">-</strong></span>
+        <span class="stat">Bank: <strong id="prof-bank">$0</strong></span>
+        <button class="logout-btn" onclick="logout()">Log Out</button>
+    </div>
+
+    <!-- Auth Screen -->
+    <div id="auth-screen">
+        <div class="form-card card">
+            <div class="card-inner">
+                <div class="brand-icon"><img src="logo.png" alt="DLRP" onerror="this.style.display='none'"></div>
+                <h1>Dream Legacy RP</h1>
+                <p class="sub" id="auth-sub">Sign in to your phone account.</p>
+                <form id="auth-form" onsubmit="event.preventDefault(); doAuth();">
+                    <div id="auth-fields">
+                        <div class="form-field">
+                            <label for="auth-user">Username</label>
+                            <input type="text" id="auth-user" placeholder="Your username" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="auth-pass">Password</label>
+                            <input type="password" id="auth-pass" placeholder="Your password" required>
+                        </div>
+                        <div id="auth-name-field" class="form-field hidden">
+                            <label for="auth-display">Display Name</label>
+                            <input type="text" id="auth-display" placeholder="e.g. John Marston">
+                        </div>
+                    </div>
+                    <div id="auth-error" class="form-error hidden"></div>
+                    <button class="btn primary" type="submit" id="auth-btn" style="width:100%;padding:12px;font-size:14px;">Sign In</button>
+                </form>
+                <div class="form-link" id="auth-toggle">
+                    <span>New here?</span> <a onclick="toggleAuthMode()">Create an account</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Content -->
+    <div id="app-content" class="hidden">
+        <div id="tab-shop" class="tab-panel">
+            <div class="hero">
+                <div class="eyebrow" style="color:var(--purple);">Phone Marketplace</div>
+                <h1 class="hero-title">Device Shop</h1>
+                <p class="lead">Choose your smartphone and get connected.</p>
+            </div>
+            <div id="brand-filters" class="brand-filters"></div>
+            <div id="shop-grid" class="shop-grid"></div>
+            <div id="shop-owned" class="hidden" style="max-width:460px;margin:28px auto 0;text-align:center;padding:18px;border:1px solid rgba(124,58,237,0.12);border-radius:var(--radius);background:rgba(124,58,237,.04);">
+                <p style="color:var(--cyan);font-size:17px;font-weight:700;">Your device: <span id="shop-owned-name"></span></p>
+            </div>
+        </div>
+
+        <div id="tab-dreamos" class="tab-panel hidden">
+            <div class="hero">
+                <div class="eyebrow" style="color:var(--cyan);">DreamOS</div>
+                <h1 class="hero-title">Your Phone</h1>
+                <p class="lead">Open your Dream Legacy smartphone.</p>
+            </div>
+            <div class="card" style="max-width:380px;margin:0 auto;text-align:center;">
+                <div class="card-inner">
+                    <p style="color:var(--muted);margin-bottom:20px;font-size:14px;">Launch DreamOS to access calls, contacts, messages, banking, and more.</p>
+                    <button class="btn primary" onclick="launchPhone()" style="width:100%;font-size:15px;padding:14px;">Launch DreamOS</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Purchase Overlay -->
+<div id="purchase-overlay" class="overlay hidden">
+    <div class="overlay-backdrop" onclick="closePurchase()"></div>
+    <div class="overlay-card">
+        <div class="card" style="width:100%;">
+            <div class="card-inner">
+                <div class="purchase-preview">
+                    <div class="pp-icon" id="pp-icon">📱</div>
+                    <div class="pp-name" id="pp-name"></div>
+                    <div class="pp-price" id="pp-price"></div>
+                    <div class="pp-balance">Bank: <strong id="pp-balance">$0</strong></div>
+                    <div class="pp-error hidden" id="pp-error"></div>
+                </div>
+                <div class="actions" style="margin-top:14px;gap:8px;">
+                    <button class="btn" style="flex:1;" onclick="closePurchase()">Cancel</button>
+                    <button class="btn primary" style="flex:1;" id="pp-confirm" onclick="confirmPurchase()">Buy Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- DREAMOS PHONE CONTAINER -->
+<div id="dreamos-phone" class="phone-container hidden">
+    <div class="backdrop" onclick="closePhone()"></div>
+    <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen" id="phone-screen">
+            <div class="wallpaper" id="phone-wp"></div>
+
+            <!-- Status Bar -->
+            <div class="dreamos-status">
+                <span class="time" id="status-time">00:00</span>
+                <span class="icons">&#9881; &#x1F4F6;</span>
+            </div>
+
+            <!-- Boot Screen -->
+            <div class="boot-screen" id="boot-screen">
+                <div class="logo"><img src="logo.png" alt="DLRP" onerror="this.style.display='none'" style="height:56px;"></div>
+                <div class="name">Dream <span>Legacy</span></div>
+                <div class="loader"><div class="loader-bar" id="boot-bar"></div></div>
+                <div class="loader-text" id="boot-text">Initializing DreamOS...</div>
+            </div>
+
+            <!-- Lock Screen -->
+            <div class="lock-screen hidden" id="lock-screen">
+                <div class="lock-time" id="lock-time">00:00</div>
+                <div class="lock-date" id="lock-date">Monday, January 1</div>
+                <div class="lock-notifs" id="lock-notifs"></div>
+                <div class="lock-hint">Tap or swipe to unlock</div>
+                <div class="swipe-up">&#8593;</div>
+            </div>
+
+            <!-- Home Screen -->
+            <div class="home-screen hidden" id="home-screen">
+                <div class="home-top">
+                    <span class="time" id="home-time">00:00</span>
+                    <span style="font-size:11px;color:rgba(255,255,255,.4);">DreamOS</span>
+                </div>
+                <div class="app-grid-wrap" id="app-grid-wrap">
+                    <div class="app-grid-page" id="app-page-0">
+                        <div class="app-icon" onclick="openApp('contacts')"><div class="icon-wrap"><div class="icon" style="background:linear-gradient(135deg,#34c759,#28a745);">&#9742;</div></div><span>Contacts</span></div>
+                        <div class="app-icon" onclick="openApp('dialer')"><div class="icon-wrap"><div class="icon" style="background:linear-gradient(135deg,#6366f1,#4338ca);">&#128222;</div></div><span>Phone</span></div>
+                        <div class="app-icon" onclick="openApp('messages')"><div class="icon-wrap"><div class="icon" style="background:linear-gradient(135deg,#22d3ee,#0891b2);">&#9993;</div></div><span>Messages</span></div>
+                        <div class="app-icon" onclick="openApp('bank')"><div class="icon-wrap"><div class="icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);">&#127974;</div></div><span>Bank</span></div>
+                        <div class="app-icon" onclick="openApp('emergency')"><div class="icon-wrap"><div class="icon badge-danger" style="background:linear-gradient(135deg,#ef4444,#dc2626);">&#9888;</div></div><span>Emergency</span></div>
+                        <div class="app-icon" onclick="openApp('settings')"><div class="icon-wrap"><div class="icon" style="background:linear-gradient(135deg,#78716c,#57534e);">&#9881;</div></div><span>Settings</span></div>
+                    </div>
+                    <div class="app-grid-page" id="app-page-1">
+                        <div class="app-icon" onclick="openApp('jobs')"><div class="icon-wrap"><div class="icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);">&#128188;</div></div><span>Jobs</span></div>
+                        <div class="app-icon" onclick="openApp('vehicles')"><div class="icon-wrap"><div class="icon" style="background:linear-gradient(135deg,#6366f1,#4338ca);">&#128663;</div></div><span>Vehicles</span></div>
+                        <div class="app-icon" onclick="openApp('property')"><div class="icon-wrap"><div class="icon" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);">&#127968;</div></div><span>Property</span></div>
+                        <div class="app-icon" onclick="openApp('businesses')"><div class="icon-wrap"><div class="icon" style="background:linear-gradient(135deg,#34c759,#28a745);">&#127970;</div></div><span>Businesses</span></div>
+                        <div class="app-icon" onclick="openApp('marketplace')"><div class="icon-wrap"><div class="icon" style="background:linear-gradient(135deg,#f97316,#c2410c);">&#128722;</div></div><span>Market</span></div>
+                        <div class="app-icon" onclick="openApp('government')"><div class="icon-wrap"><div class="icon" style="background:linear-gradient(135deg,#78716c,#57534e);">&#127987;</div></div><span>Government</span></div>
+                        <div class="app-icon" onclick="openApp('browser')"><div class="icon-wrap"><div class="icon" style="background:linear-gradient(135deg,#22d3ee,#0891b2);">&#127760;</div></div><span>Browser</span></div>
+                        <div class="app-icon" onclick="openApp('dreamgram')"><div class="icon-wrap"><div class="icon" style="background:linear-gradient(135deg,#ec4899,#be185d);">&#128247;</div></div><span>DreamGram</span></div>
+                    </div>
+                </div>
+                <div class="page-dots"><div class="dot active" onclick="goToPage(0)"></div><div class="dot" onclick="goToPage(1)"></div></div>
+                <div class="home-indicator" onclick="goHome()"></div>
+            </div>
+
+            <!-- Apps -->
+            <div class="app-view hidden" id="app-contacts">
+                <div class="app-header"><button class="back" onclick="closeApp()">&#9664;</button><span class="title">Contacts</span><button class="header-action" onclick="showAddContact()">+</button></div>
+                <div class="app-body" id="contacts-list"></div>
+                <div id="add-contact-form" class="contact-form hidden" style="padding:12px 16px;border-top:1px solid rgba(124,58,237,0.1);">
+                    <input type="text" id="new-cname" placeholder="Name" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(124,58,237,0.15);background:rgba(255,255,255,.05);color:#fff;font-size:13px;font-family:inherit;outline:none;">
+                    <input type="text" id="new-cnum" placeholder="Phone #" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(124,58,237,0.15);background:rgba(255,255,255,.05);color:#fff;font-size:13px;font-family:inherit;outline:none;">
+                    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);"><input type="checkbox" id="new-cemergency"> Emergency</label>
+                    <div class="contact-form-btns"><button class="btn small" onclick="saveContact()" style="flex:1;">Save</button><button class="btn small" onclick="hideAddContact()" style="flex:1;">Cancel</button></div>
+                </div>
+            </div>
+
+            <div class="app-view hidden" id="app-dialer">
+                <div class="app-header"><button class="back" onclick="closeApp()">&#9664;</button><span class="title">Phone</span></div>
+                <div class="app-body">
+                    <div class="dialer-display"><div class="number" id="dialer-num"></div><div class="contact-name" id="dialer-name"></div></div>
+                    <div class="dialer-grid" id="dialer-grid"></div>
+                </div>
+            </div>
+
+            <div class="app-view hidden" id="app-messages">
+                <div class="app-header"><button class="back" onclick="closeApp()">&#9664;</button><span class="title">Messages</span></div>
+                <div class="app-body" id="msgs-body"></div>
+            </div>
+
+            <div class="app-view hidden" id="app-bank">
+                <div class="app-header"><button class="back" onclick="closeApp()">&#9664;</button><span class="title">Bank</span></div>
+                <div class="app-body" id="bank-body"></div>
+            </div>
+
+            <div class="app-view hidden" id="app-emergency">
+                <div class="app-header" style="background:rgba(239,68,68,.1);"><button class="back" onclick="closeApp()" style="color:var(--red);">&#9664;</button><span class="title" style="color:var(--red);">Emergency</span></div>
+                <div class="app-body">
+                    <p style="font-size:14px;font-weight:600;color:var(--red);margin-bottom:14px;text-align:center;">&#9888; 911 Emergency Services</p>
+                    <p style="font-size:12px;color:var(--muted);margin-bottom:14px;text-align:center;">What emergency do you require?</p>
+                    <div style="display:grid;gap:10px;">
+                        <input type="text" id="emer-loc" placeholder="Your location" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(124,58,237,0.15);background:rgba(255,255,255,.05);color:#fff;font-size:13px;font-family:inherit;outline:none;">
+                        <select id="emer-type" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(124,58,237,0.15);background:rgba(255,255,255,.05);color:#fff;font-size:13px;font-family:inherit;outline:none;appearance:auto;">
+                            <option value="">Select type</option>
+                            <option value="Police">Police</option>
+                            <option value="EMS">EMS (Medical)</option>
+                            <option value="Fire">Fire</option>
+                        </select>
+                        <button class="emergency-btn" onclick="callEmergency()">&#128222; Call 911</button>
+                    </div>
+                    <div id="emer-status" style="display:none;margin-top:12px;text-align:center;padding:14px;border-radius:10px;"></div>
+                </div>
+            </div>
+
+            <div class="app-view hidden" id="app-settings">
+                <div class="app-header"><button class="back" onclick="closeApp()">&#9664;</button><span class="title">Settings</span></div>
+                <div class="app-body" id="settings-body"></div>
+            </div>
+
+            <div class="app-view hidden" id="app-jobs">
+                <div class="app-header"><button class="back" onclick="closeApp()">&#9664;</button><span class="title">Jobs</span></div>
+                <div class="app-body" id="jobs-body"></div>
+            </div>
+
+            <div class="app-view hidden" id="app-vehicles">
+                <div class="app-header"><button class="back" onclick="closeApp()">&#9664;</button><span class="title">Vehicles</span></div>
+                <div class="app-body" id="vehicles-body"></div>
+            </div>
+
+            <div class="app-view hidden" id="app-property">
+                <div class="app-header"><button class="back" onclick="closeApp()">&#9664;</button><span class="title">Property</span></div>
+                <div class="app-body" id="property-body"></div>
+            </div>
+
+            <div class="app-view hidden" id="app-businesses">
+                <div class="app-header"><button class="back" onclick="closeApp()">&#9664;</button><span class="title">Businesses</span></div>
+                <div class="app-body" id="businesses-body"></div>
+            </div>
+
+            <div class="app-view hidden" id="app-marketplace">
+                <div class="app-header"><button class="back" onclick="closeApp()">&#9664;</button><span class="title">Marketplace</span></div>
+                <div class="app-body" id="marketplace-body"></div>
+            </div>
+
+            <div class="app-view hidden" id="app-government">
+                <div class="app-header"><button class="back" onclick="closeApp()">&#9664;</button><span class="title">Government</span></div>
+                <div class="app-body" id="government-body"></div>
+            </div>
+
+            <div class="app-view hidden" id="app-browser">
+                <div class="app-header"><button class="back" onclick="closeApp()">&#9664;</button><span class="title">Browser</span></div>
+                <div class="app-body" id="browser-body"></div>
+            </div>
+
+            <div class="app-view hidden" id="app-dreamgram">
+                <div class="app-header"><button class="back" onclick="closeApp()">&#9664;</button><span class="title">DreamGram</span></div>
+                <div class="app-body" id="dreamgram-body"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bank Modal -->
+<div id="bank-modal" class="overlay hidden">
+    <div class="overlay-backdrop" onclick="closeBankModal()"></div>
+    <div class="overlay-card">
+        <div class="card" style="width:100%;">
+            <div class="card-inner">
+                <div class="purchase-preview">
+                    <div style="font-size:34px;margin-bottom:8px;" id="bm-icon">&#128184;</div>
+                    <div style="font-size:18px;font-weight:700;" id="bm-title">Deposit</div>
+                    <div id="bm-form" style="margin-top:14px;">
+                        <div class="form-field">
+                            <label for="bm-amount">Amount</label>
+                            <input type="number" id="bm-amount" placeholder="Enter amount" min="1" style="width:100%;padding:11px 14px;border-radius:8px;border:1px solid rgba(124,58,237,0.15);background:rgba(255,255,255,.05);color:var(--text);font-size:14px;font-family:inherit;outline:none;">
+                        </div>
+                        <div id="bm-target-field" class="form-field hidden">
+                            <label for="bm-target">Recipient Username</label>
+                            <input type="text" id="bm-target" placeholder="Recipient name" style="width:100%;padding:11px 14px;border-radius:8px;border:1px solid rgba(124,58,237,0.15);background:rgba(255,255,255,.05);color:var(--text);font-size:14px;font-family:inherit;outline:none;">
+                        </div>
+                    </div>
+                    <div id="bm-error" class="form-error hidden"></div>
+                </div>
+                <div class="actions" style="margin-top:14px;gap:8px;">
+                    <button class="btn" style="flex:1;" onclick="closeBankModal()">Cancel</button>
+                    <button class="btn primary" style="flex:1;" onclick="confirmBankModal()">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="idform-overlay" class="overlay hidden">
+    <div class="overlay-backdrop" onclick="closeIDForm()"></div>
+    <div class="overlay-card">
+        <div class="card" style="width:100%;">
+            <div class="card-inner">
+                <div class="purchase-preview">
+                    <div style="font-size:34px;margin-bottom:8px;">&#128179;</div>
+                    <div style="font-size:18px;font-weight:700;margin-bottom:14px;">Citizen ID Application</div>
+                    <div class="form-field"><label>Full Name</label><input type="text" id="idf-name" placeholder="Enter your full name" style="width:100%;padding:11px 14px;border-radius:8px;border:1px solid rgba(124,58,237,0.15);background:rgba(255,255,255,.05);color:var(--text);font-size:14px;font-family:inherit;outline:none;"></div>
+                    <div class="form-field"><label>Date of Birth</label><input type="text" id="idf-dob" placeholder="DD/MM/YYYY" style="width:100%;padding:11px 14px;border-radius:8px;border:1px solid rgba(124,58,237,0.15);background:rgba(255,255,255,.05);color:var(--text);font-size:14px;font-family:inherit;outline:none;"></div>
+                    <div class="form-field"><label>Place of Birth</label><input type="text" id="idf-pob" placeholder="City, State" style="width:100%;padding:11px 14px;border-radius:8px;border:1px solid rgba(124,58,237,0.15);background:rgba(255,255,255,.05);color:var(--text);font-size:14px;font-family:inherit;outline:none;"></div>
+                    <div class="form-field"><label>Gender</label><select id="idf-gender" style="width:100%;padding:11px 14px;border-radius:8px;border:1px solid rgba(124,58,237,0.15);background:rgba(255,255,255,.05);color:var(--text);font-size:14px;font-family:inherit;outline:none;"><option value="">Select...</option><option>Male</option><option>Female</option><option>Non-Binary</option></select></div>
+                </div>
+                <div class="actions" style="margin-top:14px;gap:8px;">
+                    <button class="btn" style="flex:1;" onclick="closeIDForm()">Cancel</button>
+                    <button class="btn primary" style="flex:1;" onclick="submitIDForm()">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="notif-container"></div>
+
+<div id="crop-overlay" class="overlay hidden">
+    <div class="overlay-backdrop" onclick="closeCropModal()"></div>
+    <div class="overlay-card">
+        <div class="card" style="width:100%;">
+            <div class="card-inner">
+                <div style="font-size:18px;font-weight:700;margin-bottom:12px;">Crop Image</div>
+                <div id="crop-container" style="width:100%;max-height:50vh;overflow:hidden;border-radius:8px;background:#111;"></div>
+                <div class="actions" style="margin-top:12px;gap:8px;">
+                <button class="btn" style="flex:1;" onclick="closeCropModal()">Cancel</button>
+                <button class="btn" style="flex:1;border-color:var(--muted);color:var(--muted);" onclick="skipCrop()">Skip Crop</button>
+                <button class="btn primary" style="flex:1;" onclick="confirmCrop()">Crop & Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="story-overlay" class="overlay hidden" style="z-index:900;">
+    <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000;display:flex;flex-direction:column;">
+        <div id="story-progress-bar" style="height:3px;background:rgba(255,255,255,.15);width:100%;"><div id="story-progress" style="height:100%;background:linear-gradient(90deg,var(--purple),var(--cyan));width:0%;transition:width .1s linear;"></div></div>
+        <div id="story-tap-left" style="position:absolute;top:0;left:0;width:40%;height:100%;z-index:10;cursor:pointer;"></div>
+        <div id="story-tap-right" style="position:absolute;top:0;right:0;width:60%;height:100%;z-index:10;cursor:pointer;"></div>
+        <div style="display:flex;align-items:center;padding:10px 14px;position:relative;z-index:5;">
+            <button onclick="closeStoryViewer()" style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer;margin-right:8px;">&larr;</button>
+        </div>
+        <div id="story-content" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;overflow:hidden;"></div>
+    </div>
+</div>
+
+<script>
+/* ---- PRESET USERS ---- */
+var presetUsers = {
+    "JohnMarston": {
+        password: "JOHnmAesTON",
+        displayName: "John Marston",
+        bank: 15000,
+        cash: 3200,
+        purchasedPhone: "",
+        phoneNumber: "555-0192",
+        contacts: [
+            { name: "Dutch van der Linde", number: "555-0101", emergency: false },
+            { name: "Arthur Morgan", number: "555-0102", emergency: false },
+            { name: "Abigail Roberts", number: "555-0103", emergency: false }
+        ],
+        settings: { bg: "default", fontSize: "medium", sound: true, notifEnabled: true },
+        pfp: "", bio: "Rancher and family man. Beecher's Hope.",
+        currentJob: "Rancher",
+        vehicles: [
+            { name: "Western Bison", plate: "DLRP-42", color: "Black", insured: true },
+            { name: "Cheval Fugue", plate: "DLRP-17", color: "Red", insured: false }
+        ],
+        properties: [
+            { name: "Beecher's Hope Cabin", type: "Cabin", location: "Great Plains", price: 25000, owned: true },
+            { name: "Del Perro Apt 4", type: "Apartment", location: "Del Perro", price: 75000, owned: false }
+        ],
+        businesses: [
+            { name: "Marston Ranch", type: "Livestock", profit: 1800, owned: true }
+        ],
+        inventory: [
+            { name: "Lockpick", qty: 2, desc: "Basic lockpick tools" },
+            { name: "Phone Charger", qty: 1, desc: "Standard charging cable" }
+        ],
+        posts: [
+            { user: "JohnMarston", text: "Just finished fixing the fence at Beecher's Hope. Hard work pays off.", time: "2h ago", likes: 5, liked: false, comments: 2 },
+            { user: "DutchvanderLinde", text: "We need more money. I have a plan.", time: "5h ago", likes: 12, liked: false, comments: 7 }
+        ]
+    }
+};
+
+var SESSION_KEY = "dlrp_phone_session";
+var SAVE_KEY = "dlrp_save_";
+var API_BASE = window.location.origin;
+var POLICE_WEBHOOK = "https://discord.com/api/webhooks/1518083440560308415/_Y0MNlI1r61WcFPt6rdNTNXgj_Vs-E8RdsnSefd6MgDOZB2oL-aV2KjqBr62q0b8uXmq";
+var EMS_WEBHOOK = "https://discord.com/api/webhooks/1518084110177013892/VxCcmeS3fTEYcF_AuhUf-y1-ZGMZueI910N0krJsyrZqxrrld38GLXlWK8EmXdIgYPl1";
+var STAFF_WEBHOOK = "";
+
+/* Fetch staff webhook from server */
+(function() {
+    var x = new XMLHttpRequest();
+    x.open("POST", API_BASE + "/api/webhook/get", true);
+    x.setRequestHeader("Content-Type", "application/json");
+    x.onload = function() { try { var d = JSON.parse(x.responseText); if (d.staffUrl) STAFF_WEBHOOK = d.staffUrl; } catch(e) {} };
+    x.send(JSON.stringify({ password: "RRPOGTEDEV" }));
+})();
+var tabs = ["shop", "dreamos"];
+var currentUser = null, isNewUser = false, phoneBooted = false, phoneInterval = null;
+var notifStack = [], notifId = 0;
+
+/* ---- Storage ---- */
+function getSession() { try { var r = localStorage.getItem(SESSION_KEY); return r ? JSON.parse(r) : null; } catch(e) { return null; } }
+function setSession(n, r) { localStorage.setItem(SESSION_KEY, JSON.stringify({ name: n, remember: !!r })); }
+function clearSession() { localStorage.removeItem(SESSION_KEY); }
+function dataKey(n) { return SAVE_KEY + n.replace(/[^a-zA-Z0-9]/g, "_"); }
+
+function loadData(n) { try { var r = localStorage.getItem(dataKey(n)); return r ? JSON.parse(r) : null; } catch(e) { return null; } }
+
+function saveData(n) {
+    var src = presetUsers[n]; if (!src) return;
+    localStorage.setItem(dataKey(n), JSON.stringify({
+        bank: src.bank, cash: src.cash, purchasedPhone: src.purchasedPhone,
+        contacts: src.contacts, settings: src.settings, phoneNumber: src.phoneNumber,
+        vehicles: src.vehicles, properties: src.properties, businesses: src.businesses,
+        inventory: src.inventory, posts: src.posts, currentJob: src.currentJob,
+        pendingJob: src.pendingJob, pendingVehicle: src.pendingVehicle, pendingBusiness: src.pendingBusiness,
+        pfp: src.pfp, bio: src.bio, idInfo: src.idInfo
+    }));
+}
+
+function mergeData(n) {
+    var s = loadData(n); if (!s) return;
+    var u = presetUsers[n];
+    if (s.bank !== undefined) u.bank = s.bank;
+    if (s.cash !== undefined) u.cash = s.cash;
+    if (s.purchasedPhone !== undefined) u.purchasedPhone = s.purchasedPhone;
+    if (s.contacts) u.contacts = s.contacts;
+    if (s.settings) u.settings = s.settings;
+    if (s.phoneNumber) u.phoneNumber = s.phoneNumber;
+    if (s.vehicles) u.vehicles = s.vehicles;
+    if (s.properties) u.properties = s.properties;
+    if (s.businesses) u.businesses = s.businesses;
+    if (s.inventory) u.inventory = s.inventory;
+    if (s.posts) u.posts = s.posts;
+    if (s.currentJob) u.currentJob = s.currentJob;
+    if (s.pendingJob) u.pendingJob = s.pendingJob;
+    if (s.pendingVehicle) u.pendingVehicle = s.pendingVehicle;
+    if (s.pendingBusiness) u.pendingBusiness = s.pendingBusiness;
+    if (s.pfp !== undefined) u.pfp = s.pfp;
+    if (s.bio !== undefined) u.bio = s.bio;
+    if (s.idInfo) u.idInfo = s.idInfo;
+}
+
+/* ---- Helpers ---- */
+function esc(s) { if (typeof s !== "string") return s; var d = document.createElement("div"); d.appendChild(document.createTextNode(s)); return d.innerHTML; }
+
+function notif(title, msg) {
+    var c = document.getElementById("notif-container");
+    var el = document.createElement("div"); el.className = "notif";
+    el.innerHTML = "<strong>" + esc(title) + "</strong><span>" + esc(msg) + "</span>";
+    c.appendChild(el);
+    setTimeout(function() { el.style.opacity = "0"; el.style.transition = "opacity .3s"; setTimeout(function() { el.remove(); }, 300); }, 4000);
+}
+
+function pushNotif(title, msg) {
+    notifStack.push({ id: ++notifId, title: title, msg: msg });
+}
+
+/* ---- Custom Modal ---- */
+function showCustomModal(title, bodyHtml, buttons) {
+    var existing = document.getElementById("custom-modal-overlay");
+    if (existing) existing.remove();
+    var overlay = document.createElement("div");
+    overlay.id = "custom-modal-overlay";
+    overlay.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:1000;";
+    var card = document.createElement("div");
+    card.style.cssText = "background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:20px;width:300px;max-width:90vw;max-height:80vh;overflow-y:auto;";
+    var h = '<div style="font-size:17px;font-weight:700;margin-bottom:12px;">' + esc(title) + '</div>';
+    h += '<div class="cm-body">' + bodyHtml + '</div>';
+    if (buttons && buttons.length) {
+        h += '<div class="cm-actions" style="display:flex;gap:8px;margin-top:14px;">';
+        buttons.forEach(function(b, i) {
+            var btnId = "cm-btn-" + i;
+            h += '<button id="' + btnId + '" class="' + (b["class"] || "btn") + '" style="flex:1;">' + esc(b.label) + '</button>';
+        });
+        h += '</div>';
+    }
+    card.innerHTML = h;
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
+
+    if (buttons && buttons.length) {
+        buttons.forEach(function(b, i) {
+            if (typeof b.action === "function") {
+                var btnEl = document.getElementById("cm-btn-" + i);
+                if (btnEl) {
+                    btnEl.onclick = function() { b.action(); overlay.remove(); };
+                }
+            }
+        });
+    }
+}
+
+function closeCustomModal() {
+    var el = document.getElementById("custom-modal-overlay");
+    if (el) el.remove();
+}
+
+/* ---- Crop Modal ---- */
+var _cropInstance = null;
+var _cropCallback = null;
+var _cropOriginalSrc = null;
+function openCropModal(file, callback) {
+    var r = new FileReader();
+    r.onload = function(ev) {
+        _cropOriginalSrc = ev.target.result;
+        var img = document.createElement("img");
+        img.id = "crop-image";
+        img.src = _cropOriginalSrc;
+        img.style.cssText = "max-width:100%;display:block;";
+        var container = document.getElementById("crop-container");
+        container.innerHTML = "";
+        container.appendChild(img);
+        document.getElementById("crop-overlay").classList.remove("hidden");
+        _cropCallback = callback;
+        setTimeout(function() {
+            if (_cropInstance) _cropInstance.destroy();
+            _cropInstance = new Cropper(img, {
+                aspectRatio: NaN,
+                viewMode: 1,
+                dragMode: "move",
+                autoCropArea: 1,
+                cropBoxMovable: true,
+                cropBoxResizable: true,
+                background: false,
+                guides: true,
+                highlight: false
+            });
+        }, 200);
+    };
+    r.readAsDataURL(file);
+}
+function closeCropModal() {
+    document.getElementById("crop-overlay").classList.add("hidden");
+    if (_cropInstance) { _cropInstance.destroy(); _cropInstance = null; }
+    _cropCallback = null;
+}
+function confirmCrop() {
+    if (!_cropInstance) return;
+    var dataUrl = _cropInstance.getCroppedCanvas({ width: 512, height: 512 }).toDataURL("image/jpeg", 0.9);
+    var cb = _cropCallback;
+    closeCropModal();
+    if (cb) cb(dataUrl);
+}
+function skipCrop() {
+    var cb = _cropCallback;
+    var src = _cropOriginalSrc;
+    closeCropModal();
+    if (cb) cb(src);
+}
+
+/* ---- Tabs ---- */
+function setTab(t) {
+    tabs.forEach(function(x) {
+        var el = document.getElementById("tab-" + x); if (el) el.classList.add("hidden");
+        var btn = document.getElementById("btn-" + x); if (btn) btn.classList.remove("active");
+    });
+    var el = document.getElementById("tab-" + t); if (el) el.classList.remove("hidden");
+    var btn = document.getElementById("btn-" + t); if (btn) btn.classList.add("active");
+}
+
+/* ---- Auth ---- */
+function toggleAuthMode() {
+    isNewUser = !isNewUser;
+    document.getElementById("auth-sub").textContent = isNewUser ? "Create your DreamOS account." : "Sign in to your phone account.";
+    document.getElementById("auth-btn").textContent = isNewUser ? "Create Account" : "Sign In";
+    document.getElementById("auth-toggle").innerHTML = isNewUser
+        ? '<span>Already have an account?</span> <a onclick="toggleAuthMode()">Sign in</a>'
+        : '<span>New here?</span> <a onclick="toggleAuthMode()">Create an account</a>';
+    document.getElementById("auth-name-field").classList.toggle("hidden", !isNewUser);
+    document.getElementById("auth-error").classList.add("hidden");
+}
+
+function doAuth() {
+    var user = document.getElementById("auth-user").value.trim();
+    var pass = document.getElementById("auth-pass").value.trim();
+    var display = document.getElementById("auth-display").value.trim();
+    var err = document.getElementById("auth-error");
+
+    if (!user || !pass) { err.textContent = "Fill in all fields."; err.classList.remove("hidden"); return; }
+
+    if (isNewUser) {
+        if (presetUsers[user]) { err.textContent = "Username already taken."; err.classList.remove("hidden"); return; }
+        if (!display) { err.textContent = "Enter a display name."; err.classList.remove("hidden"); return; }
+        presetUsers[user] = { password: pass, displayName: display, bank: 5000, cash: 1000, purchasedPhone: "", phoneNumber: "", contacts: [], settings: { bg: "default", fontSize: "medium", sound: true, notifEnabled: true } };
+        err.classList.add("hidden");
+        setSession(user, true); currentUser = user;
+        mergeData(user);
+        enterApp();
+        notif("Welcome", "Account created, " + display + "!");
+        return;
+    }
+
+    var ud = presetUsers[user];
+    if (!ud || ud.password !== pass) { err.textContent = "Invalid username or password."; err.classList.remove("hidden"); return; }
+    err.classList.add("hidden");
+    mergeData(user);
+    setSession(user, true); currentUser = user;
+    enterApp();
+}
+
+function logout() {
+    if (currentUser) saveData(currentUser);
+    clearSession(); currentUser = null;
+    document.getElementById("auth-screen").classList.remove("hidden");
+    document.getElementById("app-content").classList.add("hidden");
+    document.getElementById("nav-tabs").classList.add("hidden");
+    document.getElementById("profile-bar").classList.add("hidden");
+    document.getElementById("money-hud").classList.add("hidden");
+    document.getElementById("auth-user").value = ""; document.getElementById("auth-pass").value = ""; document.getElementById("auth-display").value = "";
+    if (isNewUser) toggleAuthMode();
+    if (phoneBooted) closePhone();
+}
+
+function enterApp() {
+    document.getElementById("auth-screen").classList.add("hidden");
+    document.getElementById("app-content").classList.remove("hidden");
+    document.getElementById("nav-tabs").classList.remove("hidden");
+    loadProfile();
+    loadShop();
+    setTab("shop");
+}
+
+/* ---- Profile ---- */
+function loadProfile() {
+    if (!currentUser) return;
+    var d = presetUsers[currentUser]; if (!d) return;
+    document.getElementById("prof-rpname").textContent = d.displayName || currentUser;
+    document.getElementById("prof-phone").textContent = d.purchasedPhone || "None";
+    document.getElementById("prof-num").textContent = d.phoneNumber || "-";
+    document.getElementById("prof-bank").textContent = "$" + (d.bank || 0);
+    document.getElementById("profile-bar").classList.remove("hidden");
+    document.getElementById("hud-cash-amt").textContent = d.cash || 0;
+    document.getElementById("hud-bank-amt").textContent = d.bank || 0;
+    document.getElementById("money-hud").classList.remove("hidden");
+    var pfpEl = document.getElementById("prof-pfp");
+    if (d.pfp) { pfpEl.src = d.pfp; pfpEl.style.display = "block"; } else { pfpEl.style.display = "none"; }
+}
+
+/* ---- Shop ---- */
+var shopData = {
+    brands: { apple: { name: "Apple", icon: "🍎" }, motorola: { name: "Motorola", icon: "🔄" }, realme: { name: "Realme", icon: "📱" } },
+    phones: [
+        { id: "iphone17", brand: "apple", model: "iPhone 17", price: 500, tier: "mid", desc: "A19 chip, 48MP camera, all-day battery." },
+        { id: "iphone17pro", brand: "apple", model: "iPhone 17 Pro", price: 800, tier: "premium", desc: "Titanium, 3x zoom, ProMotion display." },
+        { id: "iphone17promax", brand: "apple", model: "iPhone 17 Pro Max", price: 1200, tier: "luxury", desc: "6.9in display, best camera system." },
+        { id: "edge70pro", brand: "motorola", model: "Edge 70 Pro", price: 400, tier: "mid", desc: "50MP camera, 125W turbo charging." },
+        { id: "razr60ultra", brand: "motorola", model: "Razr 60 Ultra", price: 900, tier: "premium", desc: "Foldable AMOLED, dual 50MP." },
+        { id: "motorsignature", brand: "motorola", model: "Motorola Signature", price: 250, tier: "affordable", desc: "Reliable budget phone." },
+        { id: "realmeGT", brand: "realme", model: "Realme GT Series", price: 350, tier: "affordable", desc: "Flagship at mid-range price." }
+    ]
+};
+
+function loadShop() {
+    var fb = document.getElementById("brand-filters");
+    var h = '<button class="btn small active" data-b="all" onclick="filterShop(\'all\')">All</button>';
+    Object.keys(shopData.brands).forEach(function(k) { var b = shopData.brands[k]; h += '<button class="btn small" data-b="' + k + '" onclick="filterShop(\'' + k + '\')">' + b.icon + ' ' + b.name + '</button>'; });
+    fb.innerHTML = h;
+    renderShop(shopData.phones);
+    updateOwned();
+}
+function renderShop(phones) {
+    var c = document.getElementById("shop-grid"); var h = "";
+    phones.forEach(function(p) {
+        var ti = { affordable: "var(--mint)", mid: "var(--purple)", premium: "var(--orange)", luxury: "#d946ef" };
+        h += '<div class="phone-card" data-b="' + p.brand + '">'
+            + '<div class="phone-card-header"><span class="phone-brand-icon">' + (shopData.brands[p.brand] ? shopData.brands[p.brand].icon : "") + '</span><span class="phone-brand-name">' + (shopData.brands[p.brand] ? shopData.brands[p.brand].name : "") + '</span></div>'
+            + '<div class="phone-model">' + p.model + '</div>'
+            + '<div class="phone-tier" style="color:' + (ti[p.tier] || "var(--muted)") + ';">' + p.tier.charAt(0).toUpperCase() + p.tier.slice(1) + '</div>'
+            + '<div class="phone-desc">' + p.desc + '</div>'
+            + '<div class="phone-price">$' + p.price + '</div>'
+            + '<button class="btn small" onclick="buyPhone(\'' + p.id + '\')" style="width:100%;">Purchase</button></div>';
+    });
+    c.innerHTML = h || '<p style="color:var(--muted);text-align:center;">No phones found.</p>';
+}
+function filterShop(b, el) {
+    document.querySelectorAll("#brand-filters .btn").forEach(function(x) { x.classList.remove("active"); });
+    (el || event.target).classList.add("active");
+    renderShop(b === "all" ? shopData.phones : shopData.phones.filter(function(p) { return p.brand === b; }));
+}
+function buyPhone(id) {
+    if (!currentUser) { notif("Login", "Log in first."); return; }
+    var phone; shopData.phones.forEach(function(p) { if (p.id === id) phone = p; });
+    if (!phone) return;
+    var d = presetUsers[currentUser];
+    document.getElementById("pp-icon").textContent = "";
+    document.getElementById("pp-name").textContent = phone.model;
+    document.getElementById("pp-price").textContent = "$" + phone.price;
+    document.getElementById("pp-error").classList.add("hidden");
+    document.getElementById("pp-confirm").disabled = false; document.getElementById("pp-confirm").textContent = "Buy Now";
+    var bal = d.bank || 0; document.getElementById("pp-balance").textContent = "$" + bal;
+    if (bal < phone.price) { document.getElementById("pp-error").textContent = "Need $" + phone.price + ", have $" + bal + "."; document.getElementById("pp-error").classList.remove("hidden"); document.getElementById("pp-confirm").disabled = true; }
+    window._pp = phone; document.getElementById("purchase-overlay").classList.remove("hidden");
+}
+function closePurchase() { document.getElementById("purchase-overlay").classList.add("hidden"); window._pp = null; }
+function confirmPurchase() {
+    var phone = window._pp; if (!phone || !currentUser) { closePurchase(); return; }
+    var d = presetUsers[currentUser]; if ((d.bank || 0) < phone.price) { notif("Error", "Insufficient funds."); return; }
+    d.bank -= phone.price; d.purchasedPhone = phone.model;
+    if (!d.phoneNumber) d.phoneNumber = "555-" + Math.floor(1000 + Math.random() * 9000);
+    saveData(currentUser);
+    document.getElementById("pp-confirm").disabled = true; document.getElementById("pp-confirm").textContent = "Purchasing...";
+    setTimeout(function() { notif("Device Purchased", phone.model + " is now yours!"); closePurchase(); loadShop(); loadProfile(); }, 400);
+}
+function updateOwned() {
+    if (!currentUser) return;
+    var d = presetUsers[currentUser]; var el = document.getElementById("shop-owned");
+    if (d.purchasedPhone) { document.getElementById("shop-owned-name").textContent = d.purchasedPhone; el.classList.remove("hidden"); }
+    else el.classList.add("hidden");
+}
+
+/* ==================== DREAMOS ==================== */
+function launchPhone() {
+    if (!currentUser) { notif("Login", "Log in first."); return; }
+    var d = presetUsers[currentUser];
+    if (!d.purchasedPhone) { notif("Device Required", "Buy a phone from the shop first."); return; }
+    if (!d.contacts) d.contacts = []; if (!d.settings) d.settings = { bg: "default", fontSize: "medium", sound: true, notifEnabled: true };
+    document.getElementById("dreamos-phone").classList.remove("hidden");
+    applyWP(d.settings.bg);
+    bootSequence();
+}
+
+function closePhone() {
+    document.getElementById("dreamos-phone").classList.add("hidden");
+    document.getElementById("home-screen").classList.add("hidden");
+    document.getElementById("lock-screen").classList.add("hidden");
+    document.getElementById("boot-screen").classList.remove("hidden");
+    document.getElementById("boot-bar").style.width = "0%";
+    phoneBooted = false;
+    if (phoneInterval) clearInterval(phoneInterval);
+}
+
+function bootSequence() {
+    var bar = document.getElementById("boot-bar");
+    var txt = document.getElementById("boot-text");
+    var msgs = ["Initializing DreamOS...", "Loading kernel...", "Mounting filesystems...", "Starting services...", "Ready."];
+    var i = 0;
+    bar.style.width = "0%";
+    function step() {
+        if (i < msgs.length) { txt.textContent = msgs[i]; bar.style.width = ((i + 1) * 20) + "%"; i++; setTimeout(step, 400 + Math.random() * 200); }
+        else { setTimeout(function() { showLock(); }, 300); }
+    }
+    setTimeout(step, 300);
+}
+
+function showLock() {
+    document.getElementById("boot-screen").classList.add("hidden");
+    document.getElementById("lock-screen").classList.remove("hidden");
+    phoneBooted = true;
+    updateClock();
+    if (phoneInterval) clearInterval(phoneInterval);
+    phoneInterval = setInterval(updateClock, 1000);
+    renderLockNotifs();
+}
+
+function updateClock() {
+    var n = new Date();
+    var h = n.getHours().toString().padStart(2, "0");
+    var m = n.getMinutes().toString().padStart(2, "0");
+    var t = h + ":" + m;
+    var els = ["status-time", "lock-time", "home-time"];
+    els.forEach(function(id) { var el = document.getElementById(id); if (el) el.textContent = t; });
+    var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    var de = document.getElementById("lock-date"); if (de) de.textContent = days[n.getDay()] + ", " + months[n.getMonth()] + " " + n.getDate();
+}
+
+function renderLockNotifs() {
+    var nl = document.getElementById("lock-notifs");
+    var items = [{ title: "DreamOS", msg: "Welcome, " + (presetUsers[currentUser] ? (presetUsers[currentUser].displayName || currentUser) : currentUser) + "!" }];
+    notifStack.forEach(function(n) { items.push({ title: n.title, msg: n.msg }); });
+    nl.innerHTML = items.map(function(n) { return '<div class="lock-notif"><strong>' + esc(n.title) + '</strong>' + esc(n.msg) + '</div>'; }).join("");
+}
+
+// Lock -> Home
+document.getElementById("lock-screen").addEventListener("click", function() {
+    if (!phoneBooted) return;
+    document.getElementById("lock-screen").classList.add("hidden");
+    document.getElementById("home-screen").classList.remove("hidden");
+    var ud = presetUsers[currentUser];
+    if (ud && ud.settings) applyPhoneFont(ud.settings.fontSize);
+    goToPage(currentPage, true);
+});
+
+function goHome() {
+    document.getElementById("lock-screen").classList.add("hidden");
+    document.getElementById("home-screen").classList.remove("hidden");
+    ["contacts","dialer","messages","bank","emergency","settings","jobs","vehicles","property","businesses","marketplace","government","browser","dreamgram"].forEach(function(a) { document.getElementById("app-" + a).classList.add("hidden"); });
+    var es = document.getElementById("emer-status"); if (es) es.style.display = "none";
+}
+
+/* ---- Apps ---- */
+function openApp(name) {
+    if (name === "contacts") renderContacts();
+    if (name === "dialer") renderDialer();
+    if (name === "messages") renderMessages();
+    if (name === "bank") renderBank();
+    if (name === "settings") renderSettings();
+    if (name === "jobs") renderJobs();
+    if (name === "vehicles") renderVehicles();
+    if (name === "property") renderProperty();
+    if (name === "businesses") renderBusinesses();
+    if (name === "marketplace") renderMarketplace();
+    if (name === "government") renderGovernment();
+    if (name === "browser") renderBrowser();
+    if (name === "dreamgram") renderDreamGram();
+    document.getElementById("home-screen").classList.add("hidden");
+    document.getElementById("app-" + name).classList.remove("hidden");
+}
+
+function closeApp() { goHome(); }
+
+/* ---- Contacts ---- */
+function getUD() { if (!currentUser) return null; var d = presetUsers[currentUser]; if (!d.contacts) d.contacts = []; if (!d.settings) d.settings = { bg:"default",fontSize:"medium",sound:true,notifEnabled:true }; return d; }
+
+function renderContacts() {
+    var list = document.getElementById("contacts-list");
+    var d = getUD(); if (!d) return;
+    var cs = d.contacts || [];
+    if (!cs.length) { list.innerHTML = '<p style="color:var(--muted);text-align:center;padding-top:20px;font-size:13px;">No contacts yet.</p>'; return; }
+    list.innerHTML = cs.map(function(c, i) {
+        var cnum = (c.number || "").replace(/'/g, "\\'");
+        var letter = c.name ? c.name.charAt(0).toUpperCase() : "?";
+        var avatarHtml = '<div class="contact-avatar" style="background:' + (c.emergency ? 'linear-gradient(135deg,#ef4444,#dc2626)' : 'linear-gradient(135deg,var(--purple),var(--purple-dark))') + ';">' + letter + '</div>';
+        return '<div class="contact-entry">' + avatarHtml + '<div class="contact-info"><div class="contact-name">' + esc(c.name) + (c.emergency ? '<span class="contact-badge">EMERGENCY</span>' : "") + '</div><div class="contact-num">' + esc(c.number || "-") + '</div></div><button class="contact-del" onclick="openApp(\'dialer\'); dialContact(\'' + cnum + '\');" title="Call" style="background:none;border:none;color:var(--mint);cursor:pointer;font-size:16px;padding:4px 8px;">&#128222;</button><button class="contact-del" onclick="openApp(\'messages\'); (function(){ var cs2 = (getUD()||{}).contacts||[]; cs2.forEach(function(cc, ii) { if (ii === ' + i + ') { msgContactTarget = cc; renderMsgThread(); } }); })();" title="Message" style="background:none;border:none;color:var(--cyan);cursor:pointer;font-size:14px;padding:4px 8px;">&#9993;</button><button class="contact-del" onclick="removeContact(' + i + ')">&#10005;</button></div>';
+    }).join("");
+}
+
+function showAddContact() { document.getElementById("add-contact-form").classList.remove("hidden"); }
+function hideAddContact() { document.getElementById("add-contact-form").classList.add("hidden"); document.getElementById("new-cname").value = ""; document.getElementById("new-cnum").value = ""; document.getElementById("new-cemergency").checked = false; }
+
+function saveContact() {
+    if (!currentUser) return;
+    var n = document.getElementById("new-cname").value.trim(); if (!n) { notif("Contacts", "Name required."); return; }
+    var num = document.getElementById("new-cnum").value.trim();
+    var em = document.getElementById("new-cemergency").checked;
+    var d = getUD(); d.contacts.push({ name: n, number: num || "Unknown", emergency: em });
+    saveData(currentUser); renderContacts(); hideAddContact(); notif("Contacts", n + " added.");
+}
+
+function removeContact(i) { if (!currentUser) return; var d = getUD(); d.contacts.splice(i, 1); saveData(currentUser); renderContacts(); }
+
+/* ---- Dialer ---- */
+function renderDialer() {
+    var b = document.getElementById("app-dialer").querySelector(".app-body");
+    var d = getUD();
+    var contacts = d ? (d.contacts || []) : [];
+
+    var h = '<div class="dialer-contacts" id="dialer-contacts-list">';
+    var withPhone = contacts.filter(function(c) { return c.number && c.number !== "Unknown"; });
+    if (withPhone.length) {
+        withPhone.forEach(function(c) {
+            var num = c.number || "";
+            var letter = c.name ? c.name.charAt(0).toUpperCase() : "?";
+            h += '<div class="dialer-contact" onclick="dialContact(\'' + num.replace(/'/g, "\\'") + '\')"><div class="dc-avatar">' + letter + '</div><div class="dc-name">' + esc(c.name) + '</div><div class="dc-num">' + esc(num) + '</div></div>';
+        });
+    }
+    h += '</div>';
+
+    h += '<div class="dialer-display"><div class="number" id="dialer-num"></div><div class="contact-name" id="dialer-name"></div></div>';
+    h += '<div class="dialer-grid" id="dialer-grid"></div>';
+
+    b.innerHTML = h;
+
+    var g = document.getElementById("dialer-grid");
+    var keys = [
+        ["1",""],["2","ABC"],["3","DEF"],
+        ["4","GHI"],["5","JKL"],["6","MNO"],
+        ["7","PQRS"],["8","TUV"],["9","WXYZ"],
+        ["*",""],["0","+"],["#",""]
+    ];
+    g.innerHTML = keys.map(function(k) {
+        return '<button class="dialer-key" onclick="dialKey(\'' + k[0] + '\')">' + k[0] + (k[1] ? '<span class="sub">' + k[1] + '</span>' : "") + '</button>';
+    }).join("") + '<button class="dialer-key call" onclick="dialCall()">&#9990;</button><button class="dialer-key del" onclick="dialDel()">&#9003;</button>';
+    dialerNum = "";
+    updateDialerDisplay();
+}
+
+function dialContact(num) {
+    dialerNum = num;
+    updateDialerDisplay();
+}
+
+var dialerNum = "";
+function dialKey(k) { dialerNum += k; updateDialerDisplay(); }
+function dialDel() { dialerNum = dialerNum.slice(0, -1); updateDialerDisplay(); }
+
+function updateDialerDisplay() {
+    document.getElementById("dialer-num").textContent = dialerNum || "";
+    var d = getUD(); if (!d) return;
+    var found = null; d.contacts.forEach(function(c) { if (c.number === dialerNum) found = c; });
+    document.getElementById("dialer-name").textContent = found ? found.name : "";
+}
+
+function dialCall() {
+    if (!dialerNum) { notif("Phone", "Enter a number."); return; }
+    notif("Phone", "Calling " + (dialerNum || "..."));
+}
+
+/* ---- Messages ---- */
+var msgStore = {};
+var msgContactTarget = null;
+
+function renderMessages() {
+    var b = document.getElementById("msgs-body"); var d = getUD();
+    if (!d) return;
+    if (!msgStore[currentUser]) msgStore[currentUser] = {};
+    var cs = d.contacts || [];
+
+    b.innerHTML = '<div style="padding:8px 0;font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;">Contacts</div>';
+
+    if (!cs.length) {
+        b.innerHTML += '<p style="color:var(--muted);text-align:center;padding:20px;font-size:13px;">No contacts. Add some from the Contacts app.</p>';
+        return;
+    }
+
+    cs.forEach(function(c, idx) {
+        var msgs = msgStore[currentUser][c.name] || [];
+        var last = msgs.length ? msgs[msgs.length - 1].text : "";
+        var letter = c.name ? c.name.charAt(0).toUpperCase() : "?";
+        b.innerHTML += '<div class="msg-contact" onclick="openMsgContact(' + idx + ')"><div class="mc-avatar">' + letter + '</div><div class="mc-info"><div class="mc-name">' + esc(c.name) + '</div><div class="mc-num">' + esc(c.number || "-") + '</div>' + (last ? '<div class="mc-preview">' + esc(last) + '</div>' : "") + '</div></div>';
+    });
+}
+
+function openMsgContact(idx) {
+    var d = getUD(); if (!d) return;
+    var cs = d.contacts || [];
+    if (idx < 0 || idx >= cs.length) return;
+    msgContactTarget = cs[idx];
+    renderMsgThread();
+}
+
+function renderMsgThread() {
+    var b = document.getElementById("msgs-body"); var d = getUD();
+    if (!d || !msgContactTarget) return;
+    if (!msgStore[currentUser]) msgStore[currentUser] = {};
+    if (!msgStore[currentUser][msgContactTarget.name]) msgStore[currentUser][msgContactTarget.name] = [];
+    var msgs = msgStore[currentUser][msgContactTarget.name];
+    var c = msgContactTarget;
+
+    var h = '<div class="msg-thread-view">';
+    h += '<div class="msg-thread-header"><button class="mth-back" onclick="msgContactTarget=null;renderMessages();">&#9664;</button><div class="mc-avatar" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--purple-dark));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;">' + (c.name ? c.name.charAt(0).toUpperCase() : "?") + '</div><div class="mth-name">' + esc(c.name) + '</div></div>';
+    h += '<div class="msg-thread-messages" id="msg-thread-content">';
+    if (!msgs.length) {
+        h += '<p style="color:var(--muted);text-align:center;padding:20px;font-size:12px;">Start a conversation with ' + esc(c.name) + '.</p>';
+    } else {
+        msgs.forEach(function(m) {
+            var isMe = m.from === "Me";
+            h += '<div class="msg-bubble ' + (isMe ? 'sent' : 'received') + '">' + esc(m.text) + '<span class="time">' + esc(m.time || "") + '</span></div>';
+        });
+    }
+    h += '</div>';
+    h += '<div class="msg-thread-input"><input type="text" id="msg-thread-input" placeholder="Type a message..." onkeydown="if(event.key===\'Enter\')sendMsgToContact()"><button onclick="sendMsgToContact()">&#10148;</button></div>';
+    h += '</div>';
+
+    b.innerHTML = h;
+    var tc = document.getElementById("msg-thread-content");
+    if (tc) tc.scrollTop = tc.scrollHeight;
+    var inp = document.getElementById("msg-thread-input");
+    if (inp) inp.focus();
+}
+
+function sendMsgToContact() {
+    var inp = document.getElementById("msg-thread-input");
+    if (!inp) return;
+    var t = inp.value.trim();
+    if (!t || !currentUser || !msgContactTarget) return;
+    if (!msgStore[currentUser]) msgStore[currentUser] = {};
+    if (!msgStore[currentUser][msgContactTarget.name]) msgStore[currentUser][msgContactTarget.name] = [];
+    msgStore[currentUser][msgContactTarget.name].push({ from: "Me", text: t, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
+    inp.value = "";
+    renderMsgThread();
+    pushNotif("Message", "Message sent to " + msgContactTarget.name + ".");
+}
+
+/* ---- Bank ---- */
+function renderBank() {
+    var d = getUD(); if (!d) return;
+    var b = document.getElementById("bank-body");
+    if (!d.transactions) d.transactions = [{ type: "deposit", desc: "Starting funds", amount: d.bank, time: "Today" }];
+    b.innerHTML = '<div class="bank-balance-card"><div class="label">Total Balance</div><div class="amount">$' + ((d.bank || 0) + (d.cash || 0)).toLocaleString() + '</div></div>'
+        + '<div class="bank-split"><div class="box"><div class="label">Cash</div><div class="value cash">$' + (d.cash || 0).toLocaleString() + '</div></div><div class="box"><div class="label">Bank</div><div class="value bank">$' + (d.bank || 0).toLocaleString() + '</div></div></div>'
+        + '<div class="bank-actions">'
+        + '<div class="bank-action-btn" onclick="bankAction(\'deposit\')"><span class="icon">&#11014;</span>Deposit</div>'
+        + '<div class="bank-action-btn" onclick="bankAction(\'withdraw\')"><span class="icon">&#11015;</span>Withdraw</div>'
+        + '<div class="bank-action-btn" onclick="bankAction(\'transfer\')"><span class="icon">&#8644;</span>Transfer</div>'
+        + '</div>'
+        + '<div style="font-size:13px;font-weight:600;margin-bottom:8px;color:var(--muted);">Recent Transactions</div>'
+        + (d.transactions.slice(-10).reverse().map(function(tx) {
+            var ic = tx.type === "deposit" ? ["#2ecc71", "&#11014;"] : tx.type === "withdraw" ? ["#ef4444", "&#11015;"] : ["var(--orange)", "&#8644;"];
+            var sign = tx.type === "deposit" ? "+" : "-";
+            return '<div class="bank-tx"><div class="tx-icon" style="background:' + ic[0] + '20;color:' + ic[0] + ';">' + ic[1] + '</div><div class="tx-info"><div class="tx-desc">' + esc(tx.desc || "Transaction") + '</div><div class="tx-time">' + esc(tx.time || "") + '</div></div><div class="tx-amount" style="color:' + (tx.type === "deposit" ? "#2ecc71" : "#ef4444") + ';">' + sign + '$' + Math.abs(tx.amount || 0).toLocaleString() + '</div></div>';
+        }).join("") || '<p style="color:var(--muted);font-size:13px;">No transactions yet.</p>');
+}
+
+var bankActionType = "";
+
+function showBankModal(action) {
+    bankActionType = action;
+    var labels = { deposit: "Deposit", withdraw: "Withdraw", transfer: "Transfer" };
+    var icons = { deposit: "&#128228;", withdraw: "&#128229;", transfer: "&#128256;" };
+    document.getElementById("bm-title").textContent = labels[action] || action;
+    document.getElementById("bm-icon").innerHTML = icons[action] || "&#128184;";
+    document.getElementById("bm-amount").value = "";
+    document.getElementById("bm-target").value = "";
+    document.getElementById("bm-target-field").classList.toggle("hidden", action !== "transfer");
+    document.getElementById("bm-error").classList.add("hidden");
+    document.getElementById("bank-modal").classList.remove("hidden");
+    setTimeout(function() { var el = document.getElementById("bm-amount"); if (el) el.focus(); }, 100);
+}
+
+function closeBankModal() {
+    document.getElementById("bank-modal").classList.add("hidden");
+    bankActionType = "";
+}
+
+function confirmBankModal() {
+    var d = getUD(); if (!d) return;
+    var amt = parseInt(document.getElementById("bm-amount").value);
+    if (isNaN(amt) || amt <= 0) { document.getElementById("bm-error").textContent = "Enter a valid amount."; document.getElementById("bm-error").classList.remove("hidden"); return; }
+    var target = null;
+    if (bankActionType === "deposit") {
+        if (amt > (d.cash || 0)) { notif("Bank", "Not enough cash."); return; }
+        d.cash -= amt; d.bank += amt;
+    } else if (bankActionType === "withdraw") {
+        if (amt > (d.bank || 0)) { notif("Bank", "Not enough bank funds."); return; }
+        d.bank -= amt; d.cash += amt;
+    } else if (bankActionType === "transfer") {
+        target = document.getElementById("bm-target").value.trim();
+        if (!target || !presetUsers[target]) { document.getElementById("bm-error").textContent = "Recipient not found."; document.getElementById("bm-error").classList.remove("hidden"); return; }
+        if (amt > (d.bank || 0)) { notif("Bank", "Not enough bank funds."); return; }
+        d.bank -= amt; presetUsers[target].bank = (presetUsers[target].bank || 0) + amt;
+        if (!presetUsers[target].transactions) presetUsers[target].transactions = [];
+        presetUsers[target].transactions.push({ type: "deposit", desc: "Transfer from " + (d.displayName || currentUser), amount: amt, time: new Date().toLocaleString() });
+    }
+    if (!d.transactions) d.transactions = [];
+    d.transactions.push({ type: bankActionType, desc: bankActionType.charAt(0).toUpperCase() + bankActionType.slice(1), amount: amt, time: new Date().toLocaleString() });
+    saveData(currentUser);
+    if (target && presetUsers[target]) saveData(target);
+    closeBankModal();
+    renderBank(); loadProfile();
+    notif("Bank", "$" + amt + " " + bankActionType + "ed successfully.");
+}
+
+function bankAction(action) {
+    showBankModal(action);
+}
+
+/* ---- Emergency ---- */
+function callEmergency() {
+    var loc = document.getElementById("emer-loc").value.trim();
+    var type = document.getElementById("emer-type").value;
+    var es = document.getElementById("emer-status");
+    if (!loc) { notif("911", "Enter your location."); return; }
+    if (!type) { notif("911", "Select emergency type."); return; }
+    var d = getUD(); var name = d ? d.displayName || currentUser : "Unknown";
+    var num = d ? d.phoneNumber || "Unknown" : "Unknown";
+    var isPolice = type === "Police" || type === "Fire";
+    var url = isPolice ? POLICE_WEBHOOK : EMS_WEBHOOK;
+
+    var embed = { title: (isPolice ? "\uD83D\uDEA8" : "\uD83D\uDE91") + " Emergency Call - " + type, color: isPolice ? 0xe74c3c : 0x2ecc71, fields: [
+        { name: "Caller", value: name, inline: true }, { name: "Phone", value: num, inline: true },
+        { name: "Location", value: loc, inline: false }, { name: "Emergency Type", value: type, inline: false }
+    ], timestamp: new Date().toISOString() };
+
+    es.style.display = "block"; es.style.background = "rgba(239,68,68,.12)"; es.style.color = "#ef4444"; es.style.fontWeight = "600";
+    es.innerHTML = "Calling 911...<br><span style='font-size:12px;font-weight:400;'>Contacting " + type + "...</span>";
+
+    try { fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ embeds: [embed] }) }).catch(function() {}); } catch(e) {}
+    if (type === "Fire") { try { fetch(EMS_WEBHOOK, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ embeds: [embed] }) }).catch(function() {}); } catch(e) {} }
+
+    setTimeout(function() { es.innerHTML = "&#9989; " + type + " dispatched to your location.<br>Remain calm, help is on the way."; notif("911", type + " dispatched."); }, 1500);
+    pushNotif("911", type + " dispatched to " + loc);
+}
+
+/* ---- Settings ---- */
+function renderSettings() {
+    var d = getUD(); if (!d) return;
+    var bgs = [
+        { id: "default", style: "background:linear-gradient(160deg,#1a1040,#0f0920)" },
+        { id: "purple", style: "background:linear-gradient(135deg,#1a0a2e,#3b1a6b)" },
+        { id: "cyan", style: "background:linear-gradient(135deg,#0a2a38,#1a5b6b)" },
+        { id: "orange", style: "background:linear-gradient(135deg,#2a1a0a,#6b3a1a)" },
+        { id: "dark", style: "background:#0a0715" }
+    ];
+    var s = d.settings || { bg: "default", fontSize: "medium", sound: true, notifEnabled: true };
+    var sb = document.getElementById("settings-body");
+    sb.innerHTML = '<div class="setting-group"><div class="group-label">Wallpaper</div><div class="bg-options">' + bgs.map(function(b) { return '<div class="bg-opt' + (s.bg === b.id ? ' active' : '') + '" data-bg="' + b.id + '" style="' + b.style + '" onclick="setWP(\'' + b.id + '\')"></div>'; }).join("") + '</div></div>'
+        + '<div class="setting-group"><div class="group-label">Display</div>'
+        + '<div class="setting-row"><div class="s-left"><span class="s-icon">Aa</span><span class="s-label">Font Size</span></div><div class="s-right" style="gap:4px;"><button class="btn small' + (s.fontSize === "small" ? " primary" : "") + '" onclick="setFont(\'small\')">S</button><button class="btn small' + (s.fontSize === "medium" ? " primary" : "") + '" onclick="setFont(\'medium\')">M</button><button class="btn small' + (s.fontSize === "large" ? " primary" : "") + '" onclick="setFont(\'large\')">L</button></div></div>'
+        + '<div class="setting-row"><div class="s-left"><span class="s-icon">&#128266;</span><span class="s-label">Sound Effects</span></div><div class="s-right"><label style="position:relative;display:inline-block;width:40px;height:22px;"><input type="checkbox" id="toggle-sound" ' + (s.sound ? 'checked' : '') + ' onchange="togSound()" style="opacity:0;width:0;height:0;"><span style="position:absolute;inset:0;background:' + (s.sound ? 'var(--purple)' : 'rgba(255,255,255,.15)') + ';border-radius:11px;transition:.2s;cursor:pointer;"><span style="position:absolute;top:2px;' + (s.sound ? 'right:2px' : 'left:2px') + ';width:18px;height:18px;background:#fff;border-radius:50%;transition:.2s;"></span></span></label></div></div>'
+        + '<div class="setting-row"><div class="s-left"><span class="s-icon">&#128276;</span><span class="s-label">Notifications</span></div><div class="s-right"><label style="position:relative;display:inline-block;width:40px;height:22px;"><input type="checkbox" id="toggle-notif" ' + (s.notifEnabled ? 'checked' : '') + ' onchange="togNotif()" style="opacity:0;width:0;height:0;"><span style="position:absolute;inset:0;background:' + (s.notifEnabled ? 'var(--purple)' : 'rgba(255,255,255,.15)') + ';border-radius:11px;transition:.2s;cursor:pointer;"><span style="position:absolute;top:2px;' + (s.notifEnabled ? 'right:2px' : 'left:2px') + ';width:18px;height:18px;background:#fff;border-radius:50%;transition:.2s;"></span></span></label></div></div></div>'
+        + '<div class="setting-group"><div class="group-label">About</div>'
+        + '<div class="setting-row"><div class="s-left"><span class="s-icon">&#8505;</span><span class="s-label">DreamOS</span></div><div class="s-right" style="font-size:11px;">v1.0.0</div></div>'
+        + '<div class="setting-row"><div class="s-left"><span class="s-icon" style="color:var(--cyan);">&#9830;</span><span class="s-label">Dream Legacy RP</span></div><div class="s-right" style="font-size:11px;">Connected</div></div></div>'
+        + '<div class="setting-group"><div class="group-label">Account</div>'
+        + '<div class="setting-row" style="cursor:pointer;" onclick="logout()"><div class="s-left"><span class="s-icon" style="color:var(--red);">&#10149;</span><span class="s-label" style="color:var(--red);">Log Out</span></div></div></div>';
+}
+
+function setWP(bg) {
+    var d = getUD(); if (!d) return;
+    d.settings.bg = bg; saveData(currentUser); applyWP(bg); renderSettings();
+}
+function applyWP(bg) {
+    var wp = document.getElementById("phone-wp");
+    var m = { default: "linear-gradient(160deg,#1a1040 0%,#0f0920 40%,#0a0715 100%)", purple: "linear-gradient(135deg,#1a0a2e,#3b1a6b)", cyan: "linear-gradient(135deg,#0a2a38,#1a5b6b)", orange: "linear-gradient(135deg,#2a1a0a,#6b3a1a)", dark: "#0a0715" };
+    wp.style.background = m[bg] || m.default;
+}
+
+function setFont(s) {
+    var d = getUD(); if (!d) return;
+    d.settings.fontSize = s; saveData(currentUser); applyPhoneFont(s); renderSettings();
+}
+function applyPhoneFont(s) {
+    var scr = document.getElementById("phone-screen");
+    scr.classList.remove("font-small", "font-large");
+    if (s === "small") scr.classList.add("font-small");
+    else if (s === "large") scr.classList.add("font-large");
+}
+
+function togSound() { var d = getUD(); if (!d) return; d.settings.sound = !d.settings.sound; saveData(currentUser); renderSettings(); }
+function togNotif() { var d = getUD(); if (!d) return; d.settings.notifEnabled = !d.settings.notifEnabled; saveData(currentUser); renderSettings(); }
+
+/* ---- Jobs ---- */
+var availableJobs = [
+    { name: "Rancher", pay: "350/hr", desc: "Tend to livestock, maintain fences, and work the land." },
+    { name: "Mechanic", pay: "450/hr", desc: "Repair vehicles at the local auto shop." },
+    { name: "Taxi Driver", pay: "300/hr + tips", desc: "Drive citizens around the city and beyond." },
+    { name: "Trucker", pay: "500/hr", desc: "Haul cargo across the state." },
+    { name: "Bartender", pay: "250/hr + tips", desc: "Serve drinks at the local saloon." },
+    { name: "Fisherman", pay: "200/hr", desc: "Catch and sell fresh fish." },
+    { name: "Construction", pay: "400/hr", desc: "Help build and repair structures." },
+    { name: "Miner", pay: "550/hr", desc: "Extract valuable minerals from the quarry." },
+    { name: "Delivery Driver", pay: "300/hr", desc: "Deliver packages around the city." },
+    { name: "Security Guard", pay: "350/hr", desc: "Protect businesses and properties." },
+    { name: "Doctor", pay: "600/hr", desc: "Provide medical care at the hospital." }
+];
+
+function renderJobs() {
+    var d = getUD(); if (!d) return;
+    var b = document.getElementById("jobs-body");
+    var cur = d.currentJob;
+    var pending = d.pendingJob;
+    var h = "";
+
+    if (cur) {
+        var cj = null; availableJobs.forEach(function(j) { if (j.name === cur) cj = j; });
+        h += '<div class="job-current"><div class="jct-label">Current Job</div><div class="jct-name">' + esc(cur) + '</div>';
+        if (cj) h += '<div style="font-size:12px;color:var(--muted);margin-top:4px;">' + esc(cj.pay) + '</div>';
+        h += '<button class="btn small" onclick="quitJob()" style="margin-top:10px;border-color:var(--red);color:var(--red);">Quit Job</button></div>';
+    }
+
+    if (pending) {
+        h += '<div class="job-current" style="border-color:rgba(255,183,0,0.3);"><div class="jct-label">Pending Application</div><div class="jct-name">' + esc(pending) + '</div><div style="font-size:12px;color:#ffb700;margin-top:4px;">&#8987; Awaiting approval...</div></div>';
+    }
+
+    h += '<div style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em;">Available Jobs</div>';
+
+    availableJobs.forEach(function(j, idx) {
+        var hired = j.name === cur;
+        var isPending = j.name === pending;
+        h += '<div class="job-card"><div class="job-name">' + esc(j.name) + '</div><div class="job-pay">' + esc(j.pay) + '</div><div class="job-desc">' + esc(j.desc) + '</div>';
+        if (hired) {
+            h += '<div class="job-status hired">Active</div>';
+        } else if (isPending) {
+            h += '<div class="job-status" style="background:rgba(255,183,0,0.15);color:#ffb700;">Pending</div>';
+        } else {
+            h += '<div class="job-action"><button class="btn small" onclick="showJobApply(' + idx + ')">Apply</button></div>';
+        }
+        h += '</div>';
+    });
+
+    b.innerHTML = h;
+}
+
+function showJobApply(idx) {
+    var d = getUD(); if (!d) return;
+    var j = availableJobs[idx];
+    var h = '<div style="text-align:center;padding:10px 0;"><div style="font-size:30px;margin-bottom:8px;">&#128188;</div><div style="font-weight:700;font-size:16px;margin-bottom:4px;">' + esc(j.name) + '</div><div style="font-size:13px;color:var(--muted);margin-bottom:12px;">' + esc(j.desc) + '<br>' + esc(j.pay) + '</div><div class="form-field"><label>Why should we hire you?</label><textarea id="apply-message" placeholder="Tell us about yourself..." style="width:100%;padding:11px 14px;border-radius:8px;border:1px solid rgba(124,58,237,0.15);background:rgba(255,255,255,.05);color:var(--text);font-size:14px;font-family:inherit;outline:none;resize:none;min-height:70px;"></textarea></div></div>';
+    showCustomModal("Apply for " + j.name, h, [
+        { label: "Cancel", class: "btn", action: closeCustomModal },
+        { label: "Submit Application", class: "btn primary", action: function() { applyJob(idx); } }
+    ]);
+}
+
+function applyJob(idx) {
+    if (idx < 0 || idx >= availableJobs.length) return;
+    var d = getUD(); if (!d) return;
+    var j = availableJobs[idx];
+    var msg = document.getElementById("apply-message");
+    var cover = (msg ? msg.value : "") || "No message provided.";
+    closeCustomModal();
+    d.pendingJob = j.name;
+    saveData(currentUser);
+    renderJobs();
+    notif("Jobs", "Application submitted for " + j.name + "! Awaiting approval.");
+
+    /* Call server API for webhook with approve/deny links */
+    var x = new XMLHttpRequest();
+    x.open("POST", API_BASE + "/api/jobs/apply", true);
+    x.setRequestHeader("Content-Type", "application/json");
+    x.send(JSON.stringify({ username: currentUser, jobName: j.name, message: cover, phoneNumber: d.phoneNumber || "N/A" }));
+}
+
+function quitJob() {
+    var d = getUD(); if (!d) return;
+    var old = d.currentJob;
+    if (!old) { d.pendingJob = ""; saveData(currentUser); renderJobs(); return; }
+    d.currentJob = "";
+    d.pendingJob = "";
+    saveData(currentUser);
+    renderJobs();
+    notif("Jobs", "Quit " + old + ".");
+}
+
+/* ---- Vehicles ---- */
+function renderVehicles() {
+    var d = getUD(); if (!d) return;
+    var b = document.getElementById("vehicles-body");
+    var v = d.vehicles || [];
+    var pendingV = d.pendingVehicle;
+    var h = "";
+
+    if (v.length) {
+        h += '<div style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em;">Your Vehicles</div>';
+        v.forEach(function(car) {
+            h += '<div class="vehicle-card"><div class="v-icon">&#128662;</div><div class="v-info"><div class="v-name">' + esc(car.name) + '</div><div class="v-plate">' + esc(car.plate || "No Plate") + '</div><div class="v-detail">' + esc(car.color || "Unknown") + '</div></div><div class="v-badge ' + (car.insured ? 'insured' : 'uninsured') + '">' + (car.insured ? 'Insured' : 'Uninsured') + '</div></div>';
+        });
+    }
+
+    if (pendingV) {
+        h += '<div style="margin-top:10px;"><div style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em;">Pending Registration</div><div class="vehicle-card" style="border-color:rgba(255,183,0,0.3);"><div class="v-icon">&#128662;</div><div class="v-info"><div class="v-name">' + esc(pendingV.name) + '</div><div class="v-plate">' + esc(pendingV.plate) + '</div></div><div class="v-badge" style="background:rgba(255,183,0,0.15);color:#ffb700;">Pending</div></div></div>';
+    }
+
+    h += '<div style="margin-top:14px;"><button class="btn primary" onclick="showVehicleReg()" style="width:100%;">&#128662; Register Vehicle</button></div>';
+
+    if (!v.length && !pendingV) b.innerHTML = '<p style="color:var(--muted);text-align:center;padding:20px;font-size:13px;">No vehicles registered to you.</p>' + h;
+    else b.innerHTML = h;
+}
+
+function showVehicleReg() {
+    var h = '<div class="form-field"><label>Vehicle Model</label><input type="text" id="vr-name" placeholder="e.g. Pegassi Zentorno" style="width:100%;padding:11px 14px;border-radius:8px;border:1px solid rgba(124,58,237,0.15);background:rgba(255,255,255,.05);color:var(--text);font-size:14px;font-family:inherit;outline:none;"></div><div class="form-field" style="margin-top:10px;"><label>License Plate</label><input type="text" id="vr-plate" placeholder="e.g. DLRP-001" style="width:100%;padding:11px 14px;border-radius:8px;border:1px solid rgba(124,58,237,0.15);background:rgba(255,255,255,.05);color:var(--text);font-size:14px;font-family:inherit;outline:none;"></div><div class="form-field" style="margin-top:10px;"><label>Color</label><input type="text" id="vr-color" placeholder="e.g. Matte Black" style="width:100%;padding:11px 14px;border-radius:8px;border:1px solid rgba(124,58,237,0.15);background:rgba(255,255,255,.05);color:var(--text);font-size:14px;font-family:inherit;outline:none;"></div>';
+    showCustomModal("Register Vehicle", h, [
+        { label: "Cancel", class: "btn", action: closeCustomModal },
+        { label: "Submit", class: "btn primary", action: function() {
+            var nm = document.getElementById("vr-name");
+            var pl = document.getElementById("vr-plate");
+            var co = document.getElementById("vr-color");
+            if (!nm || !nm.value.trim() || !pl || !pl.value.trim()) { notif("Vehicles", "Fill in vehicle model and plate."); return; }
+            closeCustomModal();
+            var d = getUD(); if (!d) return;
+            d.pendingVehicle = { name: nm.value.trim(), plate: pl.value.trim(), color: co ? co.value.trim() : "Black" };
+            saveData(currentUser);
+            renderVehicles();
+            notif("Vehicles", "Registration submitted for " + nm.value.trim() + "!");
+
+            var x = new XMLHttpRequest();
+            x.open("POST", API_BASE + "/api/vehicles/register", true);
+            x.setRequestHeader("Content-Type", "application/json");
+            x.send(JSON.stringify({ username: currentUser, vehicleName: nm.value.trim(), plate: pl.value.trim(), phoneNumber: d.phoneNumber || "N/A" }));
+        }}
+    ]);
+}
+
+/* ---- Property ---- */
+var availableProperties = [
+    { name: "Beecher's Hope Cabin", type: "Cabin", location: "Great Plains", price: 25000, owned: false },
+    { name: "Del Perro Apt 4", type: "Apartment", location: "Del Perro", price: 75000, owned: false },
+    { name: "Vinewood Hills Villa", type: "Villa", location: "Vinewood Hills", price: 150000, owned: false },
+    { name: "Paleto Bay House", type: "House", location: "Paleto Bay", price: 45000, owned: false },
+    { name: "Sandy Shores Trailer", type: "Trailer", location: "Sandy Shores", price: 12000, owned: false },
+    { name: "Rockford Hills Mansion", type: "Mansion", location: "Rockford Hills", price: 350000, owned: false }
+];
+
+function renderProperty() {
+    var d = getUD(); if (!d) return;
+    var b = document.getElementById("property-body");
+    var owned = d.properties || [];
+    var h = "";
+
+    var ownedNames = {}; owned.forEach(function(o) { if (o.owned) ownedNames[o.name] = true; });
+
+    if (owned.length > 0) {
+        h += '<div class="gov-section"><div class="gs-title">Your Properties</div>';
+        owned.forEach(function(p) {
+            if (p.owned) {
+                h += '<div class="property-card"><div class="p-name">' + esc(p.name) + '</div><div class="p-loc">' + esc(p.location) + ' &middot; ' + esc(p.type) + '</div><div class="p-status owned">Owned</div></div>';
+            }
+        });
+        h += '</div>';
+    }
+
+    h += '<div class="gov-section"><div class="gs-title">Available Properties</div>';
+
+    availableProperties.forEach(function(p, idx) {
+        if (ownedNames[p.name]) return;
+        h += '<div class="property-card"><div class="p-name">' + esc(p.name) + '</div><div class="p-loc">' + esc(p.location) + ' &middot; ' + esc(p.type) + '</div><div class="p-price">$' + p.price.toLocaleString() + '</div>';
+        h += '<div style="margin-top:8px;"><button class="btn small" onclick="buyProperty(' + idx + ')">Purchase</button></div></div>';
+    });
+
+    h += '</div>';
+    b.innerHTML = h;
+}
+
+function buyProperty(idx) {
+    if (idx < 0 || idx >= availableProperties.length) return;
+    var d = getUD(); if (!d) return;
+    var p = availableProperties[idx];
+    if ((d.bank || 0) < p.price) { notif("Property", "Insufficient funds. Need $" + p.price); return; }
+    d.bank -= p.price;
+    if (!d.properties) d.properties = [];
+    d.properties.push({ name: p.name, type: p.type, location: p.location, price: p.price, owned: true });
+    saveData(currentUser);
+    renderProperty();
+    loadProfile();
+    notif("Property", "Purchased " + p.name + "!");
+}
+
+/* ---- Businesses ---- */
+var availableBusinesses = [
+    { name: "24/7 Convenience Store", type: "Retail", cost: 25000, profit: 1200 },
+    { name: "Ammu-Nation", type: "Weapons", cost: 50000, profit: 2400 },
+    { name: "Los Santos Customs", type: "Garage", cost: 75000, profit: 3600 },
+    { name: "Nightclub", type: "Entertainment", cost: 120000, profit: 5800 },
+    { name: "Tequi-La-La Bar", type: "Bar", cost: 40000, profit: 1900 },
+    { name: "Smoke on the Water", type: "Smoke Shop", cost: 15000, profit: 700 }
+];
+
+function renderBusinesses() {
+    var d = getUD(); if (!d) return;
+    var b = document.getElementById("businesses-body");
+    var bizs = d.businesses || [];
+    var pendingB = d.pendingBusiness;
+    var h = "";
+
+    if (bizs.length) {
+        h += '<div style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em;">Your Businesses</div>';
+        bizs.forEach(function(biz) {
+            h += '<div class="business-card"><div class="b-name">' + esc(biz.name) + '</div><div class="b-type">' + esc(biz.type) + '</div><div class="b-profit">Profit: $' + (biz.profit || 0).toLocaleString() + '/hr</div><div class="b-status">Operational</div></div>';
+        });
+    }
+
+    if (pendingB) {
+        h += '<div style="margin-top:10px;"><div style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em;">Pending Application</div><div class="business-card" style="border-color:rgba(255,183,0,0.3);"><div class="b-name">' + esc(pendingB) + '</div><div class="b-status" style="background:rgba(255,183,0,0.15);color:#ffb700;">Pending</div></div></div>';
+    }
+
+    h += '<div style="font-size:13px;font-weight:600;color:var(--muted);margin:12px 0 8px;text-transform:uppercase;letter-spacing:.06em;">Available Businesses</div>';
+
+    availableBusinesses.forEach(function(biz, idx) {
+        var owned = false;
+        bizs.forEach(function(o) { if (o.name === biz.name) owned = true; });
+        if (owned || pendingB === biz.name) return;
+        h += '<div class="business-card"><div class="b-name">' + esc(biz.name) + '</div><div class="b-type">' + esc(biz.type) + '</div><div class="b-profit">Cost: $' + biz.cost.toLocaleString() + '</div><div class="b-profit">Profit: $' + biz.profit.toLocaleString() + '/hr</div><button class="btn small" onclick="applyBusiness(' + idx + ')" style="margin-top:8px;">Apply ($' + biz.cost.toLocaleString() + ')</button></div>';
+    });
+
+    if (!bizs.length && !pendingB) {
+        b.innerHTML = h || '<p style="color:var(--muted);text-align:center;padding:20px;font-size:13px;">No businesses available.</p>';
+    } else {
+        b.innerHTML = h;
+    }
+}
+
+function applyBusiness(idx) {
+    if (idx < 0 || idx >= availableBusinesses.length) return;
+    var d = getUD(); if (!d) return;
+    var biz = availableBusinesses[idx];
+    if ((d.bank || 0) < biz.cost) { notif("Businesses", "Insufficient funds. Need $" + biz.cost + " in bank."); return; }
+    d.bank -= biz.cost;
+    d.pendingBusiness = biz.name;
+    saveData(currentUser);
+    renderBusinesses();
+    loadProfile();
+    notif("Businesses", "Application submitted for " + biz.name + "!");
+    var x = new XMLHttpRequest();
+    x.open("POST", API_BASE + "/api/businesses/apply", true);
+    x.setRequestHeader("Content-Type", "application/json");
+    x.send(JSON.stringify({ username: currentUser, businessName: biz.name, cost: biz.cost, phoneNumber: d.phoneNumber || "N/A" }));
+}
+
+/* ---- Marketplace ---- */
+function renderMarketplace() {
+    var d = getUD(); if (!d) return;
+    var b = document.getElementById("marketplace-body");
+    var inv = d.inventory || [];
+
+    var h = '<div class="market-section"><div class="ms-title">Your Inventory</div>';
+    if (!inv.length) {
+        h += '<p style="color:var(--muted);font-size:13px;margin-bottom:12px;">Your inventory is empty.</p>';
+    } else {
+        inv.forEach(function(item, idx) {
+            h += '<div class="market-item"><div class="mi-icon">&#128230;</div><div class="mi-info"><div class="mi-name">' + esc(item.name) + '</div><div class="mi-desc">' + esc(item.desc || "") + '</div><div class="mi-qty">Qty: ' + (item.qty || 1) + '</div></div><button class="btn small" onclick="sellItem(' + idx + ')">Sell</button></div>';
+        });
+    }
+    h += '</div>';
+
+    b.innerHTML = h;
+}
+
+function sellItem(idx) {
+    var d = getUD(); if (!d) return;
+    var inv = d.inventory || [];
+    if (idx < 0 || idx >= inv.length) return;
+    var item = inv[idx];
+    var price = prompt("Sell " + item.name + " for how much?", "50");
+    if (!price) return;
+    var p = parseInt(price);
+    if (isNaN(p) || p <= 0) { notif("Market", "Invalid price."); return; }
+    var qty = prompt("Sell how many? (max " + (item.qty || 1) + ")", "1");
+    if (!qty) return;
+    var q = parseInt(qty);
+    if (isNaN(q) || q <= 0 || q > (item.qty || 1)) { notif("Market", "Invalid quantity."); return; }
+    item.qty -= q;
+    d.cash = (d.cash || 0) + (p * q);
+    if (item.qty <= 0) { d.inventory.splice(idx, 1); }
+    saveData(currentUser);
+    renderMarketplace();
+    loadProfile();
+    notif("Market", "Sold " + q + "x " + item.name + " for $" + (p * q));
+}
+
+/* ---- Government ---- */
+function renderGovernment() {
+    var d = getUD(); if (!d) return;
+    var b = document.getElementById("government-body");
+    var name = d.displayName || currentUser;
+    var id = d.idInfo;
+
+    if (!id) {
+        b.innerHTML = '<div style="text-align:center;padding:20px;"><p style="color:var(--muted);margin-bottom:16px;font-size:14px;">You don\'t have an ID card yet. Apply now to receive your official citizen identification.</p><button class="btn primary" onclick="showIDForm()" style="width:100%;padding:12px;">&#128179; Receive ID Card</button></div>';
+        return;
+    }
+
+    var h = '<div class="id-card">'
+        + (d.pfp ? '<img src="' + esc(d.pfp) + '" style="width:56px;height:56px;border-radius:50%;object-fit:cover;margin:0 auto 8px;display:block;border:2px solid rgba(124,58,237,0.2);">' : '<div class="id-avatar">' + name.charAt(0).toUpperCase() + '</div>')
+        + '<div class="id-name">' + esc(name) + '</div>'
+        + '<div class="id-detail">DOB: ' + esc(id.dob || "N/A") + '</div>'
+        + '<div class="id-detail">Born: ' + esc(id.pob || "N/A") + '</div>'
+        + '<div class="id-detail">Gender: ' + esc(id.gender || "N/A") + '</div>'
+        + '<div class="id-detail">ID: ' + esc(id.idNum || d.phoneNumber || "N/A") + '</div>'
+        + '<div class="id-badge">Citizen of San Andreas</div></div>';
+
+    b.innerHTML = h;
+}
+
+function showIDForm() {
+    document.getElementById("idform-overlay").classList.remove("hidden");
+}
+
+function closeIDForm() {
+    document.getElementById("idform-overlay").classList.add("hidden");
+}
+
+function submitIDForm() {
+    var d = getUD(); if (!d) return;
+    var fullname = document.getElementById("idf-name").value.trim();
+    var dob = document.getElementById("idf-dob").value.trim();
+    var pob = document.getElementById("idf-pob").value.trim();
+    var gender = document.getElementById("idf-gender").value;
+    if (!fullname || !dob || !pob || !gender) { notif("Government", "Fill in all fields."); return; }
+    d.displayName = fullname;
+    d.idInfo = { dob: dob, pob: pob, gender: gender, idNum: "SA-" + Math.floor(100000 + Math.random() * 900000) };
+    saveData(currentUser);
+    closeIDForm();
+    renderGovernment();
+    loadProfile();
+    notif("Government", "ID card issued to " + fullname + "!");
+}
+
+/* ---- Browser ---- */
+function renderBrowser() {
+    var b = document.getElementById("browser-body");
+    var url = document.getElementById("browser-url");
+    b.innerHTML = '<div class="browser-bar"><input type="text" id="browser-url" placeholder="Enter URL..." value="https://www.google.com"><button onclick="browserGo()">Go</button></div>'
+        + '<iframe class="browser-frame" id="browser-frame" src="about:blank" sandbox="allow-scripts allow-same-origin"></iframe>';
+}
+
+function browserGo() {
+    var inp = document.getElementById("browser-url");
+    var frame = document.getElementById("browser-frame");
+    var url = inp.value.trim();
+    if (!url) return;
+    if (!url.match(/^https?:\/\//i)) url = "https://" + url;
+    inp.value = url;
+    try { frame.src = url; } catch(e) { notif("Browser", "Cannot load page."); }
+}
+
+/* ---- DreamGram ---- */
+var gramTab = "feed";
+var gramViewUser = null;
+var gramDMTarget = null;
+var gramImageData = null;
+var GRAM_DMS_KEY = "dlrp_gram_dms";
+
+function getGramPosts() { try { var r = localStorage.getItem("dlrp_gram_posts"); return r ? JSON.parse(r) : []; } catch(e) { return []; } }
+function saveGramPosts(p) { localStorage.setItem("dlrp_gram_posts", JSON.stringify(p)); }
+
+/* ---- DreamGram Comments ---- */
+function getGramComments() { try { var r = localStorage.getItem("dlrp_gram_comments"); return r ? JSON.parse(r) : {}; } catch(e) { return {}; } }
+function saveGramComments(c) { localStorage.setItem("dlrp_gram_comments", JSON.stringify(c)); }
+function gramAddComment(postId, text) {
+    if (!text.trim()) return;
+    var all = getGramComments();
+    if (!all[postId]) all[postId] = [];
+    all[postId].push({ id: "c" + Date.now() + Math.random().toString(36).slice(2,5), user: currentUser, text: text.trim(), time: new Date().toLocaleString(), replies: [] });
+    saveGramComments(all);
+    var posts = getGramPosts();
+    posts.forEach(function(p) { if (p.id === postId) p.comments = (p.comments || 0) + 1; });
+    saveGramPosts(posts);
+}
+function gramAddReply(postId, commentId, text) {
+    if (!text.trim() || !commentId) return;
+    var all = getGramComments();
+    if (!all[postId]) return;
+    all[postId].forEach(function(c) {
+        if (c.id === commentId) {
+            if (!c.replies) c.replies = [];
+            c.replies.push({ id: "r" + Date.now() + Math.random().toString(36).slice(2,5), user: currentUser, text: text.trim(), time: new Date().toLocaleString() });
+        }
+    });
+    saveGramComments(all);
+}
+
+/* ---- DreamGram Stories ---- */
+function getGramStories() { try { var r = localStorage.getItem("dlrp_gram_stories"); return r ? JSON.parse(r) : []; } catch(e) { return []; } }
+function saveGramStories(s) { localStorage.setItem("dlrp_gram_stories", JSON.stringify(s)); }
+function gramAddStory(imageData, text) {
+    var stories = getGramStories();
+    stories.push({ id: "s" + Date.now() + Math.random().toString(36).slice(2,6), user: currentUser, image: imageData || "", text: text || "", time: new Date().toISOString(), expires: Date.now() + 86400000 });
+    saveGramStories(stories);
+}
+function gramGetActiveStories() {
+    var all = getGramStories();
+    var now = Date.now();
+    var active = all.filter(function(s) { return s.expires > now; });
+    if (active.length < all.length) saveGramStories(active);
+    return active;
+}
+function gramDeleteStory(id) {
+    var stories = getGramStories();
+    stories = stories.filter(function(s) { return s.id !== id; });
+    saveGramStories(stories);
+}
+function gramAddStoryFromFeed() {
+    var body = '<div class="form-field"><label>Text (optional)</label><textarea id="story-text-input" placeholder="What\'s happening?" style="width:100%;padding:11px 14px;border-radius:8px;border:1px solid rgba(124,58,237,0.15);background:rgba(255,255,255,.05);color:var(--text);font-size:14px;font-family:inherit;outline:none;resize:none;min-height:60px;"></textarea></div><div style="margin-top:10px;"><button class="btn small" onclick="gramAddStoryWithImage()" style="width:100%;">&#128247; Add Photo</button></div><div id="story-img-preview" style="display:none;margin-top:8px;"></div>';
+    showCustomModal("Add Story", body, [
+        { label: "Cancel", "class": "btn", action: closeCustomModal },
+        { label: "Share", "class": "btn primary", action: function() {
+            var inp = document.getElementById("story-text-input");
+            var t = inp ? inp.value.trim() : "";
+            if (!t && !window._storyImg) { notif("DreamGram", "Add some text or a photo."); return; }
+            gramAddStory(window._storyImg || "", t);
+            window._storyImg = null;
+            closeCustomModal();
+            renderDreamGram();
+            notif("DreamGram", "Story shared!");
+        }}
+    ]);
+}
+function gramAddStoryWithImage() {
+    var inp = document.createElement("input");
+    inp.type = "file";
+    inp.accept = "image/*";
+    inp.onchange = function() {
+        var f = inp.files && inp.files[0];
+        if (!f) return;
+        openCropModal(f, function(dataUrl) {
+            window._storyImg = dataUrl;
+            var prev = document.getElementById("story-img-preview");
+            if (prev) { prev.style.display = "block"; prev.innerHTML = '<img src="' + dataUrl + '" style="max-height:80px;border-radius:6px;">'; }
+        });
+    };
+    inp.click();
+}
+function getGramDMs() { try { var r = localStorage.getItem(GRAM_DMS_KEY); return r ? JSON.parse(r) : []; } catch(e) { return []; } }
+function saveGramDMs(d) { localStorage.setItem(GRAM_DMS_KEY, JSON.stringify(d)); }
+
+function gramAvatar(userName, size) {
+    var d = presetUsers[userName];
+    if (!d) { try { var raw = localStorage.getItem("dlrp_save_" + userName); if (raw) d = JSON.parse(raw); } catch(e) {} }
+    var s = size || 34;
+    if (d && d.pfp) return '<img src="' + esc(d.pfp) + '" style="width:' + s + 'px;height:' + s + 'px;border-radius:50%;object-fit:cover;border:2px solid rgba(124,58,237,0.15);flex-shrink:0;">';
+    var letter = d ? (d.displayName || userName).charAt(0).toUpperCase() : userName.charAt(0).toUpperCase();
+    return '<div style="width:' + s + 'px;height:' + s + 'px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:' + Math.round(s * 0.4) + 'px;font-weight:700;color:#fff;flex-shrink:0;">' + letter + '</div>';
+}
+
+function renderDreamGram() {
+    var d = getUD(); if (!d) return;
+    var b = document.getElementById("dreamgram-body");
+    var h = '<div class="gram-tabs"><div class="gram-tab' + (gramTab === "feed" ? " active" : "") + '" onclick="gramSetTab(\'feed\')">Feed</div><div class="gram-tab' + (gramTab === "profile" ? " active" : "") + '" onclick="gramSetTab(\'profile\')">Profile</div><div class="gram-tab' + (gramTab === "dm" ? " active" : "") + '" onclick="gramSetTab(\'dm\')">Messages</div></div>';
+
+    if (gramTab === "feed") h += gramRenderFeed();
+    else if (gramTab === "profile") h += gramRenderProfile();
+    else if (gramTab === "dm") h += gramRenderDMs();
+
+    b.innerHTML = h;
+    if (gramTab === "dm" && gramDMTarget) { var ci = document.getElementById("gram-dm-chat-input"); if (ci) ci.focus(); }
+}
+
+function gramSetTab(tab) { gramTab = tab; gramViewUser = null; gramDMTarget = null; gramImageData = null; renderDreamGram(); }
+
+/* ---- Feed ---- */
+function gramRenderFeed() {
+    var d = getUD(); var posts = getGramPosts();
+    var activeStories = gramGetActiveStories();
+    var storyUsers = {};
+    activeStories.forEach(function(s) { storyUsers[s.user] = true; });
+    var h = '<div class="gram-stories-bar">';
+    h += '<div class="gs-item" onclick="gramAddStoryFromFeed()"><div class="gs-avatar" style="border:2px dashed var(--purple);display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--purple);">+</div><div class="gs-name">Add</div></div>';
+    Object.keys(storyUsers).forEach(function(u) {
+        h += '<div class="gs-item" onclick="gramViewStories(\'' + esc(u) + '\')">' + gramAvatar(u, 50) + '<div class="gs-name">' + esc(u) + '</div></div>';
+    });
+    h += '</div>';
+
+    h += '<div class="gram-create-post"><textarea id="gram-new-text" placeholder="What\'s on your mind?" maxlength="500"></textarea><div class="gcp-actions"><button onclick="gramSubmitPost()">Post</button><button class="img-btn" onclick="document.getElementById(\'gram-img-input\').click()">&#128247; Photo</button><input type="file" id="gram-img-input" accept="image/*" style="display:none" onchange="gramSelectImage(this)"></div><div id="gram-img-preview" class="gcp-preview" style="display:none;"></div></div>';
+
+    if (!posts.length) {
+        h += '<p style="color:var(--muted);text-align:center;padding:20px;font-size:13px;">No posts yet. Be the first!</p>';
+    } else {
+        var sorted = posts.slice().reverse();
+        sorted.forEach(function(p) {
+            h += '<div class="gram-post">';
+            h += '<div class="gram-hdr" onclick="gramViewProfile(\'' + esc(p.user) + '\')">' + gramAvatar(p.user, 34) + '<div class="gram-user">' + esc(p.displayName || p.user) + '</div><div class="gram-time">' + esc(p.time || "") + '</div></div>';
+            if (p.image) h += '<div class="gram-img"><img src="' + esc(p.image) + '" alt="Post image"></div>';
+            h += '<div class="gram-body">' + esc(p.text) + '</div>';
+            h += '<div class="gram-actions">';
+            h += '<button class="gram-action' + (p.liked ? ' liked' : '') + '" onclick="gramLikePost(\'' + p.id + '\')">' + (p.liked ? '&#10084;' : '&#9825;') + ' ' + (p.likes || 0) + '</button>';
+            h += '<button class="gram-action" onclick="gramShowComments(\'' + p.id + '\')">&#128172; ' + (p.comments || 0) + '</button>';
+            h += '<button class="gram-action" onclick="gramOpenDM(\'' + esc(p.user) + '\')" style="margin-left:auto;">&#9993; DM</button>';
+            if (p.user === currentUser) h += '<button class="gram-action" onclick="gramDeletePost(\'' + p.id + '\')" style="color:var(--red);">&#10005;</button>';
+            h += '</div></div>';
+        });
+    }
+    return h;
+}
+
+function gramSelectImage(input) {
+    var file = input.files && input.files[0];
+    if (!file) return;
+    input.value = "";
+    openCropModal(file, function(dataUrl) {
+        gramImageData = dataUrl;
+        var prev = document.getElementById("gram-img-preview");
+        if (prev) { prev.innerHTML = '<img src="' + gramImageData + '" alt=""><button class="remove-img" onclick="gramRemoveImage()">&#10005;</button>'; prev.style.display = "block"; }
+    });
+}
+
+function gramRemoveImage() { gramImageData = null; var p = document.getElementById("gram-img-preview"); if (p) { p.style.display = "none"; p.innerHTML = ""; } }
+
+function gramSubmitPost() {
+    var inp = document.getElementById("gram-new-text");
+    var t = inp ? inp.value.trim() : "";
+    if ((!t || !t.trim()) && !gramImageData) { notif("DreamGram", "Write something or add a photo."); return; }
+    if (!currentUser) return;
+    var d = getUD();
+    var posts = getGramPosts();
+    posts.push({
+        id: "p" + Date.now() + Math.random().toString(36).slice(2, 6),
+        user: currentUser,
+        displayName: d ? d.displayName || currentUser : currentUser,
+        text: t || "",
+        image: gramImageData || "",
+        time: new Date().toLocaleString(),
+        likes: 0,
+        liked: false,
+        comments: 0
+    });
+    saveGramPosts(posts);
+    if (inp) inp.value = "";
+    gramImageData = null;
+    var prev = document.getElementById("gram-img-preview"); if (prev) { prev.style.display = "none"; prev.innerHTML = ""; }
+    var fi = document.getElementById("gram-img-input"); if (fi) fi.value = "";
+    renderDreamGram();
+    notif("DreamGram", "Posted!");
+}
+
+function gramLikePost(id) {
+    var posts = getGramPosts();
+    var found = false;
+    posts.forEach(function(p) {
+        if (p.id === id) {
+            if (p.liked) { p.likes = Math.max(0, (p.likes || 1) - 1); p.liked = false; }
+            else { p.likes = (p.likes || 0) + 1; p.liked = true; }
+            found = true;
+        }
+    });
+    if (!found) return;
+    saveGramPosts(posts);
+    renderDreamGram();
+}
+
+function gramDeletePost(id) {
+    var posts = getGramPosts();
+    for (var i = 0; i < posts.length; i++) {
+        if (posts[i].id === id && posts[i].user === currentUser) {
+            posts.splice(i, 1);
+            saveGramPosts(posts);
+            renderDreamGram();
+            notif("DreamGram", "Post deleted.");
+            return;
+        }
+    }
+}
+
+/* ---- Comments Modal ---- */
+function gramShowComments(postId) {
+    var all = getGramComments();
+    var comments = all[postId] || [];
+    var h = '<div style="max-height:300px;overflow-y:auto;text-align:left;">';
+    if (!comments.length) {
+        h += '<p style="color:var(--muted);text-align:center;padding:12px;">No comments yet.</p>';
+    } else {
+        comments.forEach(function(c) {
+            h += '<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);">';
+            h += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">' + gramAvatar(c.user, 22) + '<strong style="font-size:12px;">' + esc(c.user) + '</strong><span style="font-size:10px;color:var(--muted);margin-left:auto;">' + esc(c.time) + '</span></div>';
+            h += '<div style="font-size:12px;margin-left:28px;">' + esc(c.text) + '</div>';
+            h += '<button class="btn small" style="margin:4px 0 0 28px;padding:2px 8px;font-size:10px;" onclick="closeCustomModal();setTimeout(function(){gramShowReplyForm(\'' + postId + '\',\'' + c.id + '\',\'' + esc(c.user) + '\')},100)">Reply</button>';
+            if (c.replies && c.replies.length) {
+                c.replies.forEach(function(r) {
+                    h += '<div style="margin-left:28px;padding:6px 0 0 16px;border-left:2px solid rgba(124,58,237,0.15);">';
+                    h += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">' + gramAvatar(r.user, 18) + '<strong style="font-size:11px;">' + esc(r.user) + '</strong><span style="font-size:10px;color:var(--muted);margin-left:auto;">' + esc(r.time) + '</span></div>';
+                    h += '<div style="font-size:11px;">' + esc(r.text) + '</div></div>';
+                });
+            }
+            h += '</div>';
+        });
+    }
+    h += '</div>';
+    h += '<div style="margin-top:10px;"><textarea id="gram-cm-input" placeholder="Write a comment..." style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(124,58,237,0.15);background:rgba(255,255,255,.05);color:var(--text);font-size:13px;font-family:inherit;outline:none;resize:none;min-height:44px;"></textarea></div>';
+    showCustomModal("Comments", h, [
+        { label: "Close", "class": "btn", action: closeCustomModal },
+        { label: "Post", "class": "btn primary", action: function() {
+            var inp = document.getElementById("gram-cm-input");
+            if (!inp || !inp.value.trim()) return;
+            gramAddComment(postId, inp.value);
+            closeCustomModal();
+            renderDreamGram();
+            notif("DreamGram", "Comment posted!");
+        }}
+    ]);
+}
+
+function gramShowReplyForm(postId, commentId, userName) {
+    var h = '<p style="font-size:13px;color:var(--muted);margin-bottom:8px;">Replying to <strong>' + esc(userName) + '</strong></p>';
+    h += '<textarea id="gram-reply-input" placeholder="Write a reply..." style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(124,58,237,0.15);background:rgba(255,255,255,.05);color:var(--text);font-size:13px;font-family:inherit;outline:none;resize:none;min-height:44px;"></textarea>';
+    showCustomModal("Reply", h, [
+        { label: "Cancel", "class": "btn", action: closeCustomModal },
+        { label: "Reply", "class": "btn primary", action: function() {
+            var inp = document.getElementById("gram-reply-input");
+            if (!inp || !inp.value.trim()) return;
+            gramAddReply(postId, commentId, inp.value);
+            closeCustomModal();
+            renderDreamGram();
+            notif("DreamGram", "Reply posted!");
+        }}
+    ]);
+}
+
+/* ---- Story Viewer ---- */
+var _gramStoryIdx = 0;
+var _gramStoryList = [];
+function gramViewStories(targetUser) {
+    var active = gramGetActiveStories();
+    if (targetUser) {
+        _gramStoryList = active.filter(function(s) { return s.user === targetUser; });
+    } else {
+        _gramStoryList = active;
+    }
+    if (!_gramStoryList.length) { notif("DreamGram", "No stories."); return; }
+    _gramStoryIdx = 0;
+    gramShowStory();
+}
+function gramShowStory() {
+    if (_gramStoryIdx >= _gramStoryList.length) { document.getElementById("story-overlay").classList.add("hidden"); return; }
+    var s = _gramStoryList[_gramStoryIdx];
+    document.getElementById("story-overlay").classList.remove("hidden");
+    var c = document.getElementById("story-content");
+    var p = document.getElementById("story-progress");
+    var h = '<div class="story-header">' + gramAvatar(s.user, 28) + '<span style="font-weight:600;font-size:14px;margin-left:8px;">' + esc(s.user) + '</span><span style="margin-left:auto;font-size:11px;color:var(--muted);">' + esc(new Date(s.time).toLocaleDateString()) + '</span></div>';
+    if (s.image) h += '<div class="story-media"><img src="' + esc(s.image) + '" alt=""></div>';
+    if (s.text) h += '<div class="story-text">' + esc(s.text) + '</div>';
+    c.innerHTML = h;
+    p.style.width = "0%";
+    var w = 0;
+    var interval = setInterval(function() {
+        w += 2;
+        p.style.width = w + "%";
+        if (w >= 100) { clearInterval(interval); _gramStoryIdx++; setTimeout(gramShowStory, 100); }
+    }, 100);
+    document.getElementById("story-tap-left").onclick = function() { clearInterval(interval); _gramStoryIdx = Math.max(0, _gramStoryIdx - 1); gramShowStory(); };
+    document.getElementById("story-tap-right").onclick = function() { clearInterval(interval); _gramStoryIdx++; gramShowStory(); };
+}
+function closeStoryViewer() {
+    document.getElementById("story-overlay").classList.add("hidden");
+}
+
+/* ---- Profile ---- */
+function gramRenderProfile() {
+    var target = gramViewUser || currentUser;
+    var d = presetUsers[target]; if (!d) { gramViewUser = null; return gramRenderProfile(); }
+    var allPosts = getGramPosts();
+    var myPosts = allPosts.filter(function(p) { return p.user === target; });
+    var isMe = target === currentUser;
+    var name = d.displayName || target;
+
+    var h = '<div class="gram-profile-header">';
+    if (gramViewUser) h += '<button class="gph-back" onclick="gramViewUser=null;renderDreamGram();">&#9664; Back</button>';
+    if (d.pfp) h += '<img src="' + esc(d.pfp) + '" class="gph-avatar">';
+    else h += '<div class="gph-avatar-fallback">' + name.charAt(0).toUpperCase() + '</div>';
+    h += '<div class="gph-name">' + esc(name) + '</div>';
+    if (d.bio) h += '<div class="gph-bio">' + esc(d.bio) + '</div>';
+    h += '<div style="font-size:12px;color:var(--dim);margin-top:2px;">' + myPosts.length + ' post' + (myPosts.length !== 1 ? "s" : "") + '</div>';
+    if (isMe) h += '<div class="gph-edit"><button class="btn small" onclick="gramEditProfile()">Edit Profile</button></div>';
+    else h += '<div class="gph-edit"><button class="btn small" onclick="gramOpenDM(\'' + esc(target) + '\')">Send Message</button></div>';
+    h += '</div>';
+
+    if (isMe) {
+        h += '<div class="gram-create-post"><textarea id="gram-new-text" placeholder="What\'s on your mind?" maxlength="500"></textarea><div class="gcp-actions"><button onclick="gramSubmitPost()">Post</button><button class="img-btn" onclick="document.getElementById(\'gram-img-input\').click()">&#128247; Photo</button><input type="file" id="gram-img-input" accept="image/*" style="display:none" onchange="gramSelectImage(this)"></div><div id="gram-img-preview" class="gcp-preview" style="display:none;"></div></div>';
+    }
+
+    gramRenderProfilePosts: if (myPosts.length) {
+        var hasImages = false;
+        myPosts.forEach(function(p) { if (p.image) hasImages = true; });
+
+            if (hasImages) {
+            h += '<div class="gram-posts-grid">';
+            myPosts.slice().reverse().forEach(function(p) {
+                if (p.image) h += '<div class="gpg-item" onclick="notif(\'DreamGram\',\'Post from ' + esc(p.time || "") + '\')"><img src="' + esc(p.image) + '" alt="">' + (p.likes ? '<div class="gpg-overlay">&#10084; ' + p.likes + '</div>' : "") + '</div>';
+                else h += '<div class="gpg-item" style="display:flex;align-items:center;justify-content:center;color:var(--dim);padding:8px;text-align:center;font-size:11px;">' + esc(p.text.slice(0, 30)) + '</div>';
+            });
+            h += '</div>';
+        } else {
+            myPosts.slice().reverse().forEach(function(p) {
+                h += '<div class="gram-post"><div class="gram-hdr" style="cursor:default;">' + gramAvatar(target, 34) + '<div class="gram-user">' + esc(name) + '</div><div class="gram-time">' + esc(p.time || "") + '</div></div><div class="gram-body">' + esc(p.text) + '</div><div class="gram-actions">';
+                h += '<button class="gram-action' + (p.liked ? ' liked' : '') + '" onclick="gramLikePost(\'' + p.id + '\')">' + (p.liked ? '&#10084;' : '&#9825;') + ' ' + (p.likes || 0) + '</button>';
+                if (isMe) h += '<button class="gram-action" onclick="gramDeletePost(\'' + p.id + '\')" style="margin-left:auto;color:var(--red);">&#10005; Delete</button>';
+                h += '</div></div>';
+            });
+        }
+    } else {
+        h += '<p style="color:var(--muted);text-align:center;padding:20px;font-size:13px;">' + (isMe ? "No posts yet. Share something!" : esc(name) + " hasn't posted yet.") + '</p>';
+    }
+
+    return h;
+}
+
+function gramViewProfile(user) {
+    if (user === currentUser) { gramTab = "profile"; gramViewUser = null; }
+    else gramViewUser = user;
+    renderDreamGram();
+}
+
+function gramEditProfile() {
+    var d = getUD(); if (!d) return;
+    var name = d.displayName || currentUser;
+    var bio = d.bio || "";
+    var body = '<div class="form-field"><label>Display Name</label><input type="text" id="ep-name" value="' + esc(name) + '" style="width:100%;padding:11px 14px;border-radius:8px;border:1px solid rgba(124,58,237,0.15);background:rgba(255,255,255,.05);color:var(--text);font-size:14px;font-family:inherit;outline:none;"></div><div class="form-field" style="margin-top:10px;"><label>Bio</label><textarea id="ep-bio" style="width:100%;padding:11px 14px;border-radius:8px;border:1px solid rgba(124,58,237,0.15);background:rgba(255,255,255,.05);color:var(--text);font-size:14px;font-family:inherit;outline:none;resize:none;min-height:60px;">' + esc(bio) + '</textarea></div><div style="margin-top:12px;"><button class="btn small" onclick="gramEditPfp()" style="width:100%;">Change Profile Picture</button></div>';
+    showCustomModal("Edit Profile", body, [
+        { label: "Cancel", "class": "btn", action: closeCustomModal },
+        { label: "Save", "class": "btn primary", action: function() {
+            var d2 = getUD(); if (!d2) return;
+            var nn = document.getElementById("ep-name");
+            var bb = document.getElementById("ep-bio");
+            var changed = false;
+            if (nn && nn.value.trim() && nn.value.trim() !== (d2.displayName || currentUser)) { d2.displayName = nn.value.trim(); changed = true; }
+            if (bb && bb.value !== undefined && bb.value !== (d2.bio || "")) { d2.bio = bb.value; changed = true; }
+            if (changed) saveData(currentUser);
+            closeCustomModal();
+            renderDreamGram(); loadProfile();
+        }}
+    ]);
+}
+
+function gramEditPfp() {
+    if (!currentUser) return;
+    var d = getUD(); if (!d) return;
+    var nn = document.getElementById("ep-name");
+    var bb = document.getElementById("ep-bio");
+    if (nn && nn.value.trim()) { d.displayName = nn.value.trim(); saveData(currentUser); }
+    if (bb && bb.value !== undefined) { d.bio = bb.value; saveData(currentUser); }
+    closeCustomModal();
+    var inp = document.createElement("input");
+    inp.type = "file";
+    inp.accept = "image/*";
+    inp.onchange = function() {
+        var f = inp.files && inp.files[0];
+        if (!f) return;
+        openCropModal(f, function(dataUrl) {
+            var d2 = getUD(); if (!d2) return;
+            d2.pfp = dataUrl;
+            saveData(currentUser);
+            renderDreamGram();
+            loadProfile();
+            notif("DreamGram", "Profile picture updated!");
+        });
+    };
+    inp.click();
+}
+
+/* ---- DMs ---- */
+function gramRenderDMs() {
+    if (gramDMTarget) return gramRenderDMChat();
+    var d = getUD(); if (!d) return;
+    var allDMs = getGramDMs();
+    var myDMs = allDMs.filter(function(m) { return m.from === currentUser || m.to === currentUser; });
+    var contactSet = {};
+    myDMs.forEach(function(m) {
+        var other = m.from === currentUser ? m.to : m.from;
+        if (!contactSet[other] || m.time > contactSet[other].time) {
+            contactSet[other] = { user: other, time: m.time, text: m.text };
+        }
+    });
+    var contacts = Object.keys(contactSet).sort(function(a, b) { return (contactSet[b].time || "").localeCompare(contactSet[a].time || ""); });
+
+    var h = '<div class="gram-dm-list">';
+    if (!contacts.length) h += '<p style="color:var(--muted);text-align:center;padding:20px;font-size:13px;">No conversations yet. Tap DM on a post to start one.</p>';
+    contacts.forEach(function(other) {
+        var info = contactSet[other];
+        var od = presetUsers[other];
+        var oname = od ? od.displayName || other : other;
+        h += '<div class="gram-dm-item" onclick="gramOpenDM(\'' + esc(other) + '\')">';
+        if (od && od.pfp) h += '<img src="' + esc(od.pfp) + '" class="dm-avatar">';
+        else h += '<div class="dm-avatar-fallback">' + oname.charAt(0).toUpperCase() + '</div>';
+        h += '<div class="dm-info"><div class="dm-name">' + esc(oname) + '</div><div class="dm-last">' + esc(info.text || "") + '</div></div></div>';
+    });
+    h += '</div>';
+    return h;
+}
+
+function gramRenderDMChat() {
+    var target = gramDMTarget;
+    var td = presetUsers[target];
+    var tname = td ? td.displayName || target : target;
+    var allDMs = getGramDMs();
+    var conv = allDMs.filter(function(m) { return (m.from === currentUser && m.to === target) || (m.from === target && m.to === currentUser); });
+
+    var h = '<div class="gram-dm-chat">';
+    h += '<div class="dmc-header"><button class="dmc-back" onclick="gramDMTarget=null;renderDreamGram();">&#9664;</button>';
+    if (td && td.pfp) h += '<img src="' + esc(td.pfp) + '" style="width:30px;height:30px;border-radius:50%;object-fit:cover;border:2px solid rgba(124,58,237,0.15);">';
+    else h += '<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;">' + tname.charAt(0).toUpperCase() + '</div>';
+    h += '<div class="dmc-name">' + esc(tname) + '</div></div>';
+
+    h += '<div class="gram-dm-messages" id="gram-dm-msgs">';
+    if (!conv.length) h += '<p style="color:var(--muted);text-align:center;padding:20px;font-size:12px;">Start chatting with ' + esc(tname) + '.</p>';
+    else conv.forEach(function(m) {
+        var isMe = m.from === currentUser;
+        h += '<div class="msg-bubble ' + (isMe ? 'sent' : 'received') + '">' + esc(m.text) + '<span class="time">' + esc(m.time || "") + '</span></div>';
+    });
+    h += '</div>';
+
+    h += '<div class="gram-dm-input"><input type="text" id="gram-dm-chat-input" placeholder="Type a message..." onkeydown="if(event.key===\'Enter\')gramSendDM()"><button onclick="gramSendDM()">&#10148;</button></div>';
+    h += '</div>';
+    return h;
+}
+
+function gramOpenDM(user) {
+    if (user === currentUser) { notif("DreamGram", "You can't DM yourself."); return; }
+    gramTab = "dm";
+    gramDMTarget = user;
+    renderDreamGram();
+}
+
+function gramSendDM() {
+    var inp = document.getElementById("gram-dm-chat-input");
+    if (!inp) return;
+    var t = inp.value.trim();
+    if (!t || !currentUser || !gramDMTarget) return;
+    var dms = getGramDMs();
+    dms.push({ from: currentUser, to: gramDMTarget, text: t, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
+    saveGramDMs(dms);
+    inp.value = "";
+    renderDreamGram();
+    var mc = document.getElementById("gram-dm-msgs");
+    if (mc) mc.scrollTop = mc.scrollHeight;
+}
+
+/* ---- Page Swipe ---- */
+var currentPage = 0;
+var maxPages = 2;
+var swipeStartX = 0;
+var swipeDeltaX = 0;
+var pageTransitioning = false;
+
+function goToPage(n, instant) {
+    if (n < 0) n = 0;
+    if (n >= maxPages) n = maxPages - 1;
+    if (n === currentPage && !instant) return;
+    currentPage = n;
+    var wrap = document.getElementById("app-grid-wrap");
+    if (!wrap) return;
+    var pages = wrap.querySelectorAll(".app-grid-page");
+    pages.forEach(function(p, i) {
+        if (instant) p.style.transition = "none";
+        p.style.transform = "translateX(" + ((i - n) * 100) + "%)";
+        if (instant) setTimeout(function() { p.style.transition = ""; }, 10);
+    });
+    var dots = wrap.parentElement.querySelectorAll(".dot");
+    dots.forEach(function(d, i) { d.classList.toggle("active", i === n); });
+}
+
+function swipeStart(x) { swipeStartX = x; swipeDeltaX = 0; }
+function swipeMove(x) { swipeDeltaX = x - swipeStartX; }
+function swipeEnd() {
+    if (swipeDeltaX < -40) goToPage(currentPage + 1);
+    else if (swipeDeltaX > 40 && currentPage > 0) goToPage(currentPage - 1);
+}
+
+var gridWrap = document.getElementById("app-grid-wrap");
+gridWrap.addEventListener("touchstart", function(e) { swipeStart(e.touches[0].clientX); });
+gridWrap.addEventListener("touchmove", function(e) { e.preventDefault(); swipeMove(e.touches[0].clientX); }, { passive: false });
+gridWrap.addEventListener("touchend", function(e) { if (Math.abs(swipeDeltaX) > 10) { e.preventDefault(); } swipeEnd(); }, { passive: false });
+gridWrap.addEventListener("mousedown", function(e) { swipeStart(e.clientX); });
+gridWrap.addEventListener("mousemove", function(e) { if (swipeStartX !== 0) { e.preventDefault(); swipeMove(e.clientX); } });
+gridWrap.addEventListener("mouseup", function(e) { if (swipeStartX !== 0) { swipeEnd(); swipeStartX = 0; } });
+gridWrap.addEventListener("mouseleave", function(e) { swipeStartX = 0; });
+
+/* ---- Init ---- */
+document.addEventListener("DOMContentLoaded", function() {
+    var s = getSession();
+    if (s && s.name && presetUsers[s.name]) { mergeData(s.name); currentUser = s.name; enterApp(); }
+    else { clearSession(); }
+
+    /* Seed DreamGram from preset data if empty */
+    var existing = getGramPosts();
+    if (!existing.length) {
+        var seeded = [];
+        Object.keys(presetUsers).forEach(function(name) {
+            var u = presetUsers[name];
+            if (u.posts && u.posts.length) {
+                u.posts.forEach(function(p) {
+                    seeded.push({
+                        id: "p" + Date.now() + Math.random().toString(36).slice(2, 6),
+                        user: p.user || name,
+                        displayName: p.displayName || u.displayName || name,
+                        text: p.text || "",
+                        image: p.image || "",
+                        time: p.time || "Just now",
+                        likes: p.likes || 0,
+                        liked: p.liked || false,
+                        comments: p.comments || 0
+                    });
+                });
+            }
+        });
+        if (seeded.length) saveGramPosts(seeded);
+    }
+
+    /* Init page positions */
+    goToPage(0, true);
+});
+</script>
+</body>
+</html>
