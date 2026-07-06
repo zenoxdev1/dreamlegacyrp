@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>DLRP | iGlitch X</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+    --purple: #7c3aed; --purple-dark: #5b21b6; --cyan: #06b6d4;
+    --bg: #0a0a0f; --card: #13131a; --card-border: rgba(124,58,237,0.12);
+    --text: #e2e8f0; --muted: #64748b; --dim: #475569; --mint: #34d399; --red: #ef4444;
+}
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+.glow { position: fixed; top: -300px; left: -300px; width: 700px; height: 700px; border-radius: 50%; background: radial-gradient(circle, rgba(124,58,237,.08) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+.glow2 { top: auto; bottom: -300px; right: -300px; left: auto; background: radial-gradient(circle, rgba(6,182,212,.06) 0%, transparent 70%); }
+.topbar { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; background: rgba(19,19,26,.8); backdrop-filter: blur(12px); border-bottom: 1px solid var(--card-border); }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.brand img { height: 36px; }
+.brand-title { font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700; background: linear-gradient(135deg,var(--purple),var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.brand-title span { color: var(--cyan); -webkit-text-fill-color: var(--cyan); }
+.nav-links { display: flex; gap: 16px; align-items: center; }
+.nav-links a { color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 500; transition: color .2s; padding: 6px 14px; border-radius: 8px; }
+.nav-links a:hover, .nav-links a.active { color: var(--text); background: rgba(124,58,237,.1); }
+.main-wrap { position: relative; z-index: 1; max-width: 1000px; margin: 0 auto; padding: 40px 20px; display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap; justify-content: center; }
+.card { background: var(--card); border: 1px solid var(--card-border); border-radius: 16px; padding: 24px; }
+.btn { padding: 10px 20px; border-radius: 10px; border: 1px solid var(--card-border); background: transparent; color: var(--text); font-size: 13px; font-family: 'Rajdhani', sans-serif; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: .06em; transition: all .2s; }
+.btn:hover { filter: brightness(1.15); }
+.btn.primary { background: linear-gradient(135deg,var(--purple),var(--purple-dark)); border: none; color: #fff; }
+h1 { font-family: 'Rajdhani', sans-serif; font-size: 28px; margin-bottom: 6px; }
+.sub { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+
+.phone-section { display: flex; flex-direction: column; align-items: center; perspective: 1000px; }
+.phone-flipper { position: relative; width: 180px; height: 340px; transform-style: preserve-3d; transition: transform .6s ease; cursor: pointer; }
+.phone-flipper.flipped { transform: rotateY(180deg); }
+.phone-front, .phone-back { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.phone-back { transform: rotateY(180deg); }
+.phone-wrapper { position: relative; width: 180px; height: 340px; background: linear-gradient(145deg,#2a2a3e,#1a1a2e); border-radius: 28px; border: 3px solid #444; overflow: hidden; box-shadow: 0 0 40px rgba(83,52,131,.25), inset 0 0 20px rgba(0,0,0,.3); }
+.phone-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 70px; height: 22px; background: #000; border-radius: 0 0 12px 12px; z-index: 2; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.phone-notch .speaker { width: 28px; height: 3px; background: #2a2a2a; border-radius: 2px; }
+.phone-notch .cam { width: 8px; height: 8px; background: radial-gradient(circle at 30% 30%,#1a1a3a,#0a0a1a); border-radius: 50%; border: 1px solid #222; }
+.phone-screen-bg { position: absolute; top: 24px; left: 4px; right: 4px; bottom: 4px; background: linear-gradient(180deg,#0f3460,#533483); border-radius: 16px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.phone-screen-bg .model-label { font-family: 'Rajdhani', sans-serif; font-size: 14px; font-weight: 700; color: rgba(255,255,255,.2); letter-spacing: 1px; text-transform: uppercase; }
+.phone-bottom-bar { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); width: 30px; height: 3px; background: rgba(255,255,255,.15); border-radius: 2px; }
+.phone-flip-hint { font-size: 11px; color: var(--dim); margin-top: 8px; text-align: center; transition: color .2s; cursor: pointer; }
+.phone-flip-hint:hover { color: var(--purple); }
+
+/* Back design - iGlitch X */
+.phone-back .phone-wrapper { background: linear-gradient(145deg,#1a1a2e,#2a1a3e); border-color: #555; }
+.phone-back-glass { position: absolute; inset: 4px; border-radius: 24px; background: linear-gradient(135deg,rgba(124,58,237,.08),rgba(6,182,212,.05)); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+.phone-back-logo { width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg,var(--purple),var(--cyan)); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; color: #fff; font-family: 'Rajdhani', sans-serif; }
+.phone-back-camera { display: flex; gap: 6px; align-items: center; }
+.phone-back-camera .cam-ring { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255,255,255,.1); background: radial-gradient(circle at 30% 30%,#1a1a3a,#000); }
+.phone-back-text { font-size: 9px; color: rgba(255,255,255,.15); letter-spacing: 2px; text-transform: uppercase; font-family: 'Rajdhani', sans-serif; margin-top: 4px; }
+
+.info-section { max-width: 400px; min-width: 300px; flex: 1; }
+.model-name { font-family: 'Rajdhani', sans-serif; font-size: 32px; font-weight: 700; margin-bottom: 4px; background: linear-gradient(135deg,var(--text),#b8a0e0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.model-desc { color: var(--muted); font-size: 14px; margin-bottom: 12px; line-height: 1.5; }
+.model-price { font-size: 28px; font-weight: 700; color: var(--mint); margin-bottom: 20px; }
+.specs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+.spec-item { background: rgba(255,255,255,.03); border: 1px solid var(--card-border); border-radius: 10px; padding: 10px 12px; }
+.spec-item .label { font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
+.spec-item .value { font-size: 15px; font-weight: 600; margin-top: 2px; color: var(--text); }
+
+.form-field { margin-bottom: 12px; }
+.form-field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; font-weight: 500; }
+.form-field input { width: 100%; padding: 11px 14px; border-radius: 8px; border: 1px solid var(--card-border); background: rgba(255,255,255,.05); color: var(--text); font-size: 14px; font-family: inherit; outline: none; transition: border-color .2s; }
+.form-field input:focus { border-color: var(--purple); }
+.form-error { color: var(--red); font-size: 12px; text-align: center; margin-top: 8px; display: none; }
+.actions { display: flex; gap: 8px; margin-top: 16px; }
+.actions .btn { flex: 1; }
+
+.back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none; font-size: 13px; margin-bottom: 16px; }
+.back-link:hover { color: var(--text); }
+</style>
+</head>
+<body>
+<div class="glow"></div><div class="glow glow2"></div>
+
+<div class="topbar">
+    <a class="brand" href="../index.html">
+        <img src="../Assets/logo.png" alt="DLRP" onerror="this.style.display='none'">
+        <span class="brand-title">Dream <span>Legacy</span> RolePlay</span>
+    </a>
+    <div class="nav-links">
+        <a href="../Panel/index.html">Panel</a>
+        <a href="../PhoneUi/index.html">Phone Shop</a>
+        <a href="../PhoneUi/os.html">DreamOS</a>
+    </div>
+</div>
+
+<div class="main-wrap">
+    <div class="phone-section">
+        <div class="phone-flipper" id="phoneFlipper">
+            <div class="phone-front">
+                <div class="phone-wrapper">
+                    <div class="phone-notch"><div class="speaker"></div><div class="cam"></div></div>
+                    <div class="phone-screen-bg">
+                        <span class="model-label">iGlitch X</span>
+                    </div>
+                    <div class="phone-bottom-bar"></div>
+                </div>
+            </div>
+            <div class="phone-back">
+                <div class="phone-wrapper">
+                    <div class="phone-back-glass">
+                        <div class="phone-back-camera">
+                            <div class="cam-ring"></div>
+                            <div class="cam-ring"></div>
+                            <div class="cam-ring"></div>
+                        </div>
+                        <div class="phone-back-logo">D</div>
+                        <div class="phone-back-text">iGlitch X</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="phone-flip-hint" onclick="flipPhone()">&#8645; Flip Phone</div>
+    </div>
+    <div class="info-section">
+        <a href="index.html" class="back-link">&larr; Back to Shop</a>
+        <div class="model-name">iGlitch X</div>
+        <div class="model-desc">The iconic notch returns with an all-new OLED display. Face ID, premium build, and the ecosystem that started it all.</div>
+        <div class="model-price">$599</div>
+        <div class="specs">
+            <div class="spec-item"><div class="label">RAM</div><div class="value">6GB</div></div>
+            <div class="spec-item"><div class="label">Storage</div><div class="value">128GB</div></div>
+            <div class="spec-item"><div class="label">Camera</div><div class="value">12MP</div></div>
+            <div class="spec-item"><div class="label">Display</div><div class="value">6.1" OLED</div></div>
+            <div class="spec-item"><div class="label">Battery</div><div class="value">3,200mAh</div></div>
+            <div class="spec-item"><div class="label">Color</div><div class="value" style="color:#b8a0e0;">Deep Violet</div></div>
+        </div>
+        <div class="card" id="buy-form">
+            <div style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;margin-bottom:12px;">Buy Now</div>
+            <div class="form-field"><label>RP Name</label><input type="text" id="buy-name" placeholder="e.g. JohnMarston"></div>
+            <div class="form-field"><label>Password</label><input type="password" id="buy-pass" placeholder="Enter password"></div>
+            <div class="form-error" id="buy-error"></div>
+            <div class="actions"><button class="btn primary" onclick="buyPhone()" style="flex:1;">Purchase</button></div>
+        </div>
+    </div>
+</div>
+
+<script>
+var PRICE = 599;
+var MODEL_NAME = "iGlitch X";
+
+function buyPhone() {
+    var name = document.getElementById("buy-name").value.trim();
+    var pass = document.getElementById("buy-pass").value.trim();
+    if (!name || !pass) { showError("Fill in all fields."); return; }
+    var userData = null;
+    try { var raw = localStorage.getItem("dlrp_save_" + name); if (raw) userData = JSON.parse(raw); } catch(e) {}
+    if (!userData) { showError("Account not found. Log in to DreamOS first."); return; }
+    if (userData.purchasedPhone && userData.purchasedPhone.length > 0) { showError("You already own a phone!"); return; }
+    if ((userData.bank || 0) < PRICE) { showError("Insufficient funds. Need $" + PRICE + " in bank."); return; }
+    userData.bank -= PRICE;
+    userData.purchasedPhone = MODEL_NAME;
+    userData.phoneNumber = "555-" + Math.floor(1000 + Math.random() * 9000);
+    localStorage.setItem("dlrp_save_" + name, JSON.stringify(userData));
+    showError(""); document.getElementById("buy-form").innerHTML = '<div style="padding:20px;text-align:center;"><div style="font-size:48px;margin-bottom:10px;">&#9989;</div><div style="font-size:20px;font-weight:700;">Purchase Complete!</div><div style="color:var(--muted);margin-top:6px;">' + MODEL_NAME + '<br>Number: ' + userData.phoneNumber + '</div><a href="os.html" class="btn primary" style="display:inline-block;margin-top:16px;text-decoration:none;">Open DreamOS</a></div>';
+}
+
+function showError(msg) {
+    var el = document.getElementById("buy-error");
+    if (el) { el.textContent = msg; el.style.display = msg ? "block" : "none"; }
+}
+
+function flipPhone() {
+    var f = document.getElementById("phoneFlipper");
+    f.classList.toggle("flipped");
+}
+</script>
+</body>
+</html>

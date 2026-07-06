@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>DLRP | Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+    --purple: #7c3aed; --purple-dark: #5b21b6; --cyan: #06b6d4;
+    --bg: #0a0a0f; --card: #13131a; --card-border: rgba(124,58,237,0.12);
+    --text: #e2e8f0; --muted: #64748b; --dim: #475569; --mint: #34d399; --red: #ef4444;
+}
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+.glow { position: fixed; top: -300px; left: -300px; width: 700px; height: 700px; border-radius: 50%; background: radial-gradient(circle, rgba(124,58,237,.08) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+.glow2 { top: auto; bottom: -300px; right: -300px; left: auto; background: radial-gradient(circle, rgba(6,182,212,.06) 0%, transparent 70%); }
+.topbar { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; background: rgba(19,19,26,.8); backdrop-filter: blur(12px); border-bottom: 1px solid var(--card-border); }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.brand img { height: 36px; }
+.brand-title { font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700; background: linear-gradient(135deg,var(--purple),var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.brand-title span { color: var(--cyan); -webkit-text-fill-color: var(--cyan); }
+.nav-links { display: flex; gap: 16px; align-items: center; }
+.nav-links a { color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 500; transition: color .2s; padding: 6px 14px; border-radius: 8px; }
+.nav-links a:hover, .nav-links a.active { color: var(--text); background: rgba(124,58,237,.1); }
+.btn { padding: 10px 20px; border-radius: 10px; border: 1px solid var(--card-border); background: transparent; color: var(--text); font-size: 13px; font-family: 'Rajdhani', sans-serif; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: .06em; transition: all .2s; }
+.btn:hover { filter: brightness(1.15); }
+.btn.primary { background: linear-gradient(135deg,var(--purple),var(--purple-dark)); border: none; color: #fff; }
+.btn.small { padding: 6px 14px; font-size: 11px; }
+.main-wrap { position: relative; z-index: 1; max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+.card { background: var(--card); border: 1px solid var(--card-border); border-radius: 16px; padding: 24px; }
+.section { margin-bottom: 24px; }
+.section h2 { font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 12px; color: var(--text); }
+.section p { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 8px; }
+.feature-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); gap: 12px; }
+.feature-card { background: rgba(255,255,255,.03); border: 1px solid var(--card-border); border-radius: 12px; padding: 16px; text-align: center; }
+.feature-card .fc-icon { font-size: 28px; margin-bottom: 8px; }
+.feature-card .fc-name { font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 700; }
+.feature-card .fc-desc { font-size: 11px; color: var(--muted); margin-top: 4px; }
+.form-card { max-width: 400px; margin: 40px auto; }
+.form-card .brand-icon { text-align: center; margin-bottom: 16px; }
+.form-card .brand-icon img { height: 48px; }
+.form-card h1 { font-family: 'Rajdhani', sans-serif; font-size: 26px; text-align: center; margin-bottom: 4px; }
+.form-card .sub { text-align: center; color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+.form-field { margin-bottom: 14px; }
+.form-field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; font-weight: 500; }
+.form-field input, .form-field select { width: 100%; padding: 11px 14px; border-radius: 8px; border: 1px solid var(--card-border); background: rgba(255,255,255,.05); color: var(--text); font-size: 14px; font-family: inherit; outline: none; }
+.form-field input:focus, .form-field select:focus { border-color: var(--purple); }
+.form-error { color: var(--red); font-size: 12px; text-align: center; margin-top: 8px; display: none; }
+.actions { display: flex; gap: 8px; margin-top: 16px; }
+.actions .btn { flex: 1; }
+.hidden { display: none !important; }
+.profile-bar { display: flex; align-items: center; gap: 14px; padding: 14px 20px; background: var(--card); border: 1px solid var(--card-border); border-radius: 12px; margin-bottom: 20px; }
+.profile-bar .rp-name { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 18px; }
+.profile-bar .stat { color: var(--muted); font-size: 12px; }
+.profile-bar .stat strong { color: var(--text); }
+.logout-btn { margin-left: auto; padding: 6px 16px; border-radius: 8px; border: 1px solid var(--red); background: transparent; color: var(--red); font-size: 12px; font-family: 'Rajdhani', sans-serif; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: .06em; }
+</style>
+</head>
+<body>
+<div class="glow"></div><div class="glow glow2"></div>
+
+<div class="topbar">
+    <a class="brand" href="../index.html">
+        <img src="../Assets/logo.png" alt="DLRP" onerror="this.style.display='none'">
+        <span class="brand-title">Dream <span>Legacy</span> RolePlay</span>
+    </a>
+    <div class="nav-links">
+        <a href="../Panel/index.html" class="active">Panel</a>
+        <a href="../PhoneUi/index.html">Phone Shop</a>
+        <a href="../PhoneUi/os.html">DreamOS</a>
+    </div>
+</div>
+
+<div class="main-wrap">
+    <!-- Profile Bar -->
+    <div id="profile-bar" class="profile-bar hidden">
+        <img id="prof-pfp" src="" style="width:36px;height:36px;border-radius:50%;object-fit:cover;display:none;border:2px solid rgba(124,58,237,0.2);">
+        <span class="rp-name" id="prof-name">-</span>
+        <span class="stat">Phone: <strong id="prof-phone">None</strong></span>
+        <span class="stat">Number: <strong id="prof-num">-</strong></span>
+        <span class="stat">Bank: <strong id="prof-bank">$0</strong></span>
+        <button class="logout-btn" onclick="logout()">Log Out</button>
+    </div>
+
+    <!-- Auth Screen -->
+    <div id="auth-screen">
+        <div class="form-card card">
+            <div class="card-inner" id="auth-inner">
+                <div class="brand-icon"><img src="../Assets/logo.png" alt="DLRP" onerror="this.style.display='none'"></div>
+                <h1>Welcome to DLRP</h1>
+                <p class="sub">Login or create your account to access the phone system.</p>
+                <div class="form-field">
+                    <label for="auth-name">Username</label>
+                    <input type="text" id="auth-name" placeholder="e.g. Admin" autocomplete="off">
+                </div>
+                <div class="form-field">
+                    <label for="auth-pass">Password</label>
+                    <input type="password" id="auth-pass" placeholder="Enter password" onkeydown="if(event.key==='Enter')authSubmit()">
+                </div>
+                <div id="auth-error" class="form-error"></div>
+                <div class="actions">
+                    <button class="btn" id="auth-toggle-btn" onclick="toggleAuth()">Create Account</button>
+                    <button class="btn primary" onclick="authSubmit()" id="auth-submit-btn">Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="hidden">
+        <div class="section">
+            <h2>Welcome to the DLRP Phone System</h2>
+            <p>Dream Legacy RolePlay (DLRP) is a immersive roleplay community built on experience and storytelling. This phone system gives you access to a fully-featured in-game smartphone with apps, contacts, banking, and more.</p>
+        </div>
+
+        <div class="section">
+            <h2>Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card"><div class="fc-icon">&#128222;</div><div class="fc-name">Dialer</div><div class="fc-desc">Call contacts and emergency services</div></div>
+                <div class="feature-card"><div class="fc-icon">&#9993;</div><div class="fc-name">Messages</div><div class="fc-desc">Text any contact in your phonebook</div></div>
+                <div class="feature-card"><div class="fc-icon">&#128184;</div><div class="fc-name">Bank</div><div class="fc-desc">Deposit, withdraw, and transfer money</div></div>
+                <div class="feature-card"><div class="fc-icon">&#128188;</div><div class="fc-name">Jobs</div><div class="fc-desc">Apply for jobs and manage your career</div></div>
+                <div class="feature-card"><div class="fc-icon">&#128662;</div><div class="fc-name">Vehicles</div><div class="fc-desc">Register and manage your vehicles</div></div>
+                <div class="feature-card"><div class="fc-icon">&#127968;</div><div class="fc-name">Property</div><div class="fc-desc">Buy and manage properties</div></div>
+                <div class="feature-card"><div class="fc-icon">&#127981;</div><div class="fc-name">Businesses</div><div class="fc-desc">Own and operate businesses</div></div>
+                <div class="feature-card"><div class="fc-icon">&#128230;</div><div class="fc-name">Marketplace</div><div class="fc-desc">Buy and sell inventory items</div></div>
+                <div class="feature-card"><div class="fc-icon">&#128179;</div><div class="fc-name">Government</div><div class="fc-desc">Your citizen ID and identification</div></div>
+                <div class="feature-card"><div class="fc-icon">&#127760;</div><div class="fc-name">Browser</div><div class="fc-desc">In-game web browser</div></div>
+                <div class="feature-card"><div class="fc-icon">&#128247;</div><div class="fc-name">DreamGram</div><div class="fc-desc">Social media with posts and DMs</div></div>
+                <div class="feature-card"><div class="fc-icon">&#128737;</div><div class="fc-name">Emergency</div><div class="fc-desc">Quick access to police and EMS</div></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Getting Started</h2>
+            <p>1. Choose a phone model from the <a href="../PhoneUi/index.html" style="color:var(--cyan);">Phone Shop</a>.</p>
+            <p>2. Log in with your RP name and password (preset accounts available).</p>
+            <p>3. Explore the DreamOS interface with all its apps and features.</p>
+            <p>4. Manage your profile, bank account, and settings from the panel.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ---- Dynamic Account System (shared with DreamOS) ---- */
+var ACCOUNTS_KEY = "dlrp_accounts";
+var currentUser = null;
+var isNewUser = false;
+
+function getAccounts() {
+    try { return JSON.parse(localStorage.getItem(ACCOUNTS_KEY)) || {}; } catch(e) { return {}; }
+}
+function saveAccounts(acc) {
+    localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(acc));
+}
+function dataKey(n) { return "dlrp_save_" + n; }
+
+function createDefaultAccount(name, pass) {
+    return {
+        password: pass, displayName: name, bank: 10000, cash: 1000,
+        purchasedPhone: "", phoneNumber: "555-" + Math.floor(1000 + Math.random() * 9000),
+        contacts: [], settings: { bg: "default", fontSize: "medium", sound: true, notifEnabled: true },
+        pfp: "", bio: "", currentJob: "", pendingJob: "",
+        vehicles: [], properties: [], businesses: [], inventory: [],
+        idInfo: null
+    };
+}
+
+function ensureDefaultAccounts() {
+    var accounts = getAccounts();
+    if (!accounts["Admin"]) {
+        accounts["Admin"] = {
+            password: "Admin", displayName: "Administrator",
+            bank: 999999, cash: 50000,
+            purchasedPhone: "iGlitch X", phoneNumber: "555-0001",
+            contacts: [{ name: "Arthur Morgan", number: "555-0102", emergency: false }],
+            settings: { bg: "default", fontSize: "medium", sound: true, notifEnabled: true },
+            pfp: "", bio: "DLRP System Administrator",
+            currentJob: "", pendingJob: "",
+            vehicles: [{ name: "Western Bison", plate: "DLRP-42", color: "Black", insured: true }],
+            properties: [], businesses: [], inventory: [{ name: "Phone Charger", qty: 1, desc: "Standard charging cable" }],
+            idInfo: null
+        };
+        saveAccounts(accounts);
+        var saveObj = {};
+        for (var k in accounts["Admin"]) { if (k !== "password") saveObj[k] = accounts["Admin"][k]; }
+        localStorage.setItem(dataKey("Admin"), JSON.stringify(saveObj));
+    }
+}
+
+function esc(s) { if (typeof s !== "string") return s; var d = document.createElement("div"); d.appendChild(document.createTextNode(s)); return d.innerHTML; }
+
+ensureDefaultAccounts();
+
+function saveData(n) {
+    var accounts = getAccounts();
+    var src = accounts[n]; if (!src) return;
+    var saveObj = {};
+    for (var k in src) { if (k !== "password") saveObj[k] = src[k]; }
+    localStorage.setItem(dataKey(n), JSON.stringify(saveObj));
+    saveAccounts(accounts);
+}
+
+function loadData(n) {
+    try { return JSON.parse(localStorage.getItem(dataKey(n))); } catch(e) { return null; }
+}
+
+function getUD() {
+    var accounts = getAccounts();
+    return accounts[currentUser] || null;
+}
+
+function toggleAuth() {
+    isNewUser = !isNewUser;
+    document.getElementById("auth-submit-btn").textContent = isNewUser ? "Create Account" : "Login";
+    document.getElementById("auth-toggle-btn").textContent = isNewUser ? "Back to Login" : "Create Account";
+    document.getElementById("auth-error").style.display = "none";
+}
+
+function authSubmit() {
+    var name = document.getElementById("auth-name").value.trim();
+    var pass = document.getElementById("auth-pass").value.trim();
+    if (!name || !pass) { showAuthError("Fill in all fields."); return; }
+    var accounts = getAccounts();
+
+    if (isNewUser) {
+        if (accounts[name]) { showAuthError("Username already exists."); return; }
+        accounts[name] = createDefaultAccount(name, pass);
+        saveAccounts(accounts);
+        saveData(name);
+        currentUser = name;
+        onLogin();
+        return;
+    }
+
+    var user = accounts[name];
+    if (!user || user.password !== pass) { showAuthError("Invalid username or password."); return; }
+    var saved = loadData(name);
+    if (saved) {
+        for (var k in saved) { if (k !== "password") user[k] = saved[k]; }
+        accounts[name] = user;
+        saveAccounts(accounts);
+    }
+    currentUser = name;
+    onLogin();
+}
+
+function showAuthError(msg) {
+    var el = document.getElementById("auth-error");
+    el.textContent = msg; el.style.display = "block";
+}
+
+function onLogin() {
+    document.getElementById("auth-screen").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+    document.getElementById("profile-bar").classList.remove("hidden");
+    loadProfile();
+    localStorage.setItem("dlrp_phone_session", JSON.stringify({ user: currentUser }));
+}
+
+function loadProfile() {
+    var d = getUD(); if (!d) return;
+    var name = d.displayName || currentUser;
+    document.getElementById("prof-name").textContent = name;
+    document.getElementById("prof-phone").textContent = d.purchasedPhone || "None";
+    document.getElementById("prof-num").textContent = d.phoneNumber || "-";
+    document.getElementById("prof-bank").textContent = "$" + (d.bank || 0).toLocaleString();
+    var pfpEl = document.getElementById("prof-pfp");
+    if (d.pfp) { pfpEl.src = d.pfp; pfpEl.style.display = "inline"; }
+    else { pfpEl.style.display = "none"; }
+}
+
+function logout() {
+    currentUser = null;
+    localStorage.removeItem("dlrp_phone_session");
+    document.getElementById("auth-screen").classList.remove("hidden");
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("profile-bar").classList.add("hidden");
+    isNewUser = false;
+    document.getElementById("auth-submit-btn").textContent = "Login";
+    document.getElementById("auth-toggle-btn").textContent = "Create Account";
+    document.getElementById("auth-name").value = "";
+    document.getElementById("auth-pass").value = "";
+    document.getElementById("auth-error").style.display = "none";
+}
+
+/* Auto-login on load */
+(function() {
+    try {
+        var sess = JSON.parse(localStorage.getItem("dlrp_phone_session"));
+        if (sess && sess.user) {
+            var accounts = getAccounts();
+            if (accounts[sess.user]) {
+                var saved = loadData(sess.user);
+                var u = accounts[sess.user];
+                if (saved) { for (var k in saved) { if (k !== "password") u[k] = saved[k]; } }
+                accounts[sess.user] = u;
+                currentUser = sess.user;
+                document.getElementById("auth-screen").classList.add("hidden");
+                document.getElementById("dashboard").classList.remove("hidden");
+                document.getElementById("profile-bar").classList.remove("hidden");
+                loadProfile();
+            }
+        }
+    } catch(e) {}
+})();
+</script>
+</body>
+</html>
