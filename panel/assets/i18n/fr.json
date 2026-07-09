@@ -1,0 +1,48 @@
+{
+  "meta": { "title": "DLRP | Panel" },
+  "nav": {
+    "panel": "Panneau",
+    "phoneShop": "Boutique de téléphones",
+    "dreamOs": "DreamOS"
+  },
+  "whitelist": {
+    "rpName": "Nom RP",
+    "rpNamePh": "ex. John_Marston",
+    "password": "Mot de passe"
+  },
+  "login": {
+    "passwordPh": "Entrez le mot de passe",
+    "error": "Nom RP ou mot de passe invalide.",
+    "submit": "Se connecter"
+  },
+  "panel": {
+    "welcome": "Bienvenue sur DLRP",
+    "loginSub": "Connectez-vous avec votre nom RP déjà approuvé sur liste blanche pour accéder au système de téléphone.",
+    "needWhitelist": "Pas encore sur liste blanche ? Postulez ici",
+    "fillFields": "Remplissez tous les champs.",
+    "phone": "Téléphone",
+    "number": "Numéro",
+    "bank": "Banque",
+    "logOut": "Déconnexion",
+    "dashTitle": "Bienvenue sur le système téléphonique DLRP",
+    "dashDesc": "Dream Legacy RolePlay (DLRP) est une communauté de roleplay immersive fondée sur l'expérience et la narration. Ce système téléphonique vous donne accès à un smartphone complet dans le jeu, avec applications, contacts, banque et plus encore.",
+    "featuresTitle": "Fonctionnalités",
+    "fDialer": "Composeur", "fDialerDesc": "Appelez vos contacts et les services d'urgence",
+    "fMessages": "Messages", "fMessagesDesc": "Envoyez des SMS à n'importe quel contact",
+    "fBank": "Banque", "fBankDesc": "Déposez, retirez et transférez de l'argent",
+    "fJobs": "Emplois", "fJobsDesc": "Postulez à des emplois et gérez votre carrière",
+    "fVehicles": "Véhicules", "fVehiclesDesc": "Enregistrez et gérez vos véhicules",
+    "fProperty": "Propriété", "fPropertyDesc": "Achetez et gérez des propriétés",
+    "fBusiness": "Entreprises", "fBusinessDesc": "Possédez et exploitez des entreprises",
+    "fMarket": "Marché", "fMarketDesc": "Achetez et vendez des objets d'inventaire",
+    "fGov": "Gouvernement", "fGovDesc": "Votre carte d'identité de citoyen",
+    "fBrowser": "Navigateur", "fBrowserDesc": "Navigateur web dans le jeu",
+    "fDreamgramDesc": "Réseau social avec publications et messages privés",
+    "fEmergency": "Urgences", "fEmergencyDesc": "Accès rapide à la police et aux secours",
+    "gettingStarted": "Pour commencer",
+    "step1": "1. Choisissez un modèle de téléphone dans la",
+    "step2": "2. Connectez-vous avec votre nom RP et mot de passe de liste blanche.",
+    "step3": "3. Explorez l'interface DreamOS avec toutes ses applications et fonctionnalités.",
+    "step4": "4. Gérez votre profil, votre compte bancaire et vos paramètres depuis le panneau."
+  }
+}

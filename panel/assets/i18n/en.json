@@ -1,0 +1,48 @@
+{
+  "meta": { "title": "DLRP | Panel" },
+  "nav": {
+    "panel": "Panel",
+    "phoneShop": "Phone Shop",
+    "dreamOs": "DreamOS"
+  },
+  "whitelist": {
+    "rpName": "RP Name",
+    "rpNamePh": "e.g. John_Marston",
+    "password": "Password"
+  },
+  "login": {
+    "passwordPh": "Enter password",
+    "error": "Invalid RP Name or password.",
+    "submit": "Log In"
+  },
+  "panel": {
+    "welcome": "Welcome to DLRP",
+    "loginSub": "Log in with your whitelisted RP Name to access the phone system.",
+    "needWhitelist": "Not whitelisted yet? Apply here",
+    "fillFields": "Fill in all fields.",
+    "phone": "Phone",
+    "number": "Number",
+    "bank": "Bank",
+    "logOut": "Log Out",
+    "dashTitle": "Welcome to the DLRP Phone System",
+    "dashDesc": "Dream Legacy RolePlay (DLRP) is an immersive roleplay community built on experience and storytelling. This phone system gives you access to a fully-featured in-game smartphone with apps, contacts, banking, and more.",
+    "featuresTitle": "Features",
+    "fDialer": "Dialer", "fDialerDesc": "Call contacts and emergency services",
+    "fMessages": "Messages", "fMessagesDesc": "Text any contact in your phonebook",
+    "fBank": "Bank", "fBankDesc": "Deposit, withdraw, and transfer money",
+    "fJobs": "Jobs", "fJobsDesc": "Apply for jobs and manage your career",
+    "fVehicles": "Vehicles", "fVehiclesDesc": "Register and manage your vehicles",
+    "fProperty": "Property", "fPropertyDesc": "Buy and manage properties",
+    "fBusiness": "Businesses", "fBusinessDesc": "Own and operate businesses",
+    "fMarket": "Marketplace", "fMarketDesc": "Buy and sell inventory items",
+    "fGov": "Government", "fGovDesc": "Your citizen ID and identification",
+    "fBrowser": "Browser", "fBrowserDesc": "In-game web browser",
+    "fDreamgramDesc": "Social media with posts and DMs",
+    "fEmergency": "Emergency", "fEmergencyDesc": "Quick access to police and EMS",
+    "gettingStarted": "Getting Started",
+    "step1": "1. Choose a phone model from the",
+    "step2": "2. Log in with your whitelisted RP Name and password.",
+    "step3": "3. Explore the DreamOS interface with all its apps and features.",
+    "step4": "4. Manage your profile, bank account, and settings from the panel."
+  }
+}

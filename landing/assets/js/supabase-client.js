@@ -1,0 +1,162 @@
+/* ============================================================
+   Dream Legacy RP — Adaptador de base de datos (Supabase)
+   ------------------------------------------------------------
+   Sustituye al backend REST que nunca se llegó a construir
+   (Phonesite/Database estaba "Coming Soon"). En vez de montar
+   y mantener un servidor Node/Express aparte, usamos Supabase:
+   Postgres gratis y estable, con funciones RPC seguras
+   (ver /database/schema.sql).
+
+   Expone la misma firma que usaba el código original:
+       api(path, method, body) -> Promise
+   así que app.js casi no cambia.
+
+   CONFIGURA AQUÍ tu proyecto de Supabase (Project Settings -> API):
+   ============================================================ */
+
+var SUPABASE_URL = "https://TU-PROYECTO.supabase.co";
+var SUPABASE_ANON_KEY = "TU_ANON_KEY_PUBLICA";
+
+var _sb = null;
+function getSupabase() {
+    if (!_sb) {
+        if (!window.supabase) throw new Error("Supabase JS no se ha cargado todavía.");
+        _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+    return _sb;
+}
+
+function rpcFail(err) {
+    throw new Error((err && err.message) || "Database error.");
+}
+
+/**
+ * api(path, method, body)
+ * Traduce cada "endpoint" antiguo a una función RPC de Supabase.
+ */
+function api(path, method, body) {
+    var sb = getSupabase();
+    body = body || {};
+
+    if (path === "/api/health") {
+        return sb.rpc("dlrp_health").then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return { ok: true };
+        });
+    }
+
+    if (path === "/api/whitelist") {
+        return sb.rpc("dlrp_whitelist_signup", {
+            p_rp_name: body.rpName,
+            p_discord_user: body.discordUser,
+            p_psn: body.psn,
+            p_password: body.password,
+            p_story: body.story,
+            p_extra_info: body.extraInfo || ""
+        }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
+    if (path === "/api/login") {
+        return sb.rpc("dlrp_login", {
+            p_rp_name: body.username,
+            p_password: body.password
+        }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data; // { token, profile }
+        });
+    }
+
+    if (path === "/api/logout") {
+        return sb.rpc("dlrp_logout", { p_token: body.key }).then(function () {
+            return { ok: true };
+        });
+    }
+
+    if (path === "/api/profile/update") {
+        return sb.rpc("dlrp_update_profile", {
+            p_token: body.key, p_psn: body.psn || "", p_story: body.story || "", p_extra_info: body.extraInfo || ""
+        }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data; // { profile }
+        });
+    }
+
+    if (path === "/api/profile/theme") {
+        return sb.rpc("dlrp_set_theme", { p_token: body.key, p_theme: body.theme }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return { ok: true };
+        });
+    }
+
+    if (path === "/api/profile/favorites/add") {
+        return sb.rpc("dlrp_add_favorite", { p_token: body.key, p_url: body.url, p_title: body.title }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return { favorites: r.data };
+        });
+    }
+
+    if (path === "/api/profile/favorites/remove") {
+        return sb.rpc("dlrp_remove_favorite", { p_token: body.key, p_url: body.url }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return { favorites: r.data };
+        });
+    }
+
+    if (path.indexOf("/api/profile/") === 0) {
+        var token = decodeURIComponent(path.slice("/api/profile/".length));
+        return sb.rpc("dlrp_get_profile", { p_token: token }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
+    if (path.indexOf("/api/jobs/") === 0 && path !== "/api/jobs/apply") {
+        var jobId = decodeURIComponent(path.slice("/api/jobs/".length));
+        return sb.rpc("dlrp_get_job_people", { p_job_id: jobId }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data; // { people: [...] }
+        });
+    }
+
+    if (path === "/api/jobs/apply") {
+        return sb.rpc("dlrp_apply_job", { p_rp_name: body.rpName, p_job_id: body.jobId }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
+    if (path === "/api/phone/sync") {
+        return sb.rpc("dlrp_sync_phone_profile", {
+            p_token: body.key, p_bank: body.bank, p_cash: body.cash,
+            p_phone_owned: body.phoneOwned, p_phone_number: body.phoneNumber, p_phone_data: body.phoneData
+        }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
+    if (path === "/api/phone/buy") {
+        return sb.rpc("dlrp_buy_phone", {
+            p_token: body.key, p_model: body.model, p_price: body.price
+        }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
+    if (path === "/api/bank/transfer") {
+        return sb.rpc("dlrp_transfer_bank", {
+            p_token: body.key, p_to_rp_name: body.toRpName, p_amount: body.amount
+        }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
+    return Promise.reject(new Error("Unknown endpoint: " + path));
+}
+
+window.api = api;

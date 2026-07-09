@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title data-i18n="meta.title">DLRP | Panel</title>
+<link rel="icon" href="../landing/assets/img/dlrp.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="glow"></div><div class="glow glow2"></div>
+
+<div class="topbar">
+    <a class="brand" href="index.html">
+        <img src="assets/img/dlrp.png" alt="DLRP" onerror="this.style.display='none'">
+        <span class="brand-title">Dream <span>Legacy</span> RolePlay</span>
+    </a>
+    <div class="nav-links">
+        <a href="index.html" class="active" data-i18n="nav.panel">Panel</a>
+        <a href="os/index.html" data-i18n="nav.phoneShop">Phone Shop</a>
+        <a href="os/os.html" data-i18n="nav.dreamOs">DreamOS</a>
+        <div class="lang-switch">
+            <select id="lang-select" aria-label="Language / Idioma">
+                <option value="es">ES</option>
+                <option value="en">EN</option>
+                <option value="fr">FR</option>
+                <option value="pt">PT</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="main-wrap">
+    <!-- Profile Bar -->
+    <div id="profile-bar" class="profile-bar hidden">
+        <img id="prof-pfp" src="" style="width:36px;height:36px;border-radius:50%;object-fit:cover;display:none;border:2px solid rgba(124,58,237,0.2);">
+        <span class="rp-name" id="prof-name">-</span>
+        <span class="stat"><span data-i18n="panel.phone">Phone</span>: <strong id="prof-phone">None</strong></span>
+        <span class="stat"><span data-i18n="panel.number">Number</span>: <strong id="prof-num">-</strong></span>
+        <span class="stat"><span data-i18n="panel.bank">Bank</span>: <strong id="prof-bank">$0</strong></span>
+        <button class="logout-btn" onclick="logout()" data-i18n="panel.logOut">Log Out</button>
+    </div>
+
+    <!-- Auth Screen -->
+    <div id="auth-screen">
+        <div class="form-card card">
+            <div class="card-inner" id="auth-inner">
+                <div class="brand-icon"><img src="assets/img/dlrp.png" alt="DLRP" onerror="this.style.display='none'"></div>
+                <h1 data-i18n="panel.welcome">Welcome to DLRP</h1>
+                <p class="sub" data-i18n="panel.loginSub">Log in with your whitelisted RP Name to access the phone system.</p>
+                <div class="form-field">
+                    <label for="auth-name" data-i18n="whitelist.rpName">RP Name</label>
+                    <input type="text" id="auth-name" data-i18n-placeholder="whitelist.rpNamePh" placeholder="e.g. John_Marston" autocomplete="off">
+                </div>
+                <div class="form-field">
+                    <label for="auth-pass" data-i18n="whitelist.password">Password</label>
+                    <input type="password" id="auth-pass" data-i18n-placeholder="login.passwordPh" placeholder="Enter password" onkeydown="if(event.key==='Enter')authSubmit()">
+                </div>
+                <div id="auth-error" class="form-error"></div>
+                <div class="actions">
+                    <button class="btn primary" onclick="authSubmit()" id="auth-submit-btn" style="flex:1;" data-i18n="login.submit">Log In</button>
+                </div>
+                <p class="sub" style="margin-top:14px;">
+                    <a href="https://dreamlegacyrp.xyz/#whitelist" style="color:var(--cyan);" data-i18n="panel.needWhitelist">Not whitelisted yet? Apply here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="hidden">
+        <div class="section">
+            <h2 data-i18n="panel.dashTitle">Welcome to the DLRP Phone System</h2>
+            <p data-i18n="panel.dashDesc">Dream Legacy RolePlay (DLRP) is an immersive roleplay community built on experience and storytelling. This phone system gives you access to a fully-featured in-game smartphone with apps, contacts, banking, and more.</p>
+        </div>
+
+        <div class="section">
+            <h2 data-i18n="panel.featuresTitle">Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card"><div class="fc-icon">&#128222;</div><div class="fc-name" data-i18n="panel.fDialer">Dialer</div><div class="fc-desc" data-i18n="panel.fDialerDesc">Call contacts and emergency services</div></div>
+                <div class="feature-card"><div class="fc-icon">&#9993;</div><div class="fc-name" data-i18n="panel.fMessages">Messages</div><div class="fc-desc" data-i18n="panel.fMessagesDesc">Text any contact in your phonebook</div></div>
+                <div class="feature-card"><div class="fc-icon">&#128184;</div><div class="fc-name" data-i18n="panel.fBank">Bank</div><div class="fc-desc" data-i18n="panel.fBankDesc">Deposit, withdraw, and transfer money</div></div>
+                <div class="feature-card"><div class="fc-icon">&#128188;</div><div class="fc-name" data-i18n="panel.fJobs">Jobs</div><div class="fc-desc" data-i18n="panel.fJobsDesc">Apply for jobs and manage your career</div></div>
+                <div class="feature-card"><div class="fc-icon">&#128662;</div><div class="fc-name" data-i18n="panel.fVehicles">Vehicles</div><div class="fc-desc" data-i18n="panel.fVehiclesDesc">Register and manage your vehicles</div></div>
+                <div class="feature-card"><div class="fc-icon">&#127968;</div><div class="fc-name" data-i18n="panel.fProperty">Property</div><div class="fc-desc" data-i18n="panel.fPropertyDesc">Buy and manage properties</div></div>
+                <div class="feature-card"><div class="fc-icon">&#127981;</div><div class="fc-name" data-i18n="panel.fBusiness">Businesses</div><div class="fc-desc" data-i18n="panel.fBusinessDesc">Own and operate businesses</div></div>
+                <div class="feature-card"><div class="fc-icon">&#128230;</div><div class="fc-name" data-i18n="panel.fMarket">Marketplace</div><div class="fc-desc" data-i18n="panel.fMarketDesc">Buy and sell inventory items</div></div>
+                <div class="feature-card"><div class="fc-icon">&#128179;</div><div class="fc-name" data-i18n="panel.fGov">Government</div><div class="fc-desc" data-i18n="panel.fGovDesc">Your citizen ID and identification</div></div>
+                <div class="feature-card"><div class="fc-icon">&#127760;</div><div class="fc-name" data-i18n="panel.fBrowser">Browser</div><div class="fc-desc" data-i18n="panel.fBrowserDesc">In-game web browser</div></div>
+                <div class="feature-card"><div class="fc-icon">&#128247;</div><div class="fc-name">DreamGram</div><div class="fc-desc" data-i18n="panel.fDreamgramDesc">Social media with posts and DMs</div></div>
+                <div class="feature-card"><div class="fc-icon">&#128737;</div><div class="fc-name" data-i18n="panel.fEmergency">Emergency</div><div class="fc-desc" data-i18n="panel.fEmergencyDesc">Quick access to police and EMS</div></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 data-i18n="panel.gettingStarted">Getting Started</h2>
+            <p><span data-i18n="panel.step1">1. Choose a phone model from the</span> <a href="os/index.html" style="color:var(--cyan);" data-i18n="nav.phoneShop">Phone Shop</a>.</p>
+            <p data-i18n="panel.step2">2. Log in with your whitelisted RP Name and password.</p>
+            <p data-i18n="panel.step3">3. Explore the DreamOS interface with all its apps and features.</p>
+            <p data-i18n="panel.step4">4. Manage your profile, bank account, and settings from the panel.</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="assets/js/i18n.js" defer></script>
+<script src="assets/js/supabase-client.js" defer></script>
+<script src="assets/js/app.js" defer></script>
+</body>
+</html>

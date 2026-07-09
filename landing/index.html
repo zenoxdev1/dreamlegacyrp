@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="meta.title">Dream Legacy RP</title>
+<meta name="description" content="Dream Legacy RP - Proyecto de roleplay para PS3 potenciado por RLO">
+<link rel="icon" href="assets/img/dlrp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="site-shell">
+    <nav class="topbar" aria-label="Main navigation">
+        <a class="brand" href="#" onclick="setTab('rrp'); return false;" aria-label="Dream Legacy RP home">
+            <span class="brand-badge">DLRP</span>
+            <span class="brand-title">
+                <strong>Dream Legacy RP<span class="text-accent">:</span>Enhanced</strong>
+                <span data-i18n="nav.tagline">PS3 online project</span>
+            </span>
+        </a>
+
+        <div class="tabs" role="tablist" aria-label="Site sections">
+            <button id="btn-rrp" class="tab-button active" type="button" role="tab" aria-selected="true" onclick="setTab('rrp')" data-i18n="nav.rrp">RRP</button>
+            <button id="btn-whitelist" class="tab-button" type="button" role="tab" aria-selected="false" onclick="setTab('whitelist')" data-i18n="nav.whitelist">Whitelist</button>
+            <button id="btn-profile" class="tab-button hidden" type="button" role="tab" aria-selected="false" onclick="setTab('profile')" data-i18n="nav.profile">Profile</button>
+            <button id="btn-jobs" class="tab-button" type="button" role="tab" aria-selected="false" onclick="setTab('jobs')" data-i18n="nav.jobs">Jobs</button>
+            <button id="btn-settings" class="tab-button" type="button" role="tab" aria-selected="false" onclick="setTab('settings')" data-i18n="nav.settings">Settings</button>
+        </div>
+
+        <div class="top-right-group">
+            <span class="status-dot" id="status-dot" data-i18n-title="nav.checkingServer" title="Checking server..."></span>
+            <img id="top-logo" class="top-logo" src="assets/img/dlrp.png" alt="Dream Legacy RP Logo">
+            <span class="top-rrp-label">Dream Legacy RP</span>
+            <div class="lang-switch">
+                <select id="lang-select" aria-label="Language / Idioma">
+                    <option value="es">ES</option>
+                    <option value="en">EN</option>
+                    <option value="fr">FR</option>
+                    <option value="pt">PT</option>
+                </select>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-wrap">
+        <div id="tab-rrp" class="tab-panel" role="tabpanel" aria-labelledby="btn-rrp">
+            <div class="hero rrp-hero">
+                <div class="hero-copy reveal">
+                    <div class="eyebrow" data-i18n="hero.eyebrow">Roleplay setup</div>
+                    <h1 class="hero-title">Dream Legacy RP</h1>
+                    <p class="lead" data-i18n="hero.lead">Dream Legacy RP is the PlayStation 3 roleplay project powered by RLO. Join the Discord servers, complete verification, submit your whitelist application, and get ready to connect.</p>
+                    <div class="label-row">
+                        <span class="chip" data-i18n="hero.chip1">PS3 console</span>
+                        <span class="chip" data-i18n="hero.chip2">CFW or HEN</span>
+                        <span class="chip" data-i18n="hero.chip3">Discord required</span>
+                    </div>
+                    <div class="actions">
+                        <a class="btn discord" href="https://discord.gg/fywDbAzPg6" target="_blank" rel="noopener" data-i18n="hero.discordDlrp">Dream Legacy RP Discord</a>
+                        <a class="btn discord" href="https://discord.gg/NEbpKm8bww" target="_blank" rel="noopener" data-i18n="hero.discordRlo">RLO Discord</a>
+                    </div>
+                </div>
+                <div class="map-frame reveal" data-tilt>
+                    <img src="assets/img/gtav-neighborhoods.png" alt="Map of Los Santos neighborhoods">
+                </div>
+            </div>
+
+            <div class="section-head reveal">
+                <div><div class="section-kicker text-accent" data-i18n="join.kicker">Access flow</div><h2 data-i18n="join.title">How to Join</h2></div>
+                <p data-i18n="join.desc">The steps below keep the community organized and make sure each player is ready before joining.</p>
+            </div>
+
+            <div class="grid two setup-grid">
+                <div class="card reveal" data-tilt>
+                    <div class="card-inner">
+                        <h3 data-i18n="join.reqTitle">Requirements</h3>
+                        <ol class="step-list">
+                            <li data-i18n="join.req1">PlayStation 3 console.</li>
+                            <li data-i18n="join.req2">Custom Firmware (CFW) or HEN installed.</li>
+                            <li data-i18n="join.req3">A valid Discord account.</li>
+                            <li data-i18n="join.req4">GTAO: Reloaded installed.</li>
+                            <li data-i18n="join.req5">A new PSN account for roleplay.</li>
+                            <li data-i18n="join.req6">A new GTA Online character.</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="card reveal" data-tilt>
+                    <div class="card-inner">
+                        <h3 data-i18n="join.enlistTitle">Enlistment</h3>
+                        <ol class="step-list">
+                            <li data-i18n="join.enlist1">Join the Dream Legacy RP, and RLO Discord servers.</li>
+                            <li data-i18n="join.enlist2">Complete the required verification.</li>
+                            <li data-i18n="join.enlist3">Submit a whitelist application.</li>
+                            <li data-i18n="join.enlist4">Once approved, you are ready to connect.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card reveal">
+                <div class="card-inner">
+                    <div class="section-head" style="border-bottom:0;padding-bottom:20px;">
+                        <div><div class="section-kicker text-accent" data-i18n="map.kicker">The city</div><h2 data-i18n="map.title">Neighborhood Map</h2></div>
+                        <p data-i18n="map.desc">Use the city map as a visual reference for districts, routes, scenes, and roleplay planning.</p>
+                    </div>
+                    <div class="map-frame"><img src="assets/img/gtav-neighborhoods.png" alt="Detailed Los Santos neighborhood map"></div>
+                </div>
+            </div>
+
+            <div class="card reveal">
+                <div class="card-inner">
+                    <div class="section-head" style="border-bottom:0;padding-bottom:0;">
+                        <div><div class="section-kicker text-accent" data-i18n="ready.kicker">Ready?</div><h2 data-i18n="ready.title">Start the Process</h2></div>
+                        <div class="actions">
+                            <a class="btn discord" href="https://discord.gg/fywDbAzPg6" target="_blank" rel="noopener" data-i18n="ready.discordDlrp">RRP Discord</a>
+                            <a class="btn discord" href="https://discord.gg/NEbpKm8bww" target="_blank" rel="noopener" data-i18n="hero.discordRlo">RLO Discord</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-whitelist" class="tab-panel hidden" role="tabpanel" aria-labelledby="btn-whitelist">
+            <div class="hero" style="grid-template-columns:1fr;max-width:640px;margin:0 auto;">
+                <div class="hero-copy reveal" style="text-align:center;">
+                    <div class="eyebrow" style="margin:0 auto;" data-i18n="whitelist.eyebrow">Whitelist application</div>
+                    <h1 class="hero-title" style="font-size:clamp(48px,8vw,96px);" data-i18n="whitelist.title">Join RRP</h1>
+                    <p class="lead" style="margin:0 auto;" data-i18n="whitelist.lead">Submit your application below to join the Reloading RP community. Fields marked optional can be left blank.</p>
+                </div>
+            </div>
+
+            <div class="card reveal" style="max-width:640px;margin:0 auto;">
+                <div class="card-inner">
+                    <form id="whitelist-form">
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label for="rp-name" data-i18n="whitelist.rpName">RP Name</label>
+                                <input type="text" id="rp-name" data-i18n-placeholder="whitelist.rpNamePh" placeholder="e.g. John_Marston" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="discord-user" data-i18n="whitelist.discordUser">Discord User</label>
+                                <input type="text" id="discord-user" data-i18n-placeholder="whitelist.discordUserPh" placeholder="e.g. user#0000" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="psn" data-i18n="whitelist.psn">PSN</label>
+                                <input type="text" id="psn" data-i18n-placeholder="whitelist.psnPh" placeholder="e.g. PSN_Username" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="password" data-i18n="whitelist.password">Password</label>
+                                <input type="password" id="password" data-i18n-placeholder="whitelist.passwordPh" placeholder="Choose a password" required>
+                            </div>
+                            <div class="form-field full">
+                                <label for="story" data-i18n="whitelist.story">Story</label>
+                                <textarea id="story" rows="5" data-i18n-placeholder="whitelist.storyPh" placeholder="Tell us about your character's backstory, motivations, and personality..." required></textarea>
+                            </div>
+                            <div class="form-field full">
+                                <label for="extra-info"><span data-i18n="whitelist.extraInfo">More Character Info</span> <span class="optional" data-i18n="whitelist.optional">(optional)</span></label>
+                                <textarea id="extra-info" rows="4" data-i18n-placeholder="whitelist.extraInfoPh" placeholder="Any additional details - appearance, skills, affiliations, etc."></textarea>
+                            </div>
+                        </div>
+                        <div class="actions" style="margin-top:28px;">
+                            <button class="btn primary" type="submit" style="width:100%;" data-i18n="whitelist.submit">Submit Application</button>
+                        </div>
+                    </form>
+                    <div class="actions" style="margin-top:16px;justify-content:center;">
+                        <button class="btn" type="button" onclick="openLogin()" style="width:100%;" data-i18n="whitelist.alreadyLogin">Already whitelisted? Log in</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-jobs" class="tab-panel hidden" role="tabpanel" aria-labelledby="btn-jobs">
+            <div class="hero" style="grid-template-columns:1fr;">
+                <div class="hero-copy reveal" style="text-align:center;">
+                    <div class="eyebrow" style="margin:0 auto;" data-i18n="jobs.eyebrow">Career opportunities</div>
+                    <h1 class="hero-title" style="font-size:clamp(48px,8vw,96px);" data-i18n="jobs.title">Jobs</h1>
+                    <p class="lead" style="margin:0 auto;" data-i18n="jobs.lead">Browse available roles and apply to start your career in Los Santos.</p>
+                </div>
+            </div>
+
+            <div id="jobs-grid" class="grid three"></div>
+
+            <div id="job-detail" class="hidden">
+                <button class="btn" type="button" onclick="backToJobs()" style="margin-bottom:8px;" data-i18n="jobs.backToJobs">Back to Jobs</button>
+                <div class="hero" style="grid-template-columns:1fr;">
+                    <div class="hero-copy reveal" style="text-align:center;">
+                        <div class="eyebrow" style="margin:0 auto;" id="job-detail-eyebrow">-</div>
+                        <h1 class="hero-title" id="job-detail-title" style="font-size:clamp(48px,8vw,96px);">-</h1>
+                        <p class="lead" id="job-detail-desc" style="margin:0 auto;">-</p>
+                    </div>
+                </div>
+                <div class="card reveal" style="max-width:640px;margin:0 auto;">
+                    <div class="card-inner">
+                        <div class="section-head" style="border-bottom:0;padding-bottom:16px;">
+                            <div><div class="section-kicker text-accent" data-i18n="jobs.workforce">Workforce</div><h3 id="job-detail-people-heading">People with this job (0)</h3></div>
+                            <button class="btn primary" type="button" id="job-apply-btn" onclick="applyForJob()" data-i18n="jobs.apply">Apply</button>
+                        </div>
+                        <div id="job-people-list" style="display:grid;gap:10px;"><p style="color:var(--muted);" data-i18n="jobs.noOne">No one has this job yet.</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="starter-jobs" class="hidden">
+                <button class="btn" type="button" onclick="backToJobs()" style="margin-bottom:8px;" data-i18n="jobs.backToJobs">Back to Jobs</button>
+                <div class="hero" style="grid-template-columns:1fr;">
+                    <div class="hero-copy reveal" style="text-align:center;">
+                        <div class="eyebrow" style="margin:0 auto;" data-i18n="jobs.entryLevel">Entry level</div>
+                        <h1 class="hero-title" style="font-size:clamp(48px,8vw,96px);" data-i18n="jobs.starterTitle">Starter Jobs</h1>
+                        <p class="lead" style="margin:0 auto;" data-i18n="jobs.starterLead">Low-commitment roles to get you started.</p>
+                    </div>
+                </div>
+                <div class="grid three" id="starter-jobs-grid"></div>
+                <div id="starter-detail" class="hidden">
+                    <button class="btn" type="button" onclick="backToStarterJobs()" style="margin-bottom:8px;" data-i18n="jobs.backToStarter">Back to Starter Jobs</button>
+                    <div class="hero" style="grid-template-columns:1fr;">
+                        <div class="hero-copy reveal" style="text-align:center;">
+                            <div class="eyebrow" style="margin:0 auto;" id="starter-detail-eyebrow">-</div>
+                            <h1 class="hero-title" id="starter-detail-title" style="font-size:clamp(48px,8vw,96px);">-</h1>
+                            <p class="lead" id="starter-detail-desc" style="margin:0 auto;">-</p>
+                        </div>
+                    </div>
+                    <div class="card reveal" style="max-width:640px;margin:0 auto;">
+                        <div class="card-inner">
+                            <div class="section-head" style="border-bottom:0;padding-bottom:16px;">
+                                <div><div class="section-kicker text-accent" data-i18n="jobs.workforce">Workforce</div><h3 id="starter-detail-people-heading">People with this job (0)</h3></div>
+                                <button class="btn primary" type="button" id="starter-apply-btn" onclick="applyForStarterJob()" data-i18n="jobs.apply">Apply</button>
+                            </div>
+                            <div id="starter-people-list" style="display:grid;gap:10px;"><p style="color:var(--muted);" data-i18n="jobs.noOne">No one has this job yet.</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-settings" class="tab-panel hidden" role="tabpanel" aria-labelledby="btn-settings">
+            <div class="hero" style="grid-template-columns:1fr;max-width:800px;margin:0 auto;">
+                <div class="hero-copy reveal" style="text-align:center;">
+                    <div class="eyebrow" style="margin:0 auto;" data-i18n="settings.eyebrow">Preferences</div>
+                    <h1 class="hero-title" style="font-size:clamp(48px,8vw,96px);" data-i18n="settings.title">Settings</h1>
+                    <p class="lead" style="margin:0 auto;" data-i18n="settings.lead">Choose your theme, music, and more.</p>
+                </div>
+            </div>
+
+            <div class="settings-grid">
+                <div class="card reveal">
+                    <div class="card-inner">
+                        <div class="section-head" style="border-bottom:0;padding-bottom:16px;">
+                            <div>
+                                <div class="section-kicker text-accent" data-i18n="settings.appearance">Appearance</div>
+                                <h3 data-i18n="settings.theme">Theme</h3>
+                            </div>
+                            <span id="current-theme-label" style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);padding:6px 12px;border:1px solid var(--line);border-radius:999px;">Michael</span>
+                        </div>
+                        <p style="color:var(--muted);margin-bottom:18px;" data-i18n="settings.themeDesc">Pick a color palette inspired by the three protagonists.</p>
+                        <div class="theme-grid">
+                            <div class="theme-option" onclick="setTheme('michael')" data-theme="michael">
+                                <div class="theme-swatch" style="background:linear-gradient(135deg,#2f73ff,#1746a8);"></div>
+                                <div class="theme-info">
+                                    <strong>Michael</strong>
+                                    <span data-i18n="settings.themeMichael">Original blue</span>
+                                </div>
+                                <div class="theme-check">&#10003;</div>
+                            </div>
+                            <div class="theme-option" onclick="setTheme('trevor')" data-theme="trevor">
+                                <div class="theme-swatch" style="background:linear-gradient(135deg,#e84c1d,#a8320a);"></div>
+                                <div class="theme-info">
+                                    <strong>Trevor</strong>
+                                    <span data-i18n="settings.themeTrevor">Bloody orange</span>
+                                </div>
+                                <div class="theme-check">&#10003;</div>
+                            </div>
+                            <div class="theme-option" onclick="setTheme('franklin')" data-theme="franklin">
+                                <div class="theme-swatch" style="background:linear-gradient(135deg,#2eaa5f,#1a7a3f);"></div>
+                                <div class="theme-info">
+                                    <strong>Franklin</strong>
+                                    <span data-i18n="settings.themeFranklin">Green</span>
+                                </div>
+                                <div class="theme-check">&#10003;</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card reveal">
+                    <div class="card-inner">
+                        <div class="section-head" style="border-bottom:0;padding-bottom:16px;">
+                            <div>
+                                <div class="section-kicker text-accent" data-i18n="settings.acknowledgments">Acknowledgments</div>
+                                <h3 data-i18n="settings.credits">Credits</h3>
+                            </div>
+                        </div>
+                        <div class="credit-list">
+                            <div class="credit-entry">
+                                <div class="credit-avatar" style="background:linear-gradient(135deg,var(--blue),var(--blue-dark));">UD</div>
+                                <div class="credit-info">
+                                    <strong>UnknownDev</strong>
+                                    <span data-i18n="settings.founderCredit">Founder of Dream Legacy RP</span>
+                                </div>
+                            </div>
+                            <div class="credit-entry">
+                                <div class="credit-avatar" style="background:linear-gradient(135deg,#5865f2,#4050d8);">JV</div>
+                                <div class="credit-info">
+                                    <strong>JamezVfx</strong>
+                                    <span data-i18n="settings.jamezCredit">GTA Reloaded Owner &amp; Collaborator</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card reveal" style="grid-column:1/-1;">
+                    <div class="card-inner">
+                        <div class="section-head" style="border-bottom:0;padding-bottom:16px;">
+                            <div>
+                                <div class="section-kicker text-accent" data-i18n="settings.audio">Audio</div>
+                                <h3 data-i18n="settings.musicPlayer">Music Player</h3>
+                            </div>
+                            <span id="music-status" style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);padding:6px 12px;border:1px solid var(--line);border-radius:999px;" data-i18n="settings.stopped">Stopped</span>
+                        </div>
+                        <p style="color:var(--muted);margin-bottom:18px;" data-i18n="settings.musicDesc">Paste a YouTube link to play music in the background.</p>
+                        <div class="music-input-row">
+                            <input type="text" id="music-url" class="music-input" data-i18n-placeholder="settings.musicPh" placeholder="https://youtube.com/watch?v=..." onkeydown="if(event.key==='Enter')playMusic()">
+                            <button class="btn primary" type="button" onclick="playMusic()" id="music-play-btn" data-i18n="settings.play">Play</button>
+                        </div>
+                        <div class="music-controls" id="music-controls" style="display:none;">
+                            <div class="music-info">
+                                <span id="music-title" style="color:#fff;font-size:14px;font-weight:600;">-</span>
+                            </div>
+                            <div class="music-buttons">
+                                <button class="btn music-btn" type="button" onclick="toggleMusic()" id="music-toggle-btn" title="Play/Pause">&#9646;&#9646;</button>
+                                <button class="btn music-btn" type="button" onclick="stopMusic()" title="Stop">&#9632;</button>
+                            </div>
+                            <div class="music-volume-row">
+                                <span class="music-vol-label" data-i18n="settings.vol">Vol</span>
+                                <input type="range" id="music-volume" class="music-slider" min="0" max="100" value="50" oninput="setMusicVolume(this.value)">
+                            </div>
+                        </div>
+                        <div id="favorites-section" style="margin-top:18px;display:none;">
+                            <div class="section-head" style="border-bottom:0;padding:12px 0 8px;">
+                                <div><div class="section-kicker text-accent" data-i18n="settings.saved">Saved</div><h3 style="font-size:18px;" data-i18n="settings.favorites">Favorites</h3></div>
+                            </div>
+                            <div id="favorites-list" style="display:grid;gap:8px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-profile" class="tab-panel hidden" role="tabpanel" aria-labelledby="btn-profile">
+            <div class="hero" style="grid-template-columns:1fr;max-width:640px;margin:0 auto;">
+                <div class="hero-copy reveal" style="text-align:center;">
+                    <div class="eyebrow" style="margin:0 auto;" data-i18n="profile.eyebrow">Welcome back</div>
+                    <h1 class="hero-title" id="profile-rpname" style="font-size:clamp(48px,8vw,96px);">-</h1>
+                    <p class="lead" style="margin:0 auto;" data-i18n="profile.subtitle">Your whitelist profile</p>
+                </div>
+            </div>
+
+            <div class="card reveal" style="max-width:640px;margin:0 auto;">
+                <div class="card-inner">
+                    <div class="profile-grid" id="profile-content">
+                        <div class="profile-row"><span class="profile-label" data-i18n="whitelist.discordUser">Discord User</span><span id="profile-discord">-</span></div>
+                        <div class="profile-row"><span class="profile-label" data-i18n="whitelist.psn">PSN</span><span id="profile-psn">-</span></div>
+                        <div class="profile-row full"><span class="profile-label" data-i18n="whitelist.story">Story</span><p id="profile-story">-</p></div>
+                        <div class="profile-row full" id="profile-extra-row" style="display:none;"><span class="profile-label" data-i18n="whitelist.extraInfo">Extra Info</span><p id="profile-extra">-</p></div>
+                        <div class="profile-row full" id="profile-job-row" style="display:none;"><span class="profile-label" data-i18n="profile.job">Job</span><p id="profile-job">-</p></div>
+                        <div class="profile-row full" id="profile-status-row"><span class="profile-label" data-i18n="profile.status">Status</span><span id="profile-status-badge" class="profile-badge pending" data-i18n="profile.pending">Pending</span></div>
+                        <div class="profile-row full" id="profile-money-row"><span class="profile-label" data-i18n="profile.money">Money</span><p id="profile-money">$0</p></div>
+                    </div>
+                    <div class="actions" style="margin-top:28px;">
+                        <button class="btn" type="button" onclick="toggleEditProfile()" id="btn-edit-profile" style="width:100%;" data-i18n="profile.editProfile">Edit Profile</button>
+                        <button class="btn" type="button" onclick="logout()" style="width:100%;margin-top:8px;" data-i18n="profile.logOut">Log Out</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Profile Overlay -->
+            <div id="edit-profile-overlay" class="overlay hidden">
+                <div class="overlay-backdrop" onclick="closeEditProfile()"></div>
+                <div class="overlay-card">
+                    <div class="card" style="width:100%;max-width:480px;">
+                        <div class="card-inner">
+                            <div style="text-align:center;margin-bottom:24px;">
+                                <div class="section-kicker text-accent" data-i18n="profile.edit">Edit</div>
+                                <h3 style="margin-bottom:4px;" data-i18n="profile.editProfile">Edit Profile</h3>
+                                <p style="color:var(--muted);font-size:14px;" data-i18n="profile.editSubtitle">Update your whitelist details</p>
+                            </div>
+                            <form id="edit-profile-form" onsubmit="event.preventDefault(); saveEditProfile();">
+                                <div class="form-grid">
+                                    <div class="form-field">
+                                        <label for="edit-psn" data-i18n="whitelist.psn">PSN</label>
+                                        <input type="text" id="edit-psn" data-i18n-placeholder="profile.psnPh" placeholder="Your PSN ID">
+                                    </div>
+                                    <div class="form-field full">
+                                        <label for="edit-story" data-i18n="whitelist.story">Story</label>
+                                        <textarea id="edit-story" rows="4" data-i18n-placeholder="profile.storyPh" placeholder="Tell us about yourself..."></textarea>
+                                    </div>
+                                    <div class="form-field full">
+                                        <label for="edit-extra" data-i18n="whitelist.extraInfo">Extra Info</label>
+                                        <textarea id="edit-extra" rows="3" data-i18n-placeholder="profile.extraPh" placeholder="Anything else?"></textarea>
+                                    </div>
+                                </div>
+                                <div id="edit-profile-error" class="form-error hidden" data-i18n="profile.saveError">Error saving profile.</div>
+                                <button class="btn" type="submit" style="width:100%;" data-i18n="profile.saveChanges">Save Changes</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Footer -->
+    <div class="site-footer">
+        <a href="https://panel.dreamlegacyrp.xyz" target="_blank" rel="noopener">Dream Legacy RP</a>
+        <span>&copy; <span id="footer-year">2026</span> Dream Legacy RP</span>
+    </div>
+</div>
+
+<!-- Hidden YouTube Player -->
+<div id="youtube-player" style="position:fixed;bottom:0;left:0;width:1px;height:1px;opacity:0;pointer-events:none;z-index:-1;"></div>
+
+<!-- Notifications -->
+<div id="notif-container"></div>
+
+<!-- Login overlay -->
+<div id="login-overlay" class="overlay hidden">
+    <div class="overlay-backdrop" onclick="closeLogin()"></div>
+    <div class="overlay-card">
+        <div class="card" style="width:100%;max-width:440px;">
+            <div class="card-inner">
+                <div style="text-align:center;margin-bottom:24px;">
+                    <div class="section-kicker text-accent" data-i18n="profile.eyebrow">Welcome back</div>
+                    <h3 style="margin-bottom:4px;" data-i18n="login.title">Whitelist Login</h3>
+                    <p style="color:var(--muted);font-size:14px;" data-i18n="login.subtitle">Enter your RP Name and password</p>
+                </div>
+                <form id="login-form" onsubmit="event.preventDefault(); doLogin();">
+                    <div class="form-grid" style="grid-template-columns:1fr;">
+                        <div class="form-field">
+                            <label for="login-username" data-i18n="whitelist.rpName">RP Name</label>
+                            <input type="text" id="login-username" data-i18n-placeholder="whitelist.rpNamePh" placeholder="e.g. John_Marston" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="login-password" data-i18n="whitelist.password">Password</label>
+                            <input type="password" id="login-password" data-i18n-placeholder="login.passwordPh" placeholder="Your password" required>
+                        </div>
+                    </div>
+                    <div id="login-error" class="note hidden" style="margin-top:16px;" data-i18n="login.error">Invalid RP Name or password.</div>
+                    <div class="actions" style="margin-top:20px;">
+                        <button class="btn primary" type="submit" style="width:100%;" data-i18n="login.submit">Log In</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="assets/js/i18n.js" defer></script>
+<script src="assets/js/supabase-client.js" defer></script>
+<script src="assets/js/app.js" defer></script>
+</body>
+</html>
