@@ -1,5 +1,0 @@
-DLRP Phone System - User Backups
-==================================
-Format: Username | Password | Display Name | Phone Number | Bank | Cash | Created
-====================================================================================
-JohnMarston | JOHnmAesTON | John Marston | 555-0192 | 15000 | 3200 | 2026-01-15
