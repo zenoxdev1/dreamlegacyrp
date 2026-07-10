@@ -67,6 +67,10 @@
     "favorites": "Favorites"
   },
   "apply": {
+    "joinKicker": "One more step",
+    "joinTitle": "Join our Discord server first",
+    "joinDesc": "You need to be a member of the Dream Legacy RP Discord server before you can apply.",
+    "recheck": "I've joined \u2014 Check again",
     "kicker": "One more step",
     "title": "Apply for Whitelist",
     "desc": "Tell us about your character. We review every application manually and you'll get a DM on Discord once it's decided.",

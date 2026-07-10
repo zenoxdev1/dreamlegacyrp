@@ -67,6 +67,10 @@
     "favorites": "Favoris"
   },
   "apply": {
+    "joinKicker": "Derni\u00e8re \u00e9tape",
+    "joinTitle": "Rejoignez d'abord notre serveur Discord",
+    "joinDesc": "Vous devez \u00eatre membre du serveur Discord Dream Legacy RP avant de pouvoir postuler.",
+    "recheck": "J'ai rejoint \u2014 V\u00e9rifier \u00e0 nouveau",
     "kicker": "Derni\u00e8re \u00e9tape",
     "title": "Postuler \u00e0 la liste blanche",
     "desc": "Parlez-nous de votre personnage. Nous examinons chaque candidature manuellement et vous recevrez un DM sur Discord une fois la d\u00e9cision prise.",

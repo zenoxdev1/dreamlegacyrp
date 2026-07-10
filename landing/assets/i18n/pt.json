@@ -67,6 +67,10 @@
     "favorites": "Favoritos"
   },
   "apply": {
+    "joinKicker": "\u00daltima etapa",
+    "joinTitle": "Entre no nosso servidor do Discord primeiro",
+    "joinDesc": "Voc\u00ea precisa ser membro do servidor do Discord da Dream Legacy RP antes de poder se candidatar.",
+    "recheck": "Eu entrei \u2014 Verificar novamente",
     "kicker": "\u00daltima etapa",
     "title": "Candidatar-se \u00e0 lista branca",
     "desc": "Conte-nos sobre o seu personagem. Analisamos cada candidatura manualmente e voc\u00ea receber\u00e1 um DM no Discord assim que for decidido.",

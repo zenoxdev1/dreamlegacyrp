@@ -120,7 +120,7 @@
                 </div>
             </div>
 
-            <div class="card reveal">
+            <div class="card reveal" id="ready-card">
                 <div class="card-inner">
                     <div class="section-head" style="border-bottom:0;padding-bottom:0;">
                         <div><div class="section-kicker text-accent" data-i18n="ready.kicker">Ready?</div><h2 data-i18n="ready.title">Start the Process</h2></div>
@@ -256,6 +256,19 @@
                     <div class="eyebrow" style="margin:0 auto;" id="profile-eyebrow" data-i18n="profile.eyebrow">Welcome back</div>
                     <h1 class="hero-title" id="profile-rpname" style="font-size:clamp(40px,7vw,72px);">-</h1>
                     <p class="lead" style="margin:0 auto;" id="profile-subtitle" data-i18n="profile.subtitle">Your Dream Legacy RP account</p>
+                </div>
+            </div>
+
+            <!-- Estado: no esta en el servidor de Discord -->
+            <div id="join-server-card" class="card reveal hidden" style="max-width:640px;margin:0 auto;">
+                <div class="card-inner" style="text-align:center;">
+                    <div class="section-kicker text-accent" data-i18n="apply.joinKicker">One more step</div>
+                    <h3 style="margin:8px 0;" data-i18n="apply.joinTitle">Join our Discord server first</h3>
+                    <p style="color:var(--muted);margin-bottom:20px;" data-i18n="apply.joinDesc">You need to be a member of the Dream Legacy RP Discord server before you can apply.</p>
+                    <div class="actions" style="justify-content:center;">
+                        <a class="btn discord" href="https://discord.gg/fywDbAzPg6" target="_blank" rel="noopener" data-i18n="hero.discordDlrp">Join the DLRP Discord</a>
+                        <button type="button" class="btn primary" onclick="recheckGuildMembership()" id="recheck-btn" data-i18n="apply.recheck">I've joined — Check again</button>
+                    </div>
                 </div>
             </div>
 

@@ -261,6 +261,7 @@ function restoreSession() {
 function onAuthenticated(profile) {
     applyTheme(profile.theme || "michael");
     document.getElementById("btn-profile").classList.remove("hidden");
+    document.getElementById("ready-card").classList.add("hidden");
     if (profile.musicFavorites && profile.musicFavorites.length > 0) renderFavorites(profile.musicFavorites);
     showDiscordChip(profile);
     showProfile(profile);
@@ -280,7 +281,7 @@ function showDiscordChip(profile) {
 
 /* ---- Perfil / estado de la solicitud de whitelist ---- */
 
-var CARD_IDS = ["application-form-card", "application-pending-card", "application-approved-card", "application-denied-card"];
+var CARD_IDS = ["join-server-card", "application-form-card", "application-pending-card", "application-approved-card", "application-denied-card"];
 
 function showApplicationCard(id) {
     for (var i = 0; i < CARD_IDS.length; i++) {
@@ -302,13 +303,20 @@ function showProfile(data) {
     }
 
     var statusBadge = document.getElementById("profile-status-badge");
+
+    // Primero que nada: tiene que estar en el servidor de Discord.
+    // Sin esto, ni siquiera puede ver el formulario de solicitud.
+    if (!data.discordInGuild) {
+        showApplicationCard("join-server-card");
+        statusBadge.textContent = DLRP_I18N.t("profile.notInGuild", "Not a member");
+        statusBadge.className = "profile-badge denied";
+        return;
+    }
+
     var status = data.status || "pending";
     var hasApplied = !!data.appliedAt;
 
     if (!hasApplied) {
-        // Todavia no ha enviado la solicitud: precarga el formulario
-        // por si ya habia escrito algo antes (rpName/psn pueden venir
-        // vacios en un perfil recien creado por el login de Discord).
         document.getElementById("apply-rp-name").value = data.rpName || "";
         document.getElementById("apply-psn").value = data.psn || "";
         document.getElementById("apply-story").value = data.story || "";
@@ -332,6 +340,41 @@ function showProfile(data) {
         statusBadge.textContent = DLRP_I18N.t("profile.pending", "Pending");
         statusBadge.className = "profile-badge pending";
     }
+}
+
+function recheckGuildMembership() {
+    var key = getSessionKey();
+    if (!key) return;
+    var btn = document.getElementById("recheck-btn");
+    btn.disabled = true;
+    fetch("/api/discord/recheck", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key: key })
+    }).then(function(r) {
+        return r.json().then(function(d) { if (!r.ok) throw new Error(d.error || "Request failed"); return d; });
+    }).then(function(res) {
+        if (!res.discordInGuild) {
+            notify("Discord", "Still not seeing you in the server. Make sure you joined, then try again.");
+        } else {
+            notify("Discord", "You're in! You can now apply.");
+        }
+        showProfile({
+            rpName: res.rpName,
+            discordAvatar: document.getElementById("profile-avatar").src,
+            discordUsername: document.getElementById("discord-user-name").textContent,
+            discordInGuild: res.discordInGuild,
+            status: res.status,
+            appliedAt: res.appliedAt,
+            psn: res.psn,
+            story: res.story,
+            extraInfo: res.extraInfo
+        });
+    }).catch(function(err) {
+        notify("Error", err.message);
+    }).finally(function() {
+        btn.disabled = false;
+    });
 }
 
 var applicationForm = document.getElementById("application-form");
@@ -386,6 +429,7 @@ function logout() {
     document.getElementById("btn-profile").classList.add("hidden");
     document.getElementById("discord-login-btn").classList.remove("hidden");
     document.getElementById("discord-user-chip").classList.add("hidden");
+    document.getElementById("ready-card").classList.remove("hidden");
     setTab("rrp");
 }
 
