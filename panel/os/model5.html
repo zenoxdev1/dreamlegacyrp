@@ -140,8 +140,7 @@ h1 { font-family: 'Rajdhani', sans-serif; font-size: 28px; margin-bottom: 6px; }
         </div>
         <div class="card" id="buy-form">
             <div style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;margin-bottom:12px;">Buy Now</div>
-            <div class="form-field"><label>RP Name</label><input type="text" id="buy-name" placeholder="e.g. JohnMarston"></div>
-            <div class="form-field"><label>Password</label><input type="password" id="buy-pass" placeholder="Enter password"></div>
+            <p style="color:var(--muted);font-size:13px;margin-bottom:10px;">Buying as your logged-in Discord account.</p>
             <div class="form-error" id="buy-error"></div>
             <div class="actions"><button class="btn primary" onclick="buyPhone()" style="flex:1;">Purchase</button></div>
         </div>
@@ -152,19 +151,21 @@ h1 { font-family: 'Rajdhani', sans-serif; font-size: 28px; margin-bottom: 6px; }
 var PRICE = 899;
 var MODEL_NAME = "Sony Xperia Pro";
 
+function getSessionToken() {
+    try {
+        var raw = JSON.parse(localStorage.getItem("dlrp_panel_session"));
+        return raw && raw.key ? raw.key : null;
+    } catch (e) { return null; }
+}
+
 function buyPhone() {
-    var name = document.getElementById("buy-name").value.trim();
-    var pass = document.getElementById("buy-pass").value.trim();
-    if (!name || !pass) { showError("Fill in all fields."); return; }
+    var token = getSessionToken();
+    if (!token) { showError("Log in from the Panel first."); return; }
     showError("");
 
-    // Inicia sesion con las credenciales de whitelist (Supabase) y
-    // luego compra el telefono mediante la funcion RPC dlrp_buy_phone,
-    // que valida saldo y evita comprar dos veces desde el servidor.
-    api("/api/login", "POST", { username: name, password: pass }).then(function (res) {
-        localStorage.setItem("dlrp_panel_session", JSON.stringify({ key: res.token, rpName: res.profile.rpName }));
-        return api("/api/phone/buy", "POST", { key: res.token, model: MODEL_NAME, price: PRICE });
-    }).then(function (profile) {
+    // Compra el telefono mediante la funcion RPC dlrp_buy_phone, que
+    // valida saldo y evita comprar dos veces desde el servidor.
+    api("/api/phone/buy", "POST", { key: token, model: MODEL_NAME, price: PRICE }).then(function (profile) {
         document.getElementById("buy-form").innerHTML = '<div style="padding:20px;text-align:center;"><div style="font-size:48px;margin-bottom:10px;">&#9989;</div><div style="font-size:20px;font-weight:700;">Purchase Complete!</div><div style="color:var(--muted);margin-top:6px;">' + MODEL_NAME + '<br>Number: ' + profile.phoneNumber + '</div><a href="os.html" class="btn primary" style="display:inline-block;margin-top:16px;text-decoration:none;">Open DreamOS</a></div>';
     }).catch(function (err) {
         showError(err.message || "Purchase failed.");

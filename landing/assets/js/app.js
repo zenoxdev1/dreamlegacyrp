@@ -1,5 +1,6 @@
-var tabs = ["rrp", "whitelist", "profile", "jobs", "settings"];
+var tabs = ["rrp", "profile", "settings"];
 var SESSION_KEY = "rrp_session";
+
 function getSessionKey() {
     var raw = localStorage.getItem(SESSION_KEY);
     if (!raw) return null;
@@ -7,37 +8,10 @@ function getSessionKey() {
     return raw;
 }
 
-var jobsList = [
-    { id: "policeman",      emoji: "👮", name: "Policeman",      desc: "Enforce the law and keep the streets safe.", longDesc: "Patrol the city, respond to emergency calls, manage traffic, and investigate crimes. Maintain order and serve the community." },
-    { id: "taxi",           emoji: "🚕", name: "Taxi Driver",    desc: "Drive passengers across Los Santos.", longDesc: "Pick up fares, navigate the city, and provide reliable transportation. Earn tips for good service and quick routes." },
-    { id: "dealership",     emoji: "🚗", name: "Dealership",     desc: "Sell and trade vehicles.", longDesc: "Manage vehicle inventory, negotiate sales, and help citizens find the perfect ride. Knowledge of cars is a plus." },
-    { id: "ems",            emoji: "🚑", name: "EMS",            desc: "Save lives as an emergency medic.", longDesc: "Respond to medical emergencies, treat injuries, and transport patients to hospitals. Every second counts." },
-    { id: "soldier",        emoji: "🎖", name: "Soldier",        desc: "Defend the state as a trained operative.", longDesc: "Undergo combat training, participate in operations, and protect the city from threats. Discipline and teamwork are essential." },
-    { id: "pilot",          emoji: "✈",  name: "Pilot",          desc: "Fly aircraft across the state.", longDesc: "Operate planes and helicopters for transport, cargo, and emergency response. A pilot's license is verified." },
-    { id: "mechanic",       emoji: "🔧", name: "Mechanic",       desc: "Repair and tune vehicles.", longDesc: "Diagnose issues, perform repairs, and customize vehicles. Keep Los Santos moving from the garage." },
-    { id: "more-starters",  emoji: "💡", name: "More Starter Jobs\u2026", desc: "Entry-level roles for new arrivals.", longDesc: "" }
-];
-
-var starterJobsList = [
-    { id: "trashman",   emoji: "🧹", name: "Trashman",    desc: "Collect waste and keep the city clean.", longDesc: "Drive garbage routes, collect refuse, and maintain sanitation across the city. An honest day's work." },
-    { id: "uber",       emoji: "🚘", name: "Uber",        desc: "Ride-share driver for quick fares.", longDesc: "Use your own vehicle to transport passengers around town. Flexible hours, instant pay." },
-    { id: "cashier",    emoji: "🧾", name: "Cashier",     desc: "Ring up sales at local stores.", longDesc: "Process transactions, stock shelves, and assist customers. A great way to start your career." },
-    { id: "delivery",   emoji: "🚚", name: "Delivery Man", desc: "Deliver goods across the city.", longDesc: "Pick up packages and deliver them promptly. Reliable transportation required." }
-];
-
-var allJobNames = {};
-function buildJobNameMap() {
-    for (var i = 0; i < jobsList.length; i++) allJobNames[jobsList[i].id] = jobsList[i].name;
-    for (var i = 0; i < starterJobsList.length; i++) allJobNames[starterJobsList[i].id] = starterJobsList[i].name;
-}
-buildJobNameMap();
-
-function storageKey(name) { return "rrp_" + name.toLowerCase().replace(/[^a-z0-9]/g, ""); }
-
-// Nota: la función api(path, method, body) ya no vive aquí.
-// La implementa assets/js/supabase-client.js llamando a Supabase (RPC),
-// que se carga ANTES que este archivo y expone window.api con la
-// misma firma que el fetch() original.
+// Nota: la función api(path, method, body) vive en supabase-client.js.
+// El login/registro con nombre de usuario+contraseña (whitelist) se
+// eliminó; ahora la única forma de entrar es con Discord (ver
+// discord-auth.js y functions/api/discord/callback.js).
 
 /* ---- Music Player ---- */
 
@@ -158,7 +132,7 @@ function removeFavorite(url) {
 }
 
 function loadFavorites(key) {
-    api("/api/profile/" + key, "GET").then(function(profile) {
+    api("/api/profile/" + encodeURIComponent(key), "GET").then(function(profile) {
         if (profile.musicFavorites && profile.musicFavorites.length > 0) {
             renderFavorites(profile.musicFavorites);
         }
@@ -193,7 +167,7 @@ function notify(title, msg) {
     var container = document.getElementById("notif-container");
     var el = document.createElement("div");
     el.className = "notif";
-    el.innerHTML = '<div class="notif-title">' + title + '</div><div class="notif-msg">' + msg + '</div>';
+    el.innerHTML = '<div class="notif-title">' + escapeHtml(title) + '</div><div class="notif-msg">' + escapeHtml(msg) + '</div>';
     container.appendChild(el);
     setTimeout(function() {
         el.classList.add("out");
@@ -228,7 +202,7 @@ function setTheme(name) {
     applyTheme(name);
     document.getElementById("current-theme-label").textContent = themeNames[name];
     var key = getSessionKey();
-    if (!key) { notify("Not Logged In", "Log in to save your theme preference."); return; }
+    if (!key) { notify("Not Logged In", "Log in with Discord to save your theme preference."); return; }
     api("/api/profile/theme", "POST", { key: key, theme: name }).then(function() {
         notify("Theme Saved", "Theme set to " + themeNames[name] + ".");
     }).catch(function(err) {
@@ -255,7 +229,6 @@ setTimeout(checkServer, 500);
 /* ---- Tab system ---- */
 
 function setTab(tab) {
-    if (tab === "jobs") { backToJobs(); renderJobsGrid(); }
     for (var i = 0; i < tabs.length; i++) {
         var ct = tabs[i];
         var panel = document.getElementById("tab-" + ct);
@@ -270,103 +243,140 @@ function setTab(tab) {
     window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-/* ---- Whitelist ---- */
-
-document.getElementById("whitelist-form").addEventListener("submit", function(e) {
-    e.preventDefault();
-    var data = {
-        rpName: document.getElementById("rp-name").value.trim(),
-        discordUser: document.getElementById("discord-user").value.trim(),
-        psn: document.getElementById("psn").value.trim(),
-        password: document.getElementById("password").value,
-        story: document.getElementById("story").value.trim(),
-        extraInfo: document.getElementById("extra-info").value.trim()
-    };
-    api("/api/whitelist", "POST", data).then(function() {
-        document.getElementById("whitelist-form").reset();
-        notify("Whitelisted", "Successfully whitelisted! You can now log in with your RP Name and password.");
-        setTab("rrp");
-    }).catch(function(err) { notify("Error", err.message); });
-});
-
-/* ---- Login / Session ---- */
-
-function openLogin() {
-    document.getElementById("login-overlay").classList.remove("hidden");
-    document.getElementById("login-error").classList.add("hidden");
-    document.getElementById("login-form").reset();
-}
-
-function closeLogin() {
-    document.getElementById("login-overlay").classList.add("hidden");
-}
-
-function doLogin() {
-    var username = document.getElementById("login-username").value.trim();
-    var password = document.getElementById("login-password").value;
-    api("/api/login", "POST", { username: username, password: password }).then(function(res) {
-        document.getElementById("login-error").classList.add("hidden");
-        closeLogin();
-        // El token real lo genera el servidor (Supabase RPC dlrp_login);
-        // ya no se deriva del nombre de usuario en el cliente (inseguro).
-        localStorage.setItem(SESSION_KEY, JSON.stringify({ key: res.token, username: res.profile.rpName }));
-        applyTheme(res.profile.theme || "michael");
-        document.getElementById("btn-whitelist").classList.add("hidden");
-        document.getElementById("btn-profile").classList.remove("hidden");
-        if (res.profile.musicFavorites && res.profile.musicFavorites.length > 0) renderFavorites(res.profile.musicFavorites);
-        showProfile(res.profile);
-        notify("Welcome", "Logged in as " + res.profile.rpName);
-    }).catch(function(err) {
-        document.getElementById("login-error").classList.remove("hidden");
-    });
-}
+/* ---- Discord login / session ---- */
+// loginWithDiscord() vive en discord-auth.js. Aqui solo gestionamos
+// lo que pasa una vez que ya tenemos un token de sesion guardado
+// (localStorage), venga de un login nuevo o de una sesion anterior.
 
 function restoreSession() {
-    var raw = localStorage.getItem(SESSION_KEY);
-    if (!raw) return;
-    var session;
-    try { session = JSON.parse(raw); } catch(e) { session = { key: raw }; }
-    if (!session || !session.key) return;
-    api("/api/profile/" + encodeURIComponent(session.key), "GET").then(function(profile) {
-        applyTheme(profile.theme || "michael");
-        document.getElementById("btn-whitelist").classList.add("hidden");
-        document.getElementById("btn-profile").classList.remove("hidden");
-        if (profile.musicFavorites && profile.musicFavorites.length > 0) renderFavorites(profile.musicFavorites);
-        showProfile(profile);
+    var key = getSessionKey();
+    if (!key) return;
+    api("/api/profile/" + encodeURIComponent(key), "GET").then(function(profile) {
+        onAuthenticated(profile);
     }).catch(function() {
         localStorage.removeItem(SESSION_KEY);
     });
 }
 
+function onAuthenticated(profile) {
+    applyTheme(profile.theme || "michael");
+    document.getElementById("btn-profile").classList.remove("hidden");
+    if (profile.musicFavorites && profile.musicFavorites.length > 0) renderFavorites(profile.musicFavorites);
+    showDiscordChip(profile);
+    showProfile(profile);
+    if (window.DLRP_FRESH_LOGIN) {
+        window.DLRP_FRESH_LOGIN = false;
+        setTab("profile");
+    }
+}
+
+function showDiscordChip(profile) {
+    document.getElementById("discord-login-btn").classList.add("hidden");
+    var chip = document.getElementById("discord-user-chip");
+    chip.classList.remove("hidden");
+    document.getElementById("discord-user-avatar").src = profile.discordAvatar || "";
+    document.getElementById("discord-user-name").textContent = profile.discordUsername || "Discord user";
+}
+
+/* ---- Perfil / estado de la solicitud de whitelist ---- */
+
+var CARD_IDS = ["application-form-card", "application-pending-card", "application-approved-card", "application-denied-card"];
+
+function showApplicationCard(id) {
+    for (var i = 0; i < CARD_IDS.length; i++) {
+        document.getElementById(CARD_IDS[i]).classList.toggle("hidden", CARD_IDS[i] !== id);
+    }
+}
+
 function showProfile(data) {
-    document.getElementById("profile-rpname").textContent = data.rpName;
-    document.getElementById("profile-discord").textContent = data.discordUser;
-    document.getElementById("profile-psn").textContent = data.psn;
-    document.getElementById("profile-story").textContent = data.story;
+    document.getElementById("profile-rpname").textContent = data.rpName || data.discordUsername || "-";
+    document.getElementById("profile-avatar").src = data.discordAvatar || "";
 
-    var badge = document.getElementById("profile-status-badge");
+    var guildBadge = document.getElementById("profile-guild-badge");
+    if (data.discordInGuild) {
+        guildBadge.textContent = DLRP_I18N.t("profile.inGuild", "Member");
+        guildBadge.className = "profile-badge approved";
+    } else {
+        guildBadge.textContent = DLRP_I18N.t("profile.notInGuild", "Not a member");
+        guildBadge.className = "profile-badge denied";
+    }
+
+    var statusBadge = document.getElementById("profile-status-badge");
     var status = data.status || "pending";
-    badge.textContent = status.charAt(0).toUpperCase() + status.slice(1);
-    badge.className = "profile-badge " + status;
+    var hasApplied = !!data.appliedAt;
 
-    var extraRow = document.getElementById("profile-extra-row");
-    if (data.extraInfo) {
-        document.getElementById("profile-extra").textContent = data.extraInfo;
-        extraRow.style.display = "";
-    } else { extraRow.style.display = "none"; }
+    if (!hasApplied) {
+        // Todavia no ha enviado la solicitud: precarga el formulario
+        // por si ya habia escrito algo antes (rpName/psn pueden venir
+        // vacios en un perfil recien creado por el login de Discord).
+        document.getElementById("apply-rp-name").value = data.rpName || "";
+        document.getElementById("apply-psn").value = data.psn || "";
+        document.getElementById("apply-story").value = data.story || "";
+        document.getElementById("apply-extra").value = data.extraInfo || "";
+        showApplicationCard("application-form-card");
+        statusBadge.textContent = DLRP_I18N.t("profile.notApplied", "Not applied yet");
+        statusBadge.className = "profile-badge pending";
+        return;
+    }
 
-    var jobRow = document.getElementById("profile-job-row");
-    if (data.job && allJobNames[data.job]) {
-        document.getElementById("profile-job").textContent = allJobNames[data.job];
-        jobRow.style.display = "";
-    } else { jobRow.style.display = "none"; }
+    if (status === "approved") {
+        showApplicationCard("application-approved-card");
+        statusBadge.textContent = DLRP_I18N.t("profile.approved", "Approved");
+        statusBadge.className = "profile-badge approved";
+    } else if (status === "denied") {
+        showApplicationCard("application-denied-card");
+        statusBadge.textContent = DLRP_I18N.t("profile.denied", "Denied");
+        statusBadge.className = "profile-badge denied";
+    } else {
+        showApplicationCard("application-pending-card");
+        statusBadge.textContent = DLRP_I18N.t("profile.pending", "Pending");
+        statusBadge.className = "profile-badge pending";
+    }
+}
 
-    var bank = data.bank || 0;
-    var cash = data.cash || 0;
-    document.getElementById("profile-money").textContent = "$" + (bank + cash);
+var applicationForm = document.getElementById("application-form");
+if (applicationForm) {
+    applicationForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+        var key = getSessionKey();
+        if (!key) { notify("Error", "You need to log in with Discord first."); return; }
 
-    setTab("profile");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+        var data = {
+            key: key,
+            rpName: document.getElementById("apply-rp-name").value.trim(),
+            psn: document.getElementById("apply-psn").value.trim(),
+            story: document.getElementById("apply-story").value.trim(),
+            extraInfo: document.getElementById("apply-extra").value.trim()
+        };
+
+        var btn = document.getElementById("application-submit-btn");
+        var errBox = document.getElementById("application-error");
+        errBox.classList.add("hidden");
+        btn.disabled = true;
+
+        fetch("/api/whitelist/submit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        }).then(function(r) {
+            return r.json().then(function(d) { if (!r.ok) throw new Error(d.error || "Request failed"); return d; });
+        }).then(function(res) {
+            notify("Application Sent", "Check your Discord DMs for confirmation.");
+            showProfile({
+                rpName: res.profile.rpName,
+                discordAvatar: document.getElementById("profile-avatar").src,
+                discordUsername: document.getElementById("discord-user-name").textContent,
+                discordInGuild: !document.getElementById("profile-guild-badge").classList.contains("denied"),
+                status: res.profile.status,
+                appliedAt: res.profile.appliedAt
+            });
+        }).catch(function(err) {
+            errBox.textContent = err.message;
+            errBox.classList.remove("hidden");
+        }).finally(function() {
+            btn.disabled = false;
+        });
+    });
 }
 
 function logout() {
@@ -374,169 +384,12 @@ function logout() {
     if (key) api("/api/logout", "POST", { key: key }).catch(function() {});
     localStorage.removeItem(SESSION_KEY);
     document.getElementById("btn-profile").classList.add("hidden");
-    document.getElementById("btn-whitelist").classList.remove("hidden");
-    document.getElementById("edit-profile-overlay").classList.add("hidden");
+    document.getElementById("discord-login-btn").classList.remove("hidden");
+    document.getElementById("discord-user-chip").classList.add("hidden");
     setTab("rrp");
 }
 
-/* ---- Edit Profile ---- */
-
-function toggleEditProfile() {
-    var overlay = document.getElementById("edit-profile-overlay");
-    if (overlay.classList.contains("hidden")) {
-        document.getElementById("edit-psn").value = document.getElementById("profile-psn").textContent;
-        document.getElementById("edit-story").value = document.getElementById("profile-story").textContent;
-        var extra = document.getElementById("profile-extra");
-        document.getElementById("edit-extra").value = extra && extra.textContent !== "-" ? extra.textContent : "";
-        document.getElementById("edit-profile-error").classList.add("hidden");
-        overlay.classList.remove("hidden");
-    } else { overlay.classList.add("hidden"); }
-}
-
-function closeEditProfile() {
-    document.getElementById("edit-profile-overlay").classList.add("hidden");
-}
-
-function saveEditProfile() {
-    var key = getSessionKey();
-    if (!key) { notify("Error", "Not logged in."); return; }
-    var data = { key: key };
-    var psn = document.getElementById("edit-psn").value.trim();
-    var story = document.getElementById("edit-story").value.trim();
-    var extra = document.getElementById("edit-extra").value.trim();
-    if (psn) data.psn = psn;
-    if (story) data.story = story;
-    data.extraInfo = extra;
-    api("/api/profile/update", "POST", data).then(function(res) {
-        closeEditProfile();
-        showProfile(res.profile);
-        notify("Profile Updated", "Your profile has been saved.");
-    }).catch(function(err) {
-        document.getElementById("edit-profile-error").textContent = err.message;
-        document.getElementById("edit-profile-error").classList.remove("hidden");
-    });
-}
-
-/* ---- Jobs ---- */
-
-function renderJobCard(job) {
-    return '<div class="job-card reveal" onclick="openJobDetail(\'' + job.id + '\')">' +
-        '<div class="job-emoji">' + job.emoji + '</div><h3>' + job.name + '</h3><p>' + job.desc + '</p></div>';
-}
-
-function renderJobsGrid() {
-    var html = "";
-    for (var i = 0; i < jobsList.length; i++) html += renderJobCard(jobsList[i]);
-    document.getElementById("jobs-grid").innerHTML = html;
-}
-
-function openJobDetail(jobId) {
-    if (jobId === "more-starters") {
-        renderStarterJobsGrid();
-        document.getElementById("jobs-grid").classList.add("hidden");
-        document.getElementById("job-detail").classList.add("hidden");
-        document.getElementById("starter-jobs").classList.remove("hidden");
-        window.scrollTo({ top: 0, behavior: "smooth" });
-        return;
-    }
-    var job = null;
-    for (var i = 0; i < jobsList.length; i++) { if (jobsList[i].id === jobId) { job = jobsList[i]; break; } }
-    if (!job) return;
-    document.getElementById("job-detail-eyebrow").textContent = job.emoji + " " + job.name;
-    document.getElementById("job-detail-title").textContent = job.name;
-    document.getElementById("job-detail-desc").textContent = job.longDesc;
-    api("/api/jobs/" + jobId, "GET").then(function(res) {
-        var people = res.people || [];
-        document.getElementById("job-detail-people-heading").textContent = "People with this job (" + people.length + ")";
-        if (people.length === 0) {
-            document.getElementById("job-people-list").innerHTML = '<p style="color:var(--muted);">No one has this job yet. Be the first!</p>';
-        } else {
-            var h = "";
-            for (var j = 0; j < people.length; j++) h += '<div class="people-entry"><div class="job-emoji">' + job.emoji + '</div><strong>' + people[j] + '</strong><span>' + job.name + '</span></div>';
-            document.getElementById("job-people-list").innerHTML = h;
-        }
-    });
-    document.getElementById("job-apply-btn").setAttribute("data-job-id", jobId);
-    document.getElementById("jobs-grid").classList.add("hidden");
-    document.getElementById("job-detail").classList.remove("hidden");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-function backToJobs() {
-    document.getElementById("jobs-grid").classList.remove("hidden");
-    document.getElementById("job-detail").classList.add("hidden");
-    document.getElementById("starter-jobs").classList.add("hidden");
-    document.getElementById("starter-detail").classList.add("hidden");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-function applyForJob() {
-    doApply(document.getElementById("job-apply-btn").getAttribute("data-job-id"));
-}
-
-function renderStarterJobsGrid() {
-    var html = "";
-    for (var i = 0; i < starterJobsList.length; i++) {
-        html += '<div class="job-card reveal" onclick="openStarterDetail(\'' + starterJobsList[i].id + '\')">' +
-            '<div class="job-emoji">' + starterJobsList[i].emoji + '</div><h3>' + starterJobsList[i].name + '</h3><p>' + starterJobsList[i].desc + '</p></div>';
-    }
-    html += '<div class="job-card reveal" onclick="window.open(\'https://discord.gg/RAephXGHg6\',\'_blank\')" style="border-color:rgba(88,101,242,.3);">' +
-        '<div class="job-emoji" style="font-size:32px;">💬</div><h3>Suggest More</h3><p>Suggest new starter jobs on the official Discord.</p></div>';
-    document.getElementById("starter-jobs-grid").innerHTML = html;
-}
-
-function openStarterDetail(jobId) {
-    var job = null;
-    for (var i = 0; i < starterJobsList.length; i++) { if (starterJobsList[i].id === jobId) { job = starterJobsList[i]; break; } }
-    if (!job) return;
-    document.getElementById("starter-detail-eyebrow").textContent = job.emoji + " " + job.name;
-    document.getElementById("starter-detail-title").textContent = job.name;
-    document.getElementById("starter-detail-desc").textContent = job.longDesc;
-    api("/api/jobs/" + jobId, "GET").then(function(res) {
-        var people = res.people || [];
-        document.getElementById("starter-detail-people-heading").textContent = "People with this job (" + people.length + ")";
-        if (people.length === 0) {
-            document.getElementById("starter-people-list").innerHTML = '<p style="color:var(--muted);">No one has this job yet. Be the first!</p>';
-        } else {
-            var h = "";
-            for (var j = 0; j < people.length; j++) h += '<div class="people-entry"><div class="job-emoji">' + job.emoji + '</div><strong>' + people[j] + '</strong><span>' + job.name + '</span></div>';
-            document.getElementById("starter-people-list").innerHTML = h;
-        }
-    });
-    document.getElementById("starter-apply-btn").setAttribute("data-job-id", jobId);
-    document.getElementById("starter-jobs-grid").classList.add("hidden");
-    document.getElementById("starter-detail").classList.remove("hidden");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-function backToStarterJobs() {
-    document.getElementById("starter-jobs-grid").classList.remove("hidden");
-    document.getElementById("starter-detail").classList.add("hidden");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-function doApply(jobId) {
-    var name = prompt("Enter your RP Name to apply for this job:");
-    if (!name || name.trim() === "") return;
-    api("/api/jobs/apply", "POST", { rpName: name.trim(), jobId: jobId }).then(function() {
-        var jobName = allJobNames[jobId] || jobId;
-        notify("Job Center", jobName + " job has been applied to, waiting for approval.");
-        if (!document.getElementById("jobs-grid").classList.contains("hidden")) {
-            backToJobs(); renderJobsGrid();
-        } else if (!document.getElementById("starter-detail").classList.contains("hidden")) {
-            openStarterDetail(document.getElementById("starter-apply-btn").getAttribute("data-job-id"));
-        } else {
-            var cid = document.getElementById("job-apply-btn").getAttribute("data-job-id");
-            if (cid) openJobDetail(cid);
-        }
-    }).catch(function(err) { notify("Error", err.message); });
-}
-
-function applyForStarterJob() {
-    doApply(document.getElementById("starter-apply-btn").getAttribute("data-job-id"));
-}
-
-/* ---- Reveal & Tilt ---- */
+/* ---- Reveal / tilt animations ---- */
 
 function setupReveals() {
     var items = document.querySelectorAll(".reveal");
@@ -574,13 +427,64 @@ function setupTilt() {
     }
 }
 
+/* ---- Custom language dropdown ---- */
+
+function setupLangSwitch() {
+    var wrap = document.getElementById("lang-switch");
+    var btn = document.getElementById("lang-switch-btn");
+    var menu = document.getElementById("lang-switch-menu");
+    var current = document.getElementById("lang-switch-current");
+    if (!wrap || !btn || !menu) return;
+
+    function close() {
+        menu.classList.add("hidden");
+        btn.setAttribute("aria-expanded", "false");
+    }
+    function open() {
+        menu.classList.remove("hidden");
+        btn.setAttribute("aria-expanded", "true");
+    }
+
+    btn.addEventListener("click", function(e) {
+        e.stopPropagation();
+        if (menu.classList.contains("hidden")) open(); else close();
+    });
+
+    var options = menu.querySelectorAll("[data-lang]");
+    for (var i = 0; i < options.length; i++) {
+        options[i].addEventListener("click", function() {
+            var lang = this.getAttribute("data-lang");
+            DLRP_I18N.setLang(lang);
+            close();
+        });
+    }
+
+    document.addEventListener("click", function(e) {
+        if (!wrap.contains(e.target)) close();
+    });
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape") close();
+    });
+
+    DLRP_I18N.onChange(function(lang) {
+        current.textContent = lang.toUpperCase();
+        var opts = menu.querySelectorAll("[data-lang]");
+        for (var j = 0; j < opts.length; j++) {
+            opts[j].classList.toggle("active", opts[j].getAttribute("data-lang") === lang);
+        }
+    });
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     setupReveals();
     setupTilt();
+    setupLangSwitch();
     restoreSession();
-});
 
-/* ---- Whiplist Form ---- */
+    if (window.DLRP_DISCORD_ERROR) {
+        notify("Discord Login", "Something went wrong logging in with Discord. Please try again.");
+    }
+});
 
 /* ---- Misc ---- */
 (function setFooterYear() {

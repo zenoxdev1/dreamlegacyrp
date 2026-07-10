@@ -28,13 +28,21 @@ create extension if not exists pgcrypto;
 
 create table if not exists public.profiles (
     id            uuid primary key default gen_random_uuid(),
-    rp_name       text not null unique,
-    password_hash text not null,
+    rp_name       text unique,
+    password_hash text,
+    -- Identidad de Discord (nuevo método de login). rp_name/password_hash
+    -- se dejan nullable porque las cuentas creadas via Discord no los usan;
+    -- se conservan por compatibilidad con cuentas antiguas de whitelist.
+    discord_id       text unique,
+    discord_username text,
+    discord_avatar   text,
+    discord_in_guild boolean not null default false,
     discord_user  text not null default '',
     psn           text not null default '',
     story         text not null default '',
     extra_info    text not null default '',
     status        text not null default 'pending' check (status in ('pending','approved','denied')),
+    applied_at    timestamptz,
     job           text,
     bank          integer not null default 0,
     cash          integer not null default 0,
@@ -79,11 +87,16 @@ stable
 as $$
     select jsonb_build_object(
         'rpName', p.rp_name,
+        'discordId', p.discord_id,
+        'discordUsername', p.discord_username,
+        'discordAvatar', p.discord_avatar,
+        'discordInGuild', p.discord_in_guild,
         'discordUser', p.discord_user,
         'psn', p.psn,
         'story', p.story,
         'extraInfo', p.extra_info,
         'status', p.status,
+        'appliedAt', p.applied_at,
         'job', p.job,
         'bank', p.bank,
         'cash', p.cash,

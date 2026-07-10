@@ -135,10 +135,8 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
     <div style="background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:24px;width:320px;text-align:center;">
         <img src="../assets/img/dlrp.png" alt="DLRP" style="height:48px;margin-bottom:12px;" onerror="this.style.display='none'">
         <h2 style="font-family:'Rajdhani',sans-serif;font-size:22px;margin-bottom:4px;">DreamOS</h2>
-        <p style="color:var(--muted);font-size:13px;margin-bottom:16px;">Log in to access your phone.</p>
-        <div style="margin-bottom:10px;text-align:left;"><label style="font-size:12px;color:var(--muted);">Username</label><input type="text" id="os-user" value="Admin" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--card-border);background:rgba(255,255,255,.05);color:var(--text);font-size:14px;font-family:inherit;outline:none;margin-top:4px;"></div>
-        <div style="margin-bottom:14px;text-align:left;"><label style="font-size:12px;color:var(--muted);">Password</label><input type="password" id="os-pass" value="Admin" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--card-border);background:rgba(255,255,255,.05);color:var(--text);font-size:14px;font-family:inherit;outline:none;margin-top:4px;"></div>
-        <button class="btn primary" onclick="osLogin()" style="width:100%;">Log In</button>
+        <p style="color:var(--muted);font-size:13px;margin-bottom:16px;" id="os-login-msg">Log in from the Panel to access your phone.</p>
+        <a class="btn primary" href="../index.html" style="width:100%;display:block;box-sizing:border-box;text-decoration:none;">Go to Panel</a>
         <p id="os-login-error" style="color:var(--red);font-size:12px;margin-top:8px;display:none;"></p>
     </div>
 </div>
@@ -223,7 +221,7 @@ function defaultUD(rpName) {
 }
 
 function profileToUD(profile) {
-    var ud = defaultUD(profile.rpName);
+    var ud = defaultUD(profile.rpName || profile.discordUsername);
     ud.bank = profile.bank || 0;
     ud.cash = profile.cash || 0;
     ud.phoneNumber = profile.phoneNumber || "";
@@ -231,6 +229,7 @@ function profileToUD(profile) {
     if (profile.phoneData && typeof profile.phoneData === "object") {
         for (var k in profile.phoneData) { ud[k] = profile.phoneData[k]; }
     }
+    if (!ud.pfp && profile.discordAvatar) ud.pfp = profile.discordAvatar;
     if (!ud.purchasedPhone && profile.phoneOwned) ud.purchasedPhone = ud.purchasedPhone || "Phone";
     return ud;
 }
@@ -271,20 +270,10 @@ function saveData(n) {
     }).catch(function (err) { console.error("saveData failed:", err.message); });
 }
 
-/* ---- OS Login ---- */
-function osLogin() {
-    var name = document.getElementById("os-user").value.trim();
-    var pass = document.getElementById("os-pass").value.trim();
-    if (!name || !pass) { showOSError("Fill in both fields."); return; }
-    api("/api/login", "POST", { username: name, password: pass }).then(function (res) {
-        localStorage.setItem(SESSION_KEY, JSON.stringify({ key: res.token, rpName: res.profile.rpName }));
-        currentUser = res.profile.rpName;
-        userCache[currentUser] = profileToUD(res.profile);
-        enterPhone();
-    }).catch(function (err) {
-        showOSError(err.message || "Invalid credentials.");
-    });
-}
+/* ---- Entrada a DreamOS ---- */
+// Ya no hay osLogin() con usuario/contraseña: la sesion viene de la
+// landing (login con Discord) via panel/index.html, y aqui solo se
+// comprueba que exista y que la solicitud este aprobada.
 
 function enterPhone() {
     document.getElementById("os-login").classList.add("hidden");
@@ -300,6 +289,7 @@ function enterPhone() {
 function showOSError(msg) {
     var el = document.getElementById("os-login-error");
     el.textContent = msg; el.style.display = "block";
+    document.getElementById("os-login-msg").style.display = "none";
 }
 
 function logoutOS() {
@@ -314,13 +304,17 @@ function logoutOS() {
     document.getElementById("profile-bar").classList.add("hidden");
 }
 
-/* Si ya hay sesion (p.ej. iniciada en panel/index.html), entra directo */
+/* Si ya hay sesion (iniciada en panel/index.html) y esta aprobada, entra directo */
 (function restoreOSSession() {
     var token = getSessionToken();
     if (!token) return;
     document.addEventListener("DOMContentLoaded", function () {
         api("/api/profile/" + encodeURIComponent(token), "GET").then(function (profile) {
-            currentUser = profile.rpName;
+            if (profile.status !== "approved") {
+                showOSError("Your whitelist application hasn't been approved yet.");
+                return;
+            }
+            currentUser = profile.rpName || profile.discordUsername;
             userCache[currentUser] = profileToUD(profile);
             enterPhone();
         }).catch(function () { localStorage.removeItem(SESSION_KEY); });

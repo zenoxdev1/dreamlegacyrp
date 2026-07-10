@@ -48,22 +48,25 @@
             <div class="card-inner" id="auth-inner">
                 <div class="brand-icon"><img src="assets/img/dlrp.png" alt="DLRP" onerror="this.style.display='none'"></div>
                 <h1 data-i18n="panel.welcome">Welcome to DLRP</h1>
-                <p class="sub" data-i18n="panel.loginSub">Log in with your whitelisted RP Name to access the phone system.</p>
-                <div class="form-field">
-                    <label for="auth-name" data-i18n="whitelist.rpName">RP Name</label>
-                    <input type="text" id="auth-name" data-i18n-placeholder="whitelist.rpNamePh" placeholder="e.g. John_Marston" autocomplete="off">
-                </div>
-                <div class="form-field">
-                    <label for="auth-pass" data-i18n="whitelist.password">Password</label>
-                    <input type="password" id="auth-pass" data-i18n-placeholder="login.passwordPh" placeholder="Enter password" onkeydown="if(event.key==='Enter')authSubmit()">
-                </div>
+                <p class="sub" data-i18n="panel.loginSub">Log in with Discord on the main site to access the Panel.</p>
                 <div id="auth-error" class="form-error"></div>
                 <div class="actions">
-                    <button class="btn primary" onclick="authSubmit()" id="auth-submit-btn" style="flex:1;" data-i18n="login.submit">Log In</button>
+                    <a class="btn primary" href="https://dreamlegacyrp.xyz" style="flex:1;text-decoration:none;display:flex;align-items:center;justify-content:center;" data-i18n="panel.goToLanding">Log in on dreamlegacyrp.xyz</a>
                 </div>
-                <p class="sub" style="margin-top:14px;">
-                    <a href="https://dreamlegacyrp.xyz/#whitelist" style="color:var(--cyan);" data-i18n="panel.needWhitelist">Not whitelisted yet? Apply here</a>
-                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla: cuenta pendiente/rechazada (logueado pero sin aprobar) -->
+    <div id="pending-screen" class="hidden">
+        <div class="form-card card">
+            <div class="card-inner" style="text-align:center;">
+                <div class="brand-icon"><img src="assets/img/dlrp.png" alt="DLRP" onerror="this.style.display='none'"></div>
+                <h1 id="pending-title" data-i18n="panel.pendingTitle">Application pending</h1>
+                <p class="sub" id="pending-desc" data-i18n="panel.pendingDesc">Your whitelist application hasn't been approved yet. You'll get a DM on Discord once it's reviewed.</p>
+                <div class="actions" style="margin-top:16px;">
+                    <button class="btn" onclick="logout()" style="flex:1;" data-i18n="panel.logOut">Log Out</button>
+                </div>
             </div>
         </div>
     </div>
@@ -106,6 +109,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <script src="assets/js/i18n.js" defer></script>
 <script src="assets/js/supabase-client.js" defer></script>
+<script src="assets/js/session-handoff.js" defer></script>
 <script src="assets/js/app.js" defer></script>
 </body>
 </html>

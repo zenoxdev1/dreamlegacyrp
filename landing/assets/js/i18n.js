@@ -10,8 +10,8 @@
 (function (global) {
     "use strict";
 
-    var SUPPORTED = ["es", "en", "fr", "pt"];
-    var DEFAULT_LANG = "es";
+    var SUPPORTED = ["en", "fr", "pt"];
+    var DEFAULT_LANG = "en";
     var STORAGE_KEY = "dlrp_lang";
     var BASE_PATH = (global.DLRP_I18N_PATH || "/assets/i18n/");
 

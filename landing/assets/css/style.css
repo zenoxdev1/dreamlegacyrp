@@ -1,4 +1,3 @@
-<style>
 @font-face { font-family: 'Pricedown'; src: url('Pricedown.otf') format('opentype'); font-weight: normal; font-style: normal; }
 :root {
     --bg: #090a0d;
@@ -680,10 +679,18 @@ h1, h2, h3 { margin: 0; font-family: "Rajdhani","Arial Narrow",sans-serif; lette
 }
 
 @media (max-width: 980px) {
-    .topbar { align-items: flex-start; flex-direction: column; }
+    .topbar { align-items: stretch; flex-direction: column; }
     .brand { min-width: 0; }
-    .top-right-group { display: none; }
-    .tabs { width: 100%; justify-content: stretch; }
+    .top-right-group {
+        justify-content: space-between;
+        width: 100%;
+        order: 3;
+        padding-top: 10px;
+        border-top: 1px solid var(--line);
+        margin-top: 4px;
+    }
+    .top-logo, .top-rrp-label { display: none; }
+    .tabs { width: 100%; justify-content: stretch; order: 2; }
     .tab-button { flex: 1; min-width: 0; }
     .hero, .rrp-hero, .grid.two { grid-template-columns: 1fr; }
     .hero { min-height: auto; }
@@ -712,9 +719,10 @@ h1, h2, h3 { margin: 0; font-family: "Rajdhani","Arial Narrow",sans-serif; lette
     margin-left: 6px;
 }
 
-.lang-switch select {
-    appearance: none;
-    -webkit-appearance: none;
+.lang-switch-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     background: rgba(255, 255, 255, .06);
     border: 1px solid var(--line);
     color: var(--text);
@@ -724,24 +732,109 @@ h1, h2, h3 { margin: 0; font-family: "Rajdhani","Arial Narrow",sans-serif; lette
     letter-spacing: .06em;
     text-transform: uppercase;
     border-radius: var(--radius);
-    padding: 8px 30px 8px 12px;
+    padding: 8px 12px;
     cursor: pointer;
     outline: none;
-    transition: border-color .2s;
+    transition: border-color .2s, background .2s;
 }
 
-.lang-switch select:focus,
-.lang-switch select:hover { border-color: var(--line-strong); }
+.lang-switch-btn:hover,
+.lang-switch-btn:focus-visible { border-color: var(--line-strong); background: rgba(255, 255, 255, .09); }
 
-.lang-switch::after {
-    content: "▾";
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
+.lang-switch-arrow {
+    font-size: 9px;
     color: var(--muted);
-    font-size: 10px;
+    transition: transform .18s var(--ease);
+}
+
+.lang-switch[data-open="true"] .lang-switch-arrow,
+.lang-switch-btn[aria-expanded="true"] + .lang-switch-menu ~ .lang-switch-arrow { transform: rotate(180deg); }
+
+.lang-switch-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 148px;
+    list-style: none;
+    margin: 0;
+    padding: 6px;
+    background: var(--surface-strong);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(18px);
+    z-index: 60;
+    animation: panelIn .16s var(--ease);
+}
+
+.lang-switch-menu li {
+    padding: 9px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background .15s, color .15s;
+}
+
+.lang-switch-menu li:hover { background: rgba(255, 255, 255, .06); color: #fff; }
+
+.lang-switch-menu li.active {
+    color: #fff;
+    background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+}
+
+/* ---- Discord login button / user chip ---- */
+
+.discord-login-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #5865f2, #4650c9);
+    border: none;
+    color: #fff;
+}
+
+.discord-login-btn:hover { filter: brightness(1.1); }
+
+.discord-icon { width: 16px; height: 16px; flex-shrink: 0; }
+
+.discord-user-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px 6px 6px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+}
+
+.discord-user-chip:hover { border-color: var(--line-strong); background: rgba(255, 255, 255, .04); }
+
+.discord-user-chip img {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.discord-user-chip span {
+    font-family: "Rajdhani", "Arial Narrow", sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text);
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+    .lang-switch-btn span:not(.lang-switch-arrow) { display: none; }
+    .discord-login-btn span:not(.discord-icon) { display: none; }
+    .discord-login-btn { padding: 10px; }
+    .discord-user-chip span { max-width: 72px; }
 }
 
 /* Settings grid: 1 columna en pantallas medianas/pequeñas */

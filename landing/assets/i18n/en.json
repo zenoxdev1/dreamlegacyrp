@@ -1,22 +1,19 @@
 {
   "meta": { "title": "Dream Legacy RP" },
   "nav": {
-    "tagline": "PS3 online project",
-    "rrp": "RRP",
-    "whitelist": "Whitelist",
+    "rrp": "DLRP",
     "profile": "Profile",
-    "jobs": "Jobs",
     "settings": "Settings",
-    "checkingServer": "Checking server..."
+    "checkingServer": "Checking server...",
+    "loginDiscord": "Log in with Discord"
   },
   "hero": {
     "eyebrow": "Roleplay setup",
-    "lead": "Dream Legacy RP is the PlayStation 3 roleplay project powered by RLO. Join the Discord servers, complete verification, submit your whitelist application, and get ready to connect.",
+    "lead": "Dream Legacy RP is a PlayStation 3 roleplay project. Join our Discord server, log in with Discord, and get ready to connect.",
     "chip1": "PS3 console",
     "chip2": "CFW or HEN",
     "chip3": "Discord required",
-    "discordDlrp": "Dream Legacy RP Discord",
-    "discordRlo": "RLO Discord"
+    "discordDlrp": "Join the DLRP Discord"
   },
   "join": {
     "kicker": "Access flow",
@@ -30,10 +27,10 @@
     "req5": "A new PSN account for roleplay.",
     "req6": "A new GTA Online character.",
     "enlistTitle": "Enlistment",
-    "enlist1": "Join the Dream Legacy RP, and RLO Discord servers.",
+    "enlist1": "Join the Dream Legacy RP Discord server.",
     "enlist2": "Complete the required verification.",
-    "enlist3": "Submit a whitelist application.",
-    "enlist4": "Once approved, you are ready to connect."
+    "enlist3": "Log in on this site with Discord.",
+    "enlist4": "Once verified, you are ready to connect."
   },
   "map": {
     "kicker": "The city",
@@ -43,40 +40,7 @@
   "ready": {
     "kicker": "Ready?",
     "title": "Start the Process",
-    "discordDlrp": "RRP Discord"
-  },
-  "whitelist": {
-    "eyebrow": "Whitelist application",
-    "title": "Join RRP",
-    "lead": "Submit your application below to join the Reloading RP community. Fields marked optional can be left blank.",
-    "rpName": "RP Name",
-    "rpNamePh": "e.g. John_Marston",
-    "discordUser": "Discord User",
-    "discordUserPh": "e.g. user#0000",
-    "psn": "PSN",
-    "psnPh": "e.g. PSN_Username",
-    "password": "Password",
-    "passwordPh": "Choose a password",
-    "story": "Story",
-    "storyPh": "Tell us about your character's backstory, motivations, and personality...",
-    "extraInfo": "More Character Info",
-    "optional": "(optional)",
-    "extraInfoPh": "Any additional details - appearance, skills, affiliations, etc.",
-    "submit": "Submit Application",
-    "alreadyLogin": "Already whitelisted? Log in"
-  },
-  "jobs": {
-    "eyebrow": "Career opportunities",
-    "title": "Jobs",
-    "lead": "Browse available roles and apply to start your career in Los Santos.",
-    "backToJobs": "Back to Jobs",
-    "workforce": "Workforce",
-    "apply": "Apply",
-    "noOne": "No one has this job yet.",
-    "entryLevel": "Entry level",
-    "starterTitle": "Starter Jobs",
-    "starterLead": "Low-commitment roles to get you started.",
-    "backToStarter": "Back to Starter Jobs"
+    "loginDiscord": "Log in with Discord"
   },
   "settings": {
     "eyebrow": "Preferences",
@@ -90,8 +54,8 @@
     "themeFranklin": "Green",
     "acknowledgments": "Acknowledgments",
     "credits": "Credits",
-    "founderCredit": "Founder of Dream Legacy RP",
-    "jamezCredit": "GTA Reloaded Owner & Collaborator",
+    "founderCredit": "Founder",
+    "zenoxCredit": "Developer",
     "audio": "Audio",
     "musicPlayer": "Music Player",
     "stopped": "Stopped",
@@ -102,29 +66,35 @@
     "saved": "Saved",
     "favorites": "Favorites"
   },
+  "apply": {
+    "kicker": "One more step",
+    "title": "Apply for Whitelist",
+    "desc": "Tell us about your character. We review every application manually and you'll get a DM on Discord once it's decided.",
+    "submit": "Submit Application",
+    "pendingKicker": "Under review",
+    "pendingTitle": "Your application is pending",
+    "pendingDesc": "We've received your application and sent you a confirmation on Discord. We'll DM you as soon as it's reviewed.",
+    "approvedKicker": "Welcome to DLRP",
+    "approvedTitle": "Your application was approved!",
+    "approvedDesc": "You can now log in to the Panel to access DreamOS.",
+    "goToPanel": "Go to Panel",
+    "deniedKicker": "Application update",
+    "deniedTitle": "Your application wasn't approved",
+    "deniedDesc": "Reach out on our Discord server if you have questions or want to re-apply."
+  },
   "profile": {
     "eyebrow": "Welcome back",
-    "subtitle": "Your whitelist profile",
-    "job": "Job",
-    "status": "Status",
+    "subtitle": "Your Dream Legacy RP account",
+    "guildStatus": "Discord server",
+    "inGuild": "Member",
+    "notInGuild": "Not a member",
+    "status": "Application status",
+    "notApplied": "Not applied yet",
     "pending": "Pending",
+    "approved": "Approved",
+    "denied": "Denied",
     "money": "Money",
-    "editProfile": "Edit Profile",
-    "logOut": "Log Out",
-    "edit": "Edit",
-    "editSubtitle": "Update your whitelist details",
-    "psnPh": "Your PSN ID",
-    "storyPh": "Tell us about yourself...",
-    "extraPh": "Anything else?",
-    "saveError": "Error saving profile.",
-    "saveChanges": "Save Changes"
-  },
-  "login": {
-    "title": "Whitelist Login",
-    "subtitle": "Enter your RP Name and password",
-    "passwordPh": "Your password",
-    "error": "Invalid RP Name or password.",
-    "submit": "Log In"
+    "logOut": "Log Out"
   },
   "notify": {
     "musicPasteLink": "Paste a YouTube link first.",
@@ -133,11 +103,10 @@
     "favoritesLoginRequired": "Log in to save favorites.",
     "favoritesNoSong": "No song playing.",
     "favoritesAdded": "Added to favorites.",
-    "themeNotLoggedIn": "Log in to save your theme preference.",
+    "themeNotLoggedIn": "Log in with Discord to save your theme preference.",
     "themeSaved": "Theme saved.",
-    "whitelistSuccess": "Successfully whitelisted! You can now log in with your RP Name and password.",
     "genericError": "Something went wrong.",
     "loggedOut": "Logged out.",
-    "profileSaved": "Profile updated."
+    "discordLoginError": "Something went wrong logging in with Discord. Please try again."
   }
 }
