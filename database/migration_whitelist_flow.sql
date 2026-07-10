@@ -1,80 +1,35 @@
-/* ============================================================
-   Dream Legacy RP — Enviar solicitud de whitelist
-   Ruta: POST /api/whitelist/submit
-   Body JSON: { key: sessionToken, rpName, psn, story, extraInfo }
-   ============================================================ */
-import { sendDiscordDM, supabaseHeaders, getProfileByToken } from "../../_lib/discord.js";
+-- ============================================================
+-- MIGRACIÓN: flujo de solicitud (whitelist) + Discord DMs
+-- Ejecuta esto en Supabase DESPUÉS de migration_discord_login.sql
+-- si tu base de datos ya existía antes de este cambio.
+-- ============================================================
 
-export async function onRequestPost(context) {
-    const { request, env } = context;
+alter table public.profiles add column if not exists applied_at timestamptz;
 
-    let body;
-    try { body = await request.json(); } catch (e) {
-        return json({ error: "Invalid request body." }, 400);
-    }
-
-    const token = body.key;
-    if (!token) return json({ error: "Missing session token." }, 401);
-
-    const rpName = (body.rpName || "").trim();
-    const psn = (body.psn || "").trim();
-    const story = (body.story || "").trim();
-    const extraInfo = (body.extraInfo || "").trim();
-
-    if (!rpName || !psn || !story) {
-        return json({ error: "RP Name, PSN and Story are required." }, 400);
-    }
-
-    try {
-        const profile = await getProfileByToken(env, token);
-        if (!profile) return json({ error: "Session expired." }, 401);
-
-        const updateRes = await fetch(
-            env.SUPABASE_URL + "/rest/v1/profiles?id=eq." + profile.id,
-            {
-                method: "PATCH",
-                headers: supabaseHeaders(env, { Prefer: "return=representation" }),
-                body: JSON.stringify({
-                    rp_name: rpName,
-                    psn: psn,
-                    story: story,
-                    extra_info: extraInfo,
-                    status: "pending",
-                    applied_at: new Date().toISOString()
-                })
-            }
-        );
-        if (!updateRes.ok) throw new Error("Supabase update failed: " + (await updateRes.text()));
-        const rows = await updateRes.json();
-        const updated = rows[0];
-
-        if (profile.discord_id) {
-            await sendDiscordDM(
-                env,
-                profile.discord_id,
-                "**Dream Legacy RP** — We've received your whitelist application, " + rpName +
-                ". We'll DM you here as soon as it's reviewed. Thanks for applying!"
-            );
-        }
-
-        return json({
-            profile: {
-                rpName: updated.rp_name,
-                psn: updated.psn,
-                story: updated.story,
-                extraInfo: updated.extra_info,
-                status: updated.status,
-                appliedAt: updated.applied_at
-            }
-        });
-    } catch (err) {
-        return json({ error: err.message }, 500);
-    }
-}
-
-function json(data, status) {
-    return new Response(JSON.stringify(data), {
-        status: status || 200,
-        headers: { "Content-Type": "application/json" }
-    });
-}
+create or replace function public._dlrp_profile_json(p public.profiles)
+returns jsonb
+language sql
+stable
+as $$
+    select jsonb_build_object(
+        'rpName', p.rp_name,
+        'discordId', p.discord_id,
+        'discordUsername', p.discord_username,
+        'discordAvatar', p.discord_avatar,
+        'discordInGuild', p.discord_in_guild,
+        'discordUser', p.discord_user,
+        'psn', p.psn,
+        'story', p.story,
+        'extraInfo', p.extra_info,
+        'status', p.status,
+        'appliedAt', p.applied_at,
+        'job', p.job,
+        'bank', p.bank,
+        'cash', p.cash,
+        'theme', p.theme,
+        'musicFavorites', p.music_favorites,
+        'phoneOwned', p.phone_owned,
+        'phoneNumber', p.phone_number,
+        'phoneData', p.phone_data
+    );
+$$;

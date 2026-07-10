@@ -7,7 +7,7 @@
    vive solo en la Cloudflare Function (functions/api/discord/callback.js).
    ============================================================ */
 
-var DISCORD_CLIENT_ID = "TU_DISCORD_CLIENT_ID";
+var DISCORD_CLIENT_ID = "1525123502984790126";
 var DISCORD_REDIRECT_URI = "https://dreamlegacyrp.xyz/api/discord/callback";
 
 function discordLoginUrl() {
