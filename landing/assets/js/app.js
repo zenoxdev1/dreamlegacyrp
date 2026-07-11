@@ -318,6 +318,13 @@ function showProfile(data) {
         showApplicationCard("application-approved-card");
     } else if (status === "denied") {
         showApplicationCard("application-denied-card");
+        var reasonEl = document.getElementById("denied-reason-text");
+        if (data.denyReason) {
+            reasonEl.textContent = DLRP_I18N.t("apply.reasonLabel", "Reason given: ") + data.denyReason;
+            reasonEl.style.display = "block";
+        } else {
+            reasonEl.style.display = "none";
+        }
     } else {
         showApplicationCard("application-pending-card");
     }
@@ -660,6 +667,15 @@ function adminCardHtml(a) {
             DLRP_I18N.t("admin.resetPending", "Reset to pending") + '</button>';
     }
 
+    var decidedLine = "";
+    if (a.status !== "pending" && a.decidedByUsername) {
+        decidedLine = '<div class="admin-card-decided">' +
+            DLRP_I18N.t("admin.decidedBy", "Decided by") + ' <strong>' + escapeHtml(a.decidedByUsername) + '</strong>' +
+            (a.decidedAt ? ' &middot; ' + formatAdminDate(a.decidedAt) : '') +
+            (a.status === "denied" && a.denyReason ? '<br><span class="admin-card-reason">' + DLRP_I18N.t("admin.reason", "Reason") + ': ' + escapeHtml(a.denyReason) + '</span>' : '') +
+            '</div>';
+    }
+
     return '' +
         '<div class="admin-card" data-id="' + a.id + '">' +
             '<div class="admin-card-head">' +
@@ -681,13 +697,21 @@ function adminCardHtml(a) {
                 (extra ? '<p class="admin-card-extra"><strong>' + DLRP_I18N.t("whitelist.extraInfo", "More Character Info") + ':</strong><br>' + extra + '</p>' : '') +
             '</details>' +
             '<div class="admin-card-actions">' + actions + '</div>' +
+            decidedLine +
         '</div>';
 }
 
 function setApplicationStatus(profileId, status) {
     var key = getSessionKey();
     if (!key) return;
-    api("/api/admin/set-status", "POST", { key: key, profileId: profileId, status: status }).then(function() {
+
+    var reason = null;
+    if (status === "denied") {
+        reason = window.prompt(DLRP_I18N.t("admin.reasonPrompt", "Reason for denying (optional, included in their DM):"), "");
+        if (reason === null) return; // cancelado
+    }
+
+    api("/api/admin/set-status", "POST", { key: key, profileId: profileId, status: status, reason: reason }).then(function() {
         notify("Admin", "Application updated.");
         loadAdminStats();
         loadAdminApplications();

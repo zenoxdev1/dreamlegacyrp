@@ -87,7 +87,8 @@
     "goToPanel": "Ir para o Painel",
     "deniedKicker": "Atualização da candidatura",
     "deniedTitle": "Sua candidatura não foi aprovada",
-    "deniedDesc": "Fale conosco no nosso servidor do Discord se tiver dúvidas ou quiser se candidatar novamente."
+    "deniedDesc": "Fale conosco no nosso servidor do Discord se tiver dúvidas ou quiser se candidatar novamente.",
+    "reasonLabel": "Motivo informado: "
   },
   "profile": {
     "eyebrow": "Bem-vindo de volta",
@@ -138,6 +139,9 @@
     "applied": "Enviada",
     "approve": "Aprovar",
     "deny": "Recusar",
-    "resetPending": "Voltar para pendente"
+    "resetPending": "Voltar para pendente",
+    "decidedBy": "Decidido por",
+    "reason": "Motivo",
+    "reasonPrompt": "Motivo da recusa (opcional, incluído no DM):"
   }
 }

@@ -51,6 +51,32 @@ export async function sendDiscordDM(env, discordUserId, content) {
     }
 }
 
+/** Publica un mensaje en un canal de Discord usando el bot (para
+ *  avisar a los admins de una solicitud nueva). Requiere que el bot
+ *  tenga permiso de "Send Messages" en ese canal. */
+export async function sendDiscordChannelMessage(env, channelId, content) {
+    if (!env.DISCORD_BOT_TOKEN || !channelId) return { ok: false, reason: "missing_config" };
+    try {
+        const res = await fetch("https://discord.com/api/v10/channels/" + channelId + "/messages", {
+            method: "POST",
+            headers: {
+                Authorization: "Bot " + env.DISCORD_BOT_TOKEN,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(content)
+        });
+        if (!res.ok) {
+            const errText = await res.text();
+            console.error("No se pudo publicar en el canal:", errText);
+            return { ok: false, reason: "send_failed", detail: errText };
+        }
+        return { ok: true };
+    } catch (err) {
+        console.error("sendDiscordChannelMessage error:", err.message);
+        return { ok: false, reason: "exception", detail: err.message };
+    }
+}
+
 /** Cabeceras estandar para hablar con la API REST de Supabase usando
  *  la Service Role Key (bypassa RLS; solo usar server-side). */
 export function supabaseHeaders(env, extra) {

@@ -178,7 +178,7 @@ function api(path, method, body) {
     }
 
     if (path === "/api/admin/set-status") {
-        return sb.rpc("dlrp_admin_set_status", { p_token: body.key, p_profile_id: body.profileId, p_status: body.status }).then(function (r) {
+        return sb.rpc("dlrp_admin_set_status", { p_token: body.key, p_profile_id: body.profileId, p_status: body.status, p_reason: body.reason || null }).then(function (r) {
             if (r.error) rpcFail(r.error);
             return r.data;
         });

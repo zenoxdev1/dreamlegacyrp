@@ -87,7 +87,8 @@
     "goToPanel": "Go to Panel",
     "deniedKicker": "Application update",
     "deniedTitle": "Your application wasn't approved",
-    "deniedDesc": "Reach out on our Discord server if you have questions or want to re-apply."
+    "deniedDesc": "Reach out on our Discord server if you have questions or want to re-apply.",
+    "reasonLabel": "Reason given: "
   },
   "profile": {
     "eyebrow": "Welcome back",
@@ -138,6 +139,9 @@
     "applied": "Applied",
     "approve": "Approve",
     "deny": "Deny",
-    "resetPending": "Reset to pending"
+    "resetPending": "Reset to pending",
+    "decidedBy": "Decided by",
+    "reason": "Reason",
+    "reasonPrompt": "Reason for denying (optional, included in their DM):"
   }
 }

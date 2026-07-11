@@ -3,7 +3,7 @@
    Ruta: POST /api/whitelist/submit
    Body JSON: { key: sessionToken, rpName, psn, story, extraInfo }
    ============================================================ */
-import { sendDiscordDM, supabaseHeaders, getProfileByToken } from "../../_lib/discord.js";
+import { sendDiscordDM, sendDiscordChannelMessage, supabaseHeaders, getProfileByToken } from "../../_lib/discord.js";
 
 export async function onRequestPost(context) {
     const { request, env } = context;
@@ -55,6 +55,22 @@ export async function onRequestPost(context) {
                 "**Dream Legacy RP** — We've received your whitelist application, " + rpName +
                 ". We'll DM you here as soon as it's reviewed. Thanks for applying!"
             );
+        }
+
+        if (env.ADMIN_NOTIFY_CHANNEL_ID) {
+            await sendDiscordChannelMessage(env, env.ADMIN_NOTIFY_CHANNEL_ID, {
+                embeds: [{
+                    title: "New whitelist application",
+                    color: 0x2f73ff,
+                    fields: [
+                        { name: "RP Name", value: rpName, inline: true },
+                        { name: "PSN", value: psn, inline: true },
+                        { name: "Discord", value: profile.discord_username ? "@" + profile.discord_username : "-", inline: true },
+                        { name: "Story", value: story.length > 500 ? story.slice(0, 500) + "..." : story }
+                    ],
+                    footer: { text: "Review it at dreamlegacyrp.xyz -> Admin" }
+                }]
+            });
         }
 
         return json({

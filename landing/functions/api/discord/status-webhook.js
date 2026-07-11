@@ -44,8 +44,12 @@ export async function onRequestPost(context) {
         message = "**Dream Legacy RP** — Your whitelist application has been **approved**! " +
             "You can now log in at https://panel.dreamlegacyrp.xyz to access the Panel and DreamOS. Welcome to DLRP!";
     } else if (record.status === "denied") {
-        message = "**Dream Legacy RP** — Your whitelist application was **not approved** this time. " +
-            "You're welcome to reach out on our Discord server if you have questions or want to re-apply.";
+        message = "**Dream Legacy RP** — Your whitelist application was **not approved** this time." +
+            (record.deny_reason ? "\n\n**Reason:** " + record.deny_reason : "") +
+            "\n\nYou're welcome to reach out on our Discord server if you have questions or want to re-apply.";
+    } else if (record.status === "pending" && oldRecord.status === "approved") {
+        message = "**Dream Legacy RP** — Your Panel access was put back on hold because you're no longer a " +
+            "member of our Discord server. Rejoin the server and your access will be reviewed again.";
     }
 
     if (message) {

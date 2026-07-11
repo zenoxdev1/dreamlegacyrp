@@ -87,7 +87,8 @@
     "goToPanel": "Aller au Panel",
     "deniedKicker": "Mise à jour de la candidature",
     "deniedTitle": "Votre candidature n'a pas été approuvée",
-    "deniedDesc": "Contactez-nous sur notre serveur Discord si vous avez des questions ou souhaitez repostuler."
+    "deniedDesc": "Contactez-nous sur notre serveur Discord si vous avez des questions ou souhaitez repostuler.",
+    "reasonLabel": "Motif indiqué : "
   },
   "profile": {
     "eyebrow": "Content de vous revoir",
@@ -138,6 +139,9 @@
     "applied": "Envoyée",
     "approve": "Approuver",
     "deny": "Refuser",
-    "resetPending": "Remettre en attente"
+    "resetPending": "Remettre en attente",
+    "decidedBy": "Décidé par",
+    "reason": "Motif",
+    "reasonPrompt": "Motif du refus (optionnel, inclus dans son DM) :"
   }
 }
