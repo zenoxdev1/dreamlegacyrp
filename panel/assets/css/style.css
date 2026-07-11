@@ -114,6 +114,13 @@ h1, h2, h3 { font-family: "Rajdhani", "Arial Narrow", sans-serif; letter-spacing
 .nav-links a:hover { color: #fff; background: rgba(255, 255, 255, .05); }
 .nav-links a.active { color: #fff; background: linear-gradient(135deg, var(--blue), var(--blue-dark)); }
 
+.top-right-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
 /* ---------- Botones (mismo look que la landing) ---------- */
 
 .btn {
