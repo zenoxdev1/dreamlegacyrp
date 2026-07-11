@@ -223,8 +223,49 @@
           (s.fontSize === "Large" ? "selected" : "") +
           ">Large</option>" +
           "</select>" +
-          "</div>";
+          "</div>" +
+          '<div class="setting-section-title" style="padding:16px 16px 6px;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em;">Support</div>' +
+          '<div class="setting-row"><div class="setting-left"><div class="setting-label">&#9888; Report a Player or Bug</div><div class="setting-desc">Staff will review it in the admin panel.</div></div><button onclick="openReportModal()" style="padding:8px 18px;border-radius:8px;border:none;background:var(--purple);color:#fff;font-family:\'Rajdhani\',sans-serif;font-weight:700;font-size:12px;cursor:pointer;">Report</button></div>';
         body.innerHTML = html;
+      }
+      function openReportModal() {
+        var formHtml =
+          '<div style="text-align:left;">' +
+          '<label style="font-size:11px;color:var(--muted);text-transform:uppercase;">Category</label>' +
+          '<select id="report-category" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(124,58,237,0.15);background:rgba(255,255,255,.05);color:var(--text);margin:6px 0 12px;">' +
+          '<option value="player">Player</option><option value="bug">Bug</option><option value="other">Other</option></select>' +
+          '<label style="font-size:11px;color:var(--muted);text-transform:uppercase;">RP Name (optional, if reporting a player)</label>' +
+          '<input id="report-target" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(124,58,237,0.15);background:rgba(255,255,255,.05);color:var(--text);margin:6px 0 12px;">' +
+          '<label style="font-size:11px;color:var(--muted);text-transform:uppercase;">Message</label>' +
+          '<textarea id="report-message" rows="4" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(124,58,237,0.15);background:rgba(255,255,255,.05);color:var(--text);margin:6px 0;resize:none;"></textarea>' +
+          "</div>";
+        bridge.showCustomModal("Report", formHtml, [
+          { label: "Cancel", class: "btn", action: function () {} },
+          {
+            label: "Send",
+            class: "btn",
+            action: function () {
+              var category = document.getElementById("report-category").value;
+              var target = document.getElementById("report-target").value;
+              var message = document.getElementById("report-message").value;
+              if (!message || !message.trim()) {
+                bridge.notif("Report", "Write a message first.");
+                return;
+              }
+              bridge
+                .submitReport(target, category, message)
+                .then(function () {
+                  bridge.notif("Report Sent", "Staff will review it soon.");
+                })
+                .catch(function (err) {
+                  bridge.notif(
+                    "Error",
+                    err.message || "Could not send the report.",
+                  );
+                });
+            },
+          },
+        ]);
       }
       function sellPhone() {
         var ud = bridge.getUD();

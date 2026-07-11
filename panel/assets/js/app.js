@@ -45,10 +45,15 @@ function renderProfile(profile) {
     if (pfp) { pfpEl.src = pfp; pfpEl.style.display = "inline"; } else { pfpEl.style.display = "none"; }
 }
 
-function showBlockedScreen(status, discordInGuild) {
+function showBlockedScreen(status, discordInGuild, isBanned, banReason) {
     var titleEl = document.getElementById("pending-title");
     var descEl = document.getElementById("pending-desc");
-    if (!discordInGuild) {
+    if (isBanned) {
+        titleEl.textContent = DLRP_I18N.t("panel.bannedTitle", "You've been banned");
+        descEl.textContent = banReason
+            ? DLRP_I18N.t("panel.bannedReasonPrefix", "Reason: ") + banReason
+            : DLRP_I18N.t("panel.bannedDesc", "Your access has been revoked. Contact staff on Discord if you believe this is a mistake.");
+    } else if (!discordInGuild) {
         titleEl.textContent = DLRP_I18N.t("panel.notInGuildTitle", "You've left the Discord server");
         descEl.textContent = DLRP_I18N.t("panel.notInGuildDesc", "You need to be a member of the Dream Legacy RP Discord server to use the Panel. Rejoin and your access will be reviewed again.");
     } else if (status === "denied") {
@@ -83,8 +88,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }).then(function (r) {
         return r.json().then(function (d) { if (!r.ok) throw new Error(d.error || "Request failed"); return d; });
     }).then(function (profile) {
-        if (!profile.discordInGuild || profile.status !== "approved") {
-            showBlockedScreen(profile.status, profile.discordInGuild);
+        if (profile.isBanned || !profile.discordInGuild || profile.status !== "approved") {
+            showBlockedScreen(profile.status, profile.discordInGuild, profile.isBanned, profile.banReason);
             return;
         }
         showScreen("dashboard");

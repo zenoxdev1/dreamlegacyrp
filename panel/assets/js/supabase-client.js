@@ -14,8 +14,8 @@
    CONFIGURA AQUÍ tu proyecto de Supabase (Project Settings -> API):
    ============================================================ */
 
-var SUPABASE_URL = "https://cpdljnqhuealpxhpwsqk.supabase.co";
-var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNwZGxqbnFodWVhbHB4aHB3c3FrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2MjYzNjksImV4cCI6MjA5OTIwMjM2OX0.7Mkz8nOL35iOI9M55zq-CnCOd88Skc_2-voqG3c8UlE";
+var SUPABASE_URL = "https://TU-PROYECTO.supabase.co";
+var SUPABASE_ANON_KEY = "TU_ANON_KEY_PUBLICA";
 
 var _sb = null;
 function getSupabase() {
@@ -150,6 +150,15 @@ function api(path, method, body) {
     if (path === "/api/bank/transfer") {
         return sb.rpc("dlrp_transfer_bank", {
             p_token: body.key, p_to_rp_name: body.toRpName, p_amount: body.amount
+        }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
+    if (path === "/api/reports/submit") {
+        return sb.rpc("dlrp_submit_report", {
+            p_token: body.key, p_reported_name: body.reportedName || null, p_category: body.category || "other", p_message: body.message
         }).then(function (r) {
             if (r.error) rpcFail(r.error);
             return r.data;

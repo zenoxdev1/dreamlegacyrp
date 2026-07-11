@@ -432,6 +432,14 @@
                 </div>
             </div>
 
+            <!-- Sub-pestanas del panel de administracion -->
+            <div class="admin-subtabs reveal">
+                <button type="button" class="admin-subtab-btn active" data-subtab="applications" onclick="setAdminSubtab('applications')" data-i18n="admin.subtabApplications">Applications</button>
+                <button type="button" class="admin-subtab-btn" data-subtab="players" onclick="setAdminSubtab('players')" data-i18n="admin.subtabPlayers">Players</button>
+                <button type="button" class="admin-subtab-btn" data-subtab="reports" onclick="setAdminSubtab('reports')" data-i18n="admin.subtabReports">Reports</button>
+            </div>
+
+            <div id="admin-section-applications">
             <!-- Estadisticas -->
             <div class="admin-stats-grid reveal">
                 <div class="admin-stat-card">
@@ -474,6 +482,42 @@
             <p class="admin-empty" id="admin-loading" data-i18n="admin.loading">Loading applications...</p>
             <div id="admin-list" class="admin-list reveal"></div>
             <p class="admin-empty hidden" id="admin-empty-msg" data-i18n="admin.empty">No applications match this filter.</p>
+            </div>
+
+            <!-- Jugadores -->
+            <div id="admin-section-players" class="hidden">
+                <div class="admin-filter-bar reveal">
+                    <div class="admin-search-wrap" style="margin-left:0;max-width:none;flex:1;">
+                        <input type="text" id="admin-player-search" class="admin-search-input" data-i18n-placeholder="admin.playerSearchPh" placeholder="Search by RP name or Discord username..." oninput="loadAdminPlayers()">
+                        <button type="button" class="btn" onclick="loadAdminPlayers()" data-i18n="admin.refresh">Refresh</button>
+                    </div>
+                </div>
+                <p class="admin-empty" id="admin-players-loading" data-i18n="admin.loading">Loading applications...</p>
+                <div id="admin-players-list" class="admin-list reveal"></div>
+                <p class="admin-empty hidden" id="admin-players-empty" data-i18n="admin.playersEmpty">No players found.</p>
+
+                <!-- Detalle de un jugador -->
+                <div id="admin-player-detail" class="hidden">
+                    <button type="button" class="btn small" onclick="closeAdminPlayerDetail()" style="margin-bottom:16px;" data-i18n="admin.backToPlayers">&larr; Back to Players</button>
+                    <div id="admin-player-detail-content"></div>
+                </div>
+            </div>
+
+            <!-- Reportes -->
+            <div id="admin-section-reports" class="hidden">
+                <div class="admin-filter-bar reveal">
+                    <div class="admin-filter-tabs" role="tablist">
+                        <button type="button" class="admin-filter-btn active" data-report-filter="open" onclick="setReportFilter('open')" data-i18n="admin.reportOpen">Open</button>
+                        <button type="button" class="admin-filter-btn" data-report-filter="resolved" onclick="setReportFilter('resolved')" data-i18n="admin.reportResolved">Resolved</button>
+                        <button type="button" class="admin-filter-btn" data-report-filter="dismissed" onclick="setReportFilter('dismissed')" data-i18n="admin.reportDismissed">Dismissed</button>
+                        <button type="button" class="admin-filter-btn" data-report-filter="all" onclick="setReportFilter('all')" data-i18n="admin.filterAll">All</button>
+                    </div>
+                    <button type="button" class="btn" onclick="loadAdminReports()" data-i18n="admin.refresh">Refresh</button>
+                </div>
+                <p class="admin-empty" id="admin-reports-loading" data-i18n="admin.loading">Loading applications...</p>
+                <div id="admin-reports-list" class="admin-list reveal"></div>
+                <p class="admin-empty hidden" id="admin-reports-empty" data-i18n="admin.reportsEmpty">No reports match this filter.</p>
+            </div>
         </div>
     </div>
 

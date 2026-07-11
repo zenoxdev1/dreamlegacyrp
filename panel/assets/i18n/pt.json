@@ -64,7 +64,10 @@
     "deniedTitle": "Candidatura nao aprovada",
     "deniedDesc": "Sua candidatura nao foi aprovada. Fale conosco no Discord se tiver duvidas.",
     "notInGuildTitle": "Voce saiu do servidor do Discord",
-    "notInGuildDesc": "Voce precisa ser membro do servidor do Discord da Dream Legacy RP para usar o Painel. Entre novamente e seu acesso sera reavaliado."
+    "notInGuildDesc": "Voce precisa ser membro do servidor do Discord da Dream Legacy RP para usar o Painel. Entre novamente e seu acesso sera reavaliado.",
+    "bannedTitle": "Você foi banido",
+    "bannedReasonPrefix": "Motivo: ",
+    "bannedDesc": "Seu acesso foi revogado. Fale com a equipe no Discord se achar que isso é um erro."
   },
   "shop": {
     "title": "DLRP | Loja de telefones",
@@ -101,6 +104,8 @@
     "goToPanel": "Ir para o Painel",
     "notInGuild": "Você não é mais membro do servidor do Discord. Entre novamente para recuperar o acesso.",
     "notApproved": "Sua candidatura ainda não foi aprovada.",
-    "none": "Nenhum"
+    "none": "Nenhum",
+    "banned": "Você foi banido. Fale com a equipe no Discord se achar que isso é um erro.",
+    "bannedReasonPrefix": "Banido. Motivo: "
   }
 }

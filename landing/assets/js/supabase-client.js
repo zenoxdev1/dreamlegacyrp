@@ -191,6 +191,48 @@ function api(path, method, body) {
         });
     }
 
+    if (path === "/api/admin/players") {
+        return sb.rpc("dlrp_admin_list_players", { p_token: body.key, p_search: body.search || null }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return { players: r.data };
+        });
+    }
+
+    if (path === "/api/admin/player-detail") {
+        return sb.rpc("dlrp_admin_get_player", { p_token: body.key, p_profile_id: body.profileId }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
+    if (path === "/api/admin/set-ban") {
+        return sb.rpc("dlrp_admin_set_ban", { p_token: body.key, p_profile_id: body.profileId, p_banned: body.banned, p_reason: body.reason || null }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
+    if (path === "/api/reports/submit") {
+        return sb.rpc("dlrp_submit_report", { p_token: body.key, p_reported_name: body.reportedName || null, p_category: body.category || "other", p_message: body.message }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
+    if (path === "/api/admin/reports") {
+        return sb.rpc("dlrp_admin_list_reports", { p_token: body.key, p_status: body.status || null }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return { reports: r.data };
+        });
+    }
+
+    if (path === "/api/admin/resolve-report") {
+        return sb.rpc("dlrp_admin_resolve_report", { p_token: body.key, p_report_id: body.reportId, p_status: body.status }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
     return Promise.reject(new Error("Unknown endpoint: " + path));
 }
 

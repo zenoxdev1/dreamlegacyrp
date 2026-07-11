@@ -74,7 +74,9 @@ export async function onRequestPost(context) {
             phoneNumber: updated.phone_number,
             phoneData: updated.phone_data,
             discordUsername: updated.discord_username,
-            discordAvatar: updated.discord_avatar
+            discordAvatar: updated.discord_avatar,
+            isBanned: updated.is_banned,
+            banReason: updated.ban_reason
         });
     } catch (err) {
         return jsonResponse(request, { error: err.message }, 500);

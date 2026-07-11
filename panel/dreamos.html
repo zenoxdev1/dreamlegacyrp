@@ -346,6 +346,10 @@ function logoutOS() {
         }).then(function (r) {
             return r.json().then(function (d) { if (!r.ok) throw new Error(d.error || "Request failed"); return d; });
         }).then(function (profile) {
+            if (profile.isBanned) {
+                showOSError(profile.banReason ? (t("dreamos.bannedReasonPrefix", "Banned. Reason: ") + profile.banReason) : t("dreamos.banned", "You've been banned. Contact staff on Discord if you believe this is a mistake."));
+                return;
+            }
             if (!profile.discordInGuild) {
                 showOSError(t("dreamos.notInGuild", "You're no longer a member of the Discord server. Rejoin to regain access."));
                 return;
@@ -545,6 +549,11 @@ window.dlrpBridge = {
             if (d) { d.bank = profile.bank; d.cash = profile.cash; }
             return profile;
         });
+    },
+    submitReport: function(reportedName, category, message) {
+        var token = getSessionToken();
+        if (!token) return Promise.reject(new Error("Not logged in."));
+        return api("/api/reports/submit", "POST", { key: token, reportedName: reportedName, category: category, message: message });
     },
     doc: document,
     el: function(id) { return document.getElementById(id); }

@@ -43,6 +43,12 @@ create table if not exists public.profiles (
     extra_info    text not null default '',
     status        text not null default 'pending' check (status in ('pending','approved','denied')),
     applied_at    timestamptz,
+    -- Quien decidio (aprobo/rechazo) esta solicitud, y por que si fue
+    -- rechazada. Se rellena solo desde dlrp_admin_set_status.
+    decided_by_discord_id   text,
+    decided_by_username     text,
+    decided_at              timestamptz,
+    deny_reason             text,
     job           text,
     bank          integer not null default 0,
     cash          integer not null default 0,
@@ -61,6 +67,13 @@ create table if not exists public.profiles (
     -- Se activa a mano desde Table Editor: marca is_admin = true en
     -- la fila de la persona correspondiente.
     is_admin      boolean not null default false,
+    -- Baneos: separado de "denied" porque denied es para solicitudes
+    -- que nunca llegaron a entrar; is_banned es para gente ya aprobada
+    -- a la que se le retira el acceso.
+    is_banned     boolean not null default false,
+    ban_reason    text,
+    banned_by_username text,
+    banned_at     timestamptz,
     created_at    timestamptz not null default now()
 );
 
@@ -74,6 +87,22 @@ create table if not exists public.sessions (
 create index if not exists idx_sessions_profile_id on public.sessions(profile_id);
 create index if not exists idx_profiles_job on public.profiles(job);
 
+-- Reportes que un jugador manda sobre otro (bug, comportamiento, etc.)
+create table if not exists public.reports (
+    id                uuid primary key default gen_random_uuid(),
+    reporter_id       uuid references public.profiles(id) on delete set null,
+    reporter_name     text not null,
+    reported_name     text,
+    category          text not null default 'other' check (category in ('player','bug','other')),
+    message           text not null,
+    status            text not null default 'open' check (status in ('open','resolved','dismissed')),
+    resolved_by_username text,
+    resolved_at       timestamptz,
+    created_at        timestamptz not null default now()
+);
+
+create index if not exists idx_reports_status on public.reports(status);
+
 -- ---------- ROW LEVEL SECURITY ----------
 -- Se activa RLS y NO se crea ninguna policy para anon/authenticated,
 -- así que nadie puede leer/escribir estas tablas directamente.
@@ -81,6 +110,7 @@ create index if not exists idx_profiles_job on public.profiles(job);
 
 alter table public.profiles enable row level security;
 alter table public.sessions enable row level security;
+alter table public.reports enable row level security;
 
 -- ---------- FUNCIONES AUXILIARES ----------
 
@@ -101,6 +131,9 @@ as $$
         'extraInfo', p.extra_info,
         'status', p.status,
         'appliedAt', p.applied_at,
+        'denyReason', p.deny_reason,
+        'isBanned', p.is_banned,
+        'banReason', p.ban_reason,
         'job', p.job,
         'bank', p.bank,
         'cash', p.cash,
@@ -357,6 +390,7 @@ declare
 begin
     v_profile := public._dlrp_profile_from_token(p_token);
     if v_profile.id is null then raise exception 'Session expired.'; end if;
+    if v_profile.phone_owned then raise exception 'You already own a phone.'; end if;
     if v_profile.bank + v_profile.cash < p_price then raise exception 'Not enough money.'; end if;
 
     v_number := '555-' || lpad((floor(random() * 9000) + 1000)::int::text, 4, '0');
@@ -364,7 +398,8 @@ begin
     update public.profiles set
         phone_owned = true,
         phone_number = coalesce(phone_number, v_number),
-        bank = greatest(bank - p_price, 0)
+        bank = greatest(bank - p_price, 0),
+        phone_data = coalesce(phone_data, '{}'::jsonb) || jsonb_build_object('purchasedPhone', p_model, 'purchasedPhonePrice', p_price)
     where id = v_profile.id
     returning * into v_profile;
 
@@ -479,6 +514,12 @@ begin
 end;
 $$;
 
+-- Se borran explícitamente por si se re-ejecuta este script sobre una
+-- base de datos que ya tenía una versión anterior con distinta firma
+-- ("create or replace" no sustituye una función si cambian los
+-- parámetros -- crea una función nueva al lado, causando ambigüedad).
+drop function if exists public.dlrp_admin_set_status(uuid, uuid, text);
+
 create or replace function public.dlrp_admin_is(p_token uuid)
 returns boolean
 language plpgsql
@@ -530,7 +571,7 @@ begin
     perform public._dlrp_require_admin(p_token);
 
     return (
-        select coalesce(jsonb_agg(row_to_json(t) order by t.applied_at desc nulls last), '[]'::jsonb)
+        select coalesce(jsonb_agg(row_to_json(t) order by t."appliedAt" desc nulls last), '[]'::jsonb)
         from (
             select
                 id,
@@ -543,7 +584,12 @@ begin
                 story,
                 extra_info as "extraInfo",
                 status,
-                applied_at as "appliedAt"
+                applied_at as "appliedAt",
+                decided_by_username as "decidedByUsername",
+                decided_at as "decidedAt",
+                deny_reason as "denyReason",
+                bank,
+                cash
             from public.profiles
             where discord_id is not null
               and (p_status is null or status = p_status)
@@ -552,7 +598,7 @@ begin
 end;
 $$;
 
-create or replace function public.dlrp_admin_set_status(p_token uuid, p_profile_id uuid, p_status text)
+create or replace function public.dlrp_admin_set_status(p_token uuid, p_profile_id uuid, p_status text, p_reason text default null)
 returns jsonb
 language plpgsql
 security definer
@@ -567,7 +613,13 @@ begin
         raise exception 'Invalid status.';
     end if;
 
-    update public.profiles set status = p_status where id = p_profile_id;
+    update public.profiles set
+        status = p_status,
+        decided_by_discord_id = v_admin.discord_id,
+        decided_by_username = v_admin.discord_username,
+        decided_at = now(),
+        deny_reason = case when p_status = 'denied' then p_reason else null end
+    where id = p_profile_id;
 
     if not found then
         raise exception 'Application not found.';
@@ -580,8 +632,193 @@ begin
 end;
 $$;
 
+-- ---------- RPC: JUGADORES (vista completa para admins) ----------
+
+create or replace function public.dlrp_admin_list_players(p_token uuid, p_search text default null)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+    perform public._dlrp_require_admin(p_token);
+
+    return (
+        select coalesce(jsonb_agg(row_to_json(t) order by t."rpName" nulls last), '[]'::jsonb)
+        from (
+            select
+                id,
+                rp_name as "rpName",
+                discord_username as "discordUsername",
+                discord_avatar as "discordAvatar",
+                bank, cash,
+                phone_number as "phoneNumber",
+                phone_owned as "phoneOwned",
+                job,
+                is_banned as "isBanned",
+                ban_reason as "banReason"
+            from public.profiles
+            where status = 'approved'
+              and (
+                p_search is null or p_search = '' or
+                rp_name ilike '%' || p_search || '%' or
+                discord_username ilike '%' || p_search || '%'
+              )
+        ) t
+    );
+end;
+$$;
+
+create or replace function public.dlrp_admin_get_player(p_token uuid, p_profile_id uuid)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+    v_target public.profiles;
+begin
+    perform public._dlrp_require_admin(p_token);
+
+    select * into v_target from public.profiles where id = p_profile_id;
+    if v_target.id is null then
+        raise exception 'Player not found.';
+    end if;
+
+    return public._dlrp_profile_json(v_target);
+end;
+$$;
+
+create or replace function public.dlrp_admin_set_ban(p_token uuid, p_profile_id uuid, p_banned boolean, p_reason text default null)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+    v_admin public.profiles;
+begin
+    v_admin := public._dlrp_require_admin(p_token);
+
+    update public.profiles set
+        is_banned = p_banned,
+        ban_reason = case when p_banned then p_reason else null end,
+        banned_by_username = case when p_banned then v_admin.discord_username else null end,
+        banned_at = case when p_banned then now() else null end
+    where id = p_profile_id;
+
+    if not found then
+        raise exception 'Player not found.';
+    end if;
+
+    -- Invalida sus sesiones activas si se le banea, para que pierda
+    -- el acceso ya mismo en vez de esperar a que caduque el token.
+    if p_banned then
+        delete from public.sessions where profile_id = p_profile_id;
+    end if;
+
+    return jsonb_build_object('ok', true);
+end;
+$$;
+
+-- ---------- RPC: REPORTES ----------
+
+create or replace function public.dlrp_submit_report(p_token uuid, p_reported_name text, p_category text, p_message text)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+    v_profile public.profiles;
+begin
+    v_profile := public._dlrp_profile_from_token(p_token);
+    if v_profile.id is null then raise exception 'Session expired.'; end if;
+    if p_message is null or length(trim(p_message)) = 0 then raise exception 'Message is required.'; end if;
+    if p_category not in ('player','bug','other') then p_category := 'other'; end if;
+
+    insert into public.reports (reporter_id, reporter_name, reported_name, category, message)
+    values (v_profile.id, coalesce(v_profile.rp_name, v_profile.discord_username), nullif(trim(coalesce(p_reported_name,'')), ''), p_category, p_message);
+
+    return jsonb_build_object('ok', true);
+end;
+$$;
+
+create or replace function public.dlrp_admin_list_reports(p_token uuid, p_status text default null)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+    perform public._dlrp_require_admin(p_token);
+
+    return (
+        select coalesce(jsonb_agg(row_to_json(t) order by t."createdAt" desc), '[]'::jsonb)
+        from (
+            select
+                id, reporter_name as "reporterName", reported_name as "reportedName",
+                category, message, status,
+                resolved_by_username as "resolvedByUsername", resolved_at as "resolvedAt",
+                created_at as "createdAt"
+            from public.reports
+            where p_status is null or status = p_status
+        ) t
+    );
+end;
+$$;
+
+create or replace function public.dlrp_admin_resolve_report(p_token uuid, p_report_id uuid, p_status text)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+    v_admin public.profiles;
+begin
+    v_admin := public._dlrp_require_admin(p_token);
+    if p_status not in ('open','resolved','dismissed') then raise exception 'Invalid status.'; end if;
+
+    update public.reports set
+        status = p_status,
+        resolved_by_username = case when p_status <> 'open' then v_admin.discord_username else null end,
+        resolved_at = case when p_status <> 'open' then now() else null end
+    where id = p_report_id;
+
+    if not found then raise exception 'Report not found.'; end if;
+    return jsonb_build_object('ok', true);
+end;
+$$;
+
 -- Se concede EXECUTE a "anon" (visitantes sin sesión de Supabase Auth,
 -- que es el caso de este sitio ya que usa su propio sistema de login).
+
+create or replace function public.dlrp_admin_set_money(p_token uuid, p_profile_id uuid, p_bank integer, p_cash integer)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+    v_admin public.profiles;
+    v_target public.profiles;
+begin
+    v_admin := public._dlrp_require_admin(p_token);
+
+    update public.profiles set
+        bank = greatest(coalesce(p_bank, bank), 0),
+        cash = greatest(coalesce(p_cash, cash), 0)
+    where id = p_profile_id
+    returning * into v_target;
+
+    if not found then
+        raise exception 'Player not found.';
+    end if;
+
+    return jsonb_build_object('ok', true, 'bank', v_target.bank, 'cash', v_target.cash);
+end;
+$$;
 
 grant execute on function
     public.dlrp_health(),
@@ -602,7 +839,14 @@ grant execute on function
     public.dlrp_admin_is(uuid),
     public.dlrp_admin_stats(uuid),
     public.dlrp_admin_list_applications(uuid,text),
-    public.dlrp_admin_set_status(uuid,uuid,text)
+    public.dlrp_admin_set_status(uuid,uuid,text,text),
+    public.dlrp_admin_set_money(uuid,uuid,integer,integer),
+    public.dlrp_admin_list_players(uuid,text),
+    public.dlrp_admin_get_player(uuid,uuid),
+    public.dlrp_admin_set_ban(uuid,uuid,boolean,text),
+    public.dlrp_submit_report(uuid,text,text,text),
+    public.dlrp_admin_list_reports(uuid,text),
+    public.dlrp_admin_resolve_report(uuid,uuid,text)
 to anon, authenticated;
 
 -- Bloquear cualquier acceso directo por API REST autogenerada a las tablas:

@@ -1267,3 +1267,36 @@ input, textarea, select { font-size: 16px; }
 
 .rule-line { display: block; line-height: 1.5; }
 .rule-line strong { color: var(--text); }
+
+.admin-subtabs {
+    display: flex;
+    gap: 6px;
+    padding: 5px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, .045);
+    max-width: fit-content;
+    margin: 0 auto 28px;
+}
+
+.admin-subtab-btn {
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font-family: "Rajdhani", "Arial Narrow", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: 10px 22px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background .18s, color .18s;
+}
+
+.admin-subtab-btn:hover { color: #fff; }
+.admin-subtab-btn.active { background: linear-gradient(135deg, var(--blue), var(--blue-dark)); color: #fff; }
+
+@media (max-width: 480px) {
+    .admin-subtabs { width: 100%; overflow-x: auto; max-width: none; }
+}

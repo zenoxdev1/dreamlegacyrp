@@ -746,6 +746,248 @@ function setApplicationStatus(profileId, status) {
     });
 }
 
+/* ---- Sub-pestañas del panel de administración ---- */
+
+var ADMIN_SUBTAB = "applications";
+
+function setAdminSubtab(tab) {
+    ADMIN_SUBTAB = tab;
+    var btns = document.querySelectorAll(".admin-subtab-btn");
+    for (var i = 0; i < btns.length; i++) {
+        btns[i].classList.toggle("active", btns[i].getAttribute("data-subtab") === tab);
+    }
+    document.getElementById("admin-section-applications").classList.toggle("hidden", tab !== "applications");
+    document.getElementById("admin-section-players").classList.toggle("hidden", tab !== "players");
+    document.getElementById("admin-section-reports").classList.toggle("hidden", tab !== "reports");
+
+    if (tab === "players" && ADMIN_PLAYERS.length === 0) loadAdminPlayers();
+    if (tab === "reports" && ADMIN_REPORTS.length === 0) loadAdminReports();
+}
+
+/* ---- Jugadores (toda la info de su perfil/telefono) ---- */
+
+var ADMIN_PLAYERS = [];
+
+function loadAdminPlayers() {
+    if (!DLRP_IS_ADMIN) return;
+    var key = getSessionKey();
+    if (!key) return;
+    var search = (document.getElementById("admin-player-search") || {}).value || "";
+    document.getElementById("admin-players-loading").classList.remove("hidden");
+    document.getElementById("admin-players-list").innerHTML = "";
+    document.getElementById("admin-players-empty").classList.add("hidden");
+
+    api("/api/admin/players", "POST", { key: key, search: search }).then(function(res) {
+        ADMIN_PLAYERS = res.players || [];
+        renderAdminPlayersList();
+    }).catch(function(err) {
+        notify("Admin", err.message);
+        document.getElementById("admin-players-loading").classList.add("hidden");
+    });
+}
+
+function renderAdminPlayersList() {
+    document.getElementById("admin-players-loading").classList.add("hidden");
+    var list = document.getElementById("admin-players-list");
+    var empty = document.getElementById("admin-players-empty");
+
+    if (ADMIN_PLAYERS.length === 0) {
+        list.innerHTML = "";
+        empty.classList.remove("hidden");
+        return;
+    }
+    empty.classList.add("hidden");
+
+    var html = "";
+    for (var i = 0; i < ADMIN_PLAYERS.length; i++) {
+        var p = ADMIN_PLAYERS[i];
+        html += '<div class="admin-card">' +
+            '<div class="admin-card-head">' +
+            (p.discordAvatar ? '<img class="admin-card-avatar" src="' + escapeHtml(p.discordAvatar) + '" alt="">' : '<div class="admin-card-avatar"></div>') +
+            '<div class="admin-card-id"><strong>' + escapeHtml(p.rpName || p.discordUsername || "-") + '</strong><span>@' + escapeHtml(p.discordUsername || "-") + '</span></div>' +
+            (p.isBanned ? '<span class="admin-mini-badge not-in-guild">' + DLRP_I18N.t("admin.banned", "Banned") + '</span>' : '') +
+            '</div>' +
+            '<div class="admin-card-meta">' +
+                '<span>' + DLRP_I18N.t("admin.money", "Money") + ': <strong>$' + ((p.bank || 0) + (p.cash || 0)).toLocaleString() + '</strong></span>' +
+                '<span>' + DLRP_I18N.t("dreamos.number", "Number") + ': <strong>' + escapeHtml(p.phoneNumber || "-") + '</strong></span>' +
+                '<span>' + DLRP_I18N.t("panel.jobs", "Job") + ': <strong>' + escapeHtml(p.job || "-") + '</strong></span>' +
+            '</div>' +
+            '<div class="admin-card-actions">' +
+                '<button type="button" class="btn admin-action-btn" onclick="openAdminPlayerDetail(\'' + p.id + '\')">' + DLRP_I18N.t("admin.viewDetails", "View full details") + '</button>' +
+                (p.isBanned
+                    ? '<button type="button" class="btn admin-action-btn approve" onclick="setPlayerBan(\'' + p.id + '\', false)">' + DLRP_I18N.t("admin.unban", "Unban") + '</button>'
+                    : '<button type="button" class="btn admin-action-btn deny" onclick="setPlayerBan(\'' + p.id + '\', true)">' + DLRP_I18N.t("admin.ban", "Ban") + '</button>') +
+            '</div>' +
+            '</div>';
+    }
+    list.innerHTML = html;
+}
+
+function setPlayerBan(profileId, banned) {
+    var key = getSessionKey();
+    if (!key) return;
+    var reason = null;
+    if (banned) {
+        reason = window.prompt(DLRP_I18N.t("admin.banReasonPrompt", "Reason for the ban (optional):"), "");
+        if (reason === null) return;
+    }
+    api("/api/admin/set-ban", "POST", { key: key, profileId: profileId, banned: banned, reason: reason }).then(function() {
+        notify("Admin", banned ? "Player banned." : "Player unbanned.");
+        loadAdminPlayers();
+    }).catch(function(err) { notify("Admin", err.message); });
+}
+
+function openAdminPlayerDetail(profileId) {
+    var key = getSessionKey();
+    if (!key) return;
+    api("/api/admin/player-detail", "POST", { key: key, profileId: profileId }).then(function(p) {
+        renderAdminPlayerDetail(p);
+        document.querySelector("#admin-section-players .admin-filter-bar").classList.add("hidden");
+        document.getElementById("admin-players-list").classList.add("hidden");
+        document.getElementById("admin-players-empty").classList.add("hidden");
+        document.getElementById("admin-player-detail").classList.remove("hidden");
+    }).catch(function(err) { notify("Admin", err.message); });
+}
+
+function closeAdminPlayerDetail() {
+    document.querySelector("#admin-section-players .admin-filter-bar").classList.remove("hidden");
+    document.getElementById("admin-players-list").classList.remove("hidden");
+    document.getElementById("admin-player-detail").classList.add("hidden");
+}
+
+function adminDetailRow(label, value) {
+    if (value === undefined || value === null || value === "") value = "-";
+    return '<div class="profile-row"><span class="profile-label">' + escapeHtml(label) + '</span><span>' + escapeHtml(String(value)) + '</span></div>';
+}
+
+function renderAdminPlayerDetail(p) {
+    var pd = p.phoneData || {};
+    var html = '<div class="card reveal" style="margin-bottom:16px;"><div class="card-inner">' +
+        '<div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">' +
+        (p.discordAvatar ? '<img src="' + escapeHtml(p.discordAvatar) + '" style="width:56px;height:56px;border-radius:50%;object-fit:cover;">' : '') +
+        '<div><h3 style="margin-bottom:2px;">' + escapeHtml(p.rpName || p.discordUsername || "-") + '</h3><span style="color:var(--muted);font-size:13px;">@' + escapeHtml(p.discordUsername || "-") + '</span></div>' +
+        '</div>' +
+        '<div class="profile-grid">' +
+        adminDetailRow(DLRP_I18N.t("whitelist.psn", "PSN"), p.psn) +
+        adminDetailRow(DLRP_I18N.t("profile.status", "Status"), p.status) +
+        adminDetailRow(DLRP_I18N.t("admin.money", "Money") + " (Bank)", "$" + (p.bank || 0).toLocaleString()) +
+        adminDetailRow(DLRP_I18N.t("admin.cash", "Cash"), "$" + (p.cash || 0).toLocaleString()) +
+        adminDetailRow(DLRP_I18N.t("dreamos.number", "Number"), p.phoneNumber) +
+        adminDetailRow(DLRP_I18N.t("dreamos.phone", "Phone"), pd.purchasedPhone) +
+        adminDetailRow(DLRP_I18N.t("panel.jobs", "Job"), p.job) +
+        '</div>' +
+        (p.story ? '<div class="profile-row full" style="margin-top:10px;"><span class="profile-label">' + DLRP_I18N.t("whitelist.story", "Story") + '</span><p>' + escapeHtml(p.story) + '</p></div>' : '') +
+        '</div></div>';
+
+    html += adminDetailSection(DLRP_I18N.t("admin.vehicles", "Vehicles"), pd.vehicles, function(v) { return (v.name || v.model || "Vehicle") + (v.plate ? " · " + v.plate : ""); });
+    html += adminDetailSection(DLRP_I18N.t("admin.properties", "Properties"), pd.properties, function(v) { return v.name || v.address || "Property"; });
+    html += adminDetailSection(DLRP_I18N.t("admin.businesses", "Businesses"), pd.businesses, function(v) { return v.name || "Business"; });
+    html += adminDetailSection(DLRP_I18N.t("admin.inventory", "Inventory"), pd.inventory, function(v) { return (v.name || "Item") + (v.qty ? " x" + v.qty : ""); });
+
+    if (pd.idInfo) {
+        html += '<div class="card reveal" style="margin-bottom:16px;"><div class="card-inner">' +
+            '<h3 style="margin-bottom:10px;">' + DLRP_I18N.t("admin.govId", "Government ID") + '</h3>' +
+            '<div class="profile-grid">' +
+            adminDetailRow("Name", pd.idInfo.name) + adminDetailRow("DOB", pd.idInfo.dob) + adminDetailRow("ID #", pd.idInfo.id || pd.idInfo.number) +
+            '</div></div></div>';
+    }
+
+    if (pd.bio || pd.pfp) {
+        html += '<div class="card reveal" style="margin-bottom:16px;"><div class="card-inner">' +
+            '<h3 style="margin-bottom:10px;">' + DLRP_I18N.t("admin.dreamgramProfile", "DreamGram Profile") + '</h3>' +
+            (pd.pfp ? '<img src="' + escapeHtml(pd.pfp) + '" style="width:56px;height:56px;border-radius:50%;object-fit:cover;margin-bottom:8px;">' : '') +
+            '<p style="color:var(--muted);">' + escapeHtml(pd.bio || "-") + '</p>' +
+            '</div></div>';
+    }
+
+    document.getElementById("admin-player-detail-content").innerHTML = html;
+}
+
+function adminDetailSection(title, items, labelFn) {
+    if (!items || !items.length) return "";
+    var rows = "";
+    for (var i = 0; i < items.length; i++) {
+        rows += '<div class="profile-row full">' + escapeHtml(labelFn(items[i])) + '</div>';
+    }
+    return '<div class="card reveal" style="margin-bottom:16px;"><div class="card-inner"><h3 style="margin-bottom:10px;">' + escapeHtml(title) + ' (' + items.length + ')</h3><div class="profile-grid">' + rows + '</div></div></div>';
+}
+
+/* ---- Reportes ---- */
+
+var ADMIN_REPORTS = [];
+var ADMIN_REPORT_FILTER = "open";
+
+function setReportFilter(filter) {
+    ADMIN_REPORT_FILTER = filter;
+    var btns = document.querySelectorAll('[data-report-filter]');
+    for (var i = 0; i < btns.length; i++) {
+        btns[i].classList.toggle("active", btns[i].getAttribute("data-report-filter") === filter);
+    }
+    loadAdminReports();
+}
+
+function loadAdminReports() {
+    if (!DLRP_IS_ADMIN) return;
+    var key = getSessionKey();
+    if (!key) return;
+    document.getElementById("admin-reports-loading").classList.remove("hidden");
+    document.getElementById("admin-reports-list").innerHTML = "";
+    document.getElementById("admin-reports-empty").classList.add("hidden");
+
+    var status = ADMIN_REPORT_FILTER === "all" ? null : ADMIN_REPORT_FILTER;
+    api("/api/admin/reports", "POST", { key: key, status: status }).then(function(res) {
+        ADMIN_REPORTS = res.reports || [];
+        renderAdminReportsList();
+    }).catch(function(err) {
+        notify("Admin", err.message);
+        document.getElementById("admin-reports-loading").classList.add("hidden");
+    });
+}
+
+function renderAdminReportsList() {
+    document.getElementById("admin-reports-loading").classList.add("hidden");
+    var list = document.getElementById("admin-reports-list");
+    var empty = document.getElementById("admin-reports-empty");
+
+    if (ADMIN_REPORTS.length === 0) {
+        list.innerHTML = "";
+        empty.classList.remove("hidden");
+        return;
+    }
+    empty.classList.add("hidden");
+
+    var html = "";
+    for (var i = 0; i < ADMIN_REPORTS.length; i++) {
+        var r = ADMIN_REPORTS[i];
+        html += '<div class="admin-card">' +
+            '<div class="admin-card-head">' +
+            '<div class="admin-card-id"><strong>' + escapeHtml(r.reporterName) + '</strong>' +
+            (r.reportedName ? '<span>' + DLRP_I18N.t("admin.reportAbout", "About: ") + escapeHtml(r.reportedName) + '</span>' : '') +
+            '</div>' +
+            '<span class="admin-mini-badge ' + (r.category === "bug" ? "in-guild" : "not-in-guild") + '">' + escapeHtml(r.category) + '</span>' +
+            '</div>' +
+            '<div class="admin-card-meta"><span>' + formatAdminDate(r.createdAt) + '</span></div>' +
+            '<p style="color:var(--text);margin-bottom:14px;white-space:pre-wrap;">' + escapeHtml(r.message) + '</p>' +
+            (r.status === "open"
+                ? '<div class="admin-card-actions">' +
+                    '<button type="button" class="btn admin-action-btn approve" onclick="resolveReport(\'' + r.id + '\',\'resolved\')">' + DLRP_I18N.t("admin.markResolved", "Mark resolved") + '</button>' +
+                    '<button type="button" class="btn admin-action-btn deny" onclick="resolveReport(\'' + r.id + '\',\'dismissed\')">' + DLRP_I18N.t("admin.dismiss", "Dismiss") + '</button>' +
+                  '</div>'
+                : '<div class="admin-card-decided">' + DLRP_I18N.t("admin.decidedBy", "Decided by") + ' <strong>' + escapeHtml(r.resolvedByUsername || "-") + '</strong></div>') +
+            '</div>';
+    }
+    list.innerHTML = html;
+}
+
+function resolveReport(reportId, status) {
+    var key = getSessionKey();
+    if (!key) return;
+    api("/api/admin/resolve-report", "POST", { key: key, reportId: reportId, status: status }).then(function() {
+        notify("Admin", "Report updated.");
+        loadAdminReports();
+    }).catch(function(err) { notify("Admin", err.message); });
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     setupReveals();
     setupTilt();

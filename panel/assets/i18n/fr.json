@@ -64,7 +64,10 @@
     "deniedTitle": "Candidature non approuvee",
     "deniedDesc": "Votre candidature n'a pas ete approuvee. Contactez-nous sur Discord si vous avez des questions.",
     "notInGuildTitle": "Vous avez quitte le serveur Discord",
-    "notInGuildDesc": "Vous devez etre membre du serveur Discord de Dream Legacy RP pour utiliser le Panel. Rejoignez-le et votre acces sera reexamine."
+    "notInGuildDesc": "Vous devez etre membre du serveur Discord de Dream Legacy RP pour utiliser le Panel. Rejoignez-le et votre acces sera reexamine.",
+    "bannedTitle": "Vous avez été banni",
+    "bannedReasonPrefix": "Motif : ",
+    "bannedDesc": "Votre accès a été révoqué. Contactez le staff sur Discord si vous pensez qu'il s'agit d'une erreur."
   },
   "shop": {
     "title": "DLRP | Boutique de téléphones",
@@ -101,6 +104,8 @@
     "goToPanel": "Aller au Panel",
     "notInGuild": "Vous n'êtes plus membre du serveur Discord. Rejoignez-le pour retrouver l'accès.",
     "notApproved": "Votre candidature n'a pas encore été approuvée.",
-    "none": "Aucun"
+    "none": "Aucun",
+    "banned": "Vous avez été banni. Contactez le staff sur Discord si vous pensez qu'il s'agit d'une erreur.",
+    "bannedReasonPrefix": "Banni. Motif : "
   }
 }

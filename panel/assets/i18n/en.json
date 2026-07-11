@@ -64,7 +64,10 @@
     "deniedTitle": "Application not approved",
     "deniedDesc": "Your whitelist application wasn't approved. Reach out on Discord if you have questions.",
     "notInGuildTitle": "You've left the Discord server",
-    "notInGuildDesc": "You need to be a member of the Dream Legacy RP Discord server to use the Panel. Rejoin and your access will be reviewed again."
+    "notInGuildDesc": "You need to be a member of the Dream Legacy RP Discord server to use the Panel. Rejoin and your access will be reviewed again.",
+    "bannedTitle": "You've been banned",
+    "bannedReasonPrefix": "Reason: ",
+    "bannedDesc": "Your access has been revoked. Contact staff on Discord if you believe this is a mistake."
   },
   "shop": {
     "title": "DLRP | Phone Shop",
@@ -101,6 +104,8 @@
     "goToPanel": "Go to Panel",
     "notInGuild": "You're no longer a member of the Discord server. Rejoin to regain access.",
     "notApproved": "Your whitelist application hasn't been approved yet.",
-    "none": "None"
+    "none": "None",
+    "banned": "You've been banned. Contact staff on Discord if you believe this is a mistake.",
+    "bannedReasonPrefix": "Banned. Reason: "
   }
 }
