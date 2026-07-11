@@ -6,7 +6,7 @@
 <title>DLRP | Pixel Play 8</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../assets/js/supabase-client.js"></script>
+<script src="assets/js/supabase-client.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -81,14 +81,14 @@ h1 { font-family: 'Rajdhani', sans-serif; font-size: 28px; margin-bottom: 6px; }
 <div class="glow"></div><div class="glow glow2"></div>
 
 <div class="topbar">
-    <a class="brand" href="../index.html">
-        <img src="../assets/img/dlrp.png" alt="DLRP" onerror="this.style.display='none'">
+    <a class="brand" href="index.html">
+        <img src="assets/img/dlrp.png" alt="DLRP" onerror="this.style.display='none'">
         <span class="brand-title">Dream <span>Legacy</span> RolePlay</span>
     </a>
     <div class="nav-links">
-        <a href="../index.html">Panel</a>
+        <a href="index.html">Panel</a>
         <a href="index.html">Phone Shop</a>
-        <a href="os.html">DreamOS</a>
+        <a href="dreamos.html">DreamOS</a>
     </div>
 </div>
 
@@ -161,7 +161,7 @@ function buyPhone() {
     // Compra el telefono mediante la funcion RPC dlrp_buy_phone, que
     // valida saldo y evita comprar dos veces desde el servidor.
     api("/api/phone/buy", "POST", { key: token, model: MODEL_NAME, price: PRICE }).then(function (profile) {
-        document.getElementById("buy-form").innerHTML = '<div style="padding:20px;text-align:center;"><div style="font-size:48px;margin-bottom:10px;">&#9989;</div><div style="font-size:20px;font-weight:700;">Purchase Complete!</div><div style="color:var(--muted);margin-top:6px;">' + MODEL_NAME + '<br>Number: ' + profile.phoneNumber + '</div><a href="os.html" class="btn primary" style="display:inline-block;margin-top:16px;text-decoration:none;">Open DreamOS</a></div>';
+        document.getElementById("buy-form").innerHTML = '<div style="padding:20px;text-align:center;"><div style="font-size:48px;margin-bottom:10px;">&#9989;</div><div style="font-size:20px;font-weight:700;">Purchase Complete!</div><div style="color:var(--muted);margin-top:6px;">' + MODEL_NAME + '<br>Number: ' + profile.phoneNumber + '</div><a href="dreamos.html" class="btn primary" style="display:inline-block;margin-top:16px;text-decoration:none;">Open DreamOS</a></div>';
     }).catch(function (err) {
         showError(err.message || "Purchase failed.");
     });

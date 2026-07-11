@@ -142,6 +142,10 @@
     "resetPending": "Voltar para pendente",
     "decidedBy": "Decidido por",
     "reason": "Motivo",
-    "reasonPrompt": "Motivo da recusa (opcional, incluído no DM):"
+    "reasonPrompt": "Motivo da recusa (opcional, incluído no DM):",
+    "money": "Dinheiro",
+    "bank": "Banco",
+    "cash": "Dinheiro vivo",
+    "save": "Salvar"
   }
 }

@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../assets/js/supabase-client.js"></script>
+<script src="assets/js/supabase-client.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -106,14 +106,14 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
 <body>
 
 <div class="topbar">
-    <a class="brand" href="../index.html">
-        <img src="../assets/img/dlrp.png" alt="DLRP" onerror="this.style.display='none'">
+    <a class="brand" href="index.html">
+        <img src="assets/img/dlrp.png" alt="DLRP" onerror="this.style.display='none'">
         <span class="brand-title">Dream <span>Legacy</span> RolePlay</span>
     </a>
     <div class="nav-links">
-        <a href="../index.html">Panel</a>
+        <a href="index.html">Panel</a>
         <a href="index.html">Phone Shop</a>
-        <a href="os.html" class="active">DreamOS</a>
+        <a href="dreamos.html" class="active">DreamOS</a>
     </div>
 </div>
 
@@ -133,11 +133,15 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
 <!-- Login Screen -->
 <div id="os-login" style="display:flex;align-items:center;justify-content:center;height:calc(100vh - 100px);">
     <div style="background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:24px;width:320px;text-align:center;">
-        <img src="../assets/img/dlrp.png" alt="DLRP" style="height:48px;margin-bottom:12px;" onerror="this.style.display='none'">
+        <img src="assets/img/dlrp.png" alt="DLRP" style="height:48px;margin-bottom:12px;" onerror="this.style.display='none'">
         <h2 style="font-family:'Rajdhani',sans-serif;font-size:22px;margin-bottom:4px;">DreamOS</h2>
         <p style="color:var(--muted);font-size:13px;margin-bottom:16px;" id="os-login-msg">Log in from the Panel to access your phone.</p>
-        <a class="btn primary" href="../index.html" style="width:100%;display:block;box-sizing:border-box;text-decoration:none;">Go to Panel</a>
-        <p id="os-login-error" style="color:var(--red);font-size:12px;margin-top:8px;display:none;"></p>
+        <p id="os-login-error" style="color:var(--red);font-size:12px;margin-bottom:16px;display:none;"></p>
+        <div id="os-no-phone" class="hidden">
+            <p style="color:var(--muted);font-size:13px;margin-bottom:16px;">You don't own a phone yet. Buy one from the Phone Shop to access DreamOS.</p>
+            <a class="btn primary" href="index.html" style="width:100%;display:block;box-sizing:border-box;text-decoration:none;margin-bottom:8px;">Go to Phone Shop</a>
+        </div>
+        <a class="btn" href="index.html" style="width:100%;display:block;box-sizing:border-box;text-decoration:none;">Go to Panel</a>
     </div>
 </div>
 
@@ -290,6 +294,13 @@ function showOSError(msg) {
     var el = document.getElementById("os-login-error");
     el.textContent = msg; el.style.display = "block";
     document.getElementById("os-login-msg").style.display = "none";
+    document.getElementById("os-no-phone").classList.add("hidden");
+}
+
+function showOSNoPhone() {
+    document.getElementById("os-login-msg").style.display = "none";
+    document.getElementById("os-login-error").style.display = "none";
+    document.getElementById("os-no-phone").classList.remove("hidden");
 }
 
 function logoutOS() {
@@ -309,9 +320,26 @@ function logoutOS() {
     var token = getSessionToken();
     if (!token) return;
     document.addEventListener("DOMContentLoaded", function () {
-        api("/api/profile/" + encodeURIComponent(token), "GET").then(function (profile) {
+        // Revalida contra Discord AHORA (no el valor guardado la ultima
+        // vez que inicio sesion) usando la misma Function que la landing
+        // (origen distinto -> URL absoluta, esa Function tiene CORS).
+        fetch("https://dreamlegacyrp.xyz/api/discord/recheck", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ key: token })
+        }).then(function (r) {
+            return r.json().then(function (d) { if (!r.ok) throw new Error(d.error || "Request failed"); return d; });
+        }).then(function (profile) {
+            if (!profile.discordInGuild) {
+                showOSError("You're no longer a member of the Discord server. Rejoin to regain access.");
+                return;
+            }
             if (profile.status !== "approved") {
                 showOSError("Your whitelist application hasn't been approved yet.");
+                return;
+            }
+            if (!profile.phoneOwned) {
+                showOSNoPhone();
                 return;
             }
             currentUser = profile.rpName || profile.discordUsername;
@@ -479,7 +507,7 @@ function openApp(id) {
     document.getElementById("app-view").classList.add("open");
     document.getElementById("app-title").textContent = APP_NAME_MAP[id] || id.charAt(0).toUpperCase() + id.slice(1);
     var container = document.getElementById("app-content");
-    container.innerHTML = '<iframe src="app/' + id + '.html" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;background:var(--bg);"></iframe>';
+    container.innerHTML = '<iframe src="apps/' + id + '.html" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;background:var(--bg);"></iframe>';
 }
 
 function closeApp() { document.getElementById("app-view").classList.remove("open"); openAppId = null; document.getElementById("app-content").innerHTML = ""; }

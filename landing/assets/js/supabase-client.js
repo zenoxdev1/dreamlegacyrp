@@ -184,6 +184,13 @@ function api(path, method, body) {
         });
     }
 
+    if (path === "/api/admin/set-money") {
+        return sb.rpc("dlrp_admin_set_money", { p_token: body.key, p_profile_id: body.profileId, p_bank: body.bank, p_cash: body.cash }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
     return Promise.reject(new Error("Unknown endpoint: " + path));
 }
 

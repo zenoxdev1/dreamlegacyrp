@@ -142,6 +142,10 @@
     "resetPending": "Remettre en attente",
     "decidedBy": "Décidé par",
     "reason": "Motif",
-    "reasonPrompt": "Motif du refus (optionnel, inclus dans son DM) :"
+    "reasonPrompt": "Motif du refus (optionnel, inclus dans son DM) :",
+    "money": "Argent",
+    "bank": "Banque",
+    "cash": "Liquide",
+    "save": "Enregistrer"
   }
 }

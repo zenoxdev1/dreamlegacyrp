@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>DLRP | Sony Xperia Pro</title>
+<title>DLRP | Samsung Dream S24</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../assets/js/supabase-client.js"></script>
+<script src="assets/js/supabase-client.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -34,32 +34,29 @@ h1 { font-family: 'Rajdhani', sans-serif; font-size: 28px; margin-bottom: 6px; }
 .sub { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
 
 .phone-section { display: flex; flex-direction: column; align-items: center; perspective: 1000px; }
-.phone-flipper { position: relative; width: 170px; height: 340px; transform-style: preserve-3d; transition: transform .6s ease; cursor: pointer; }
+.phone-flipper { position: relative; width: 180px; height: 340px; transform-style: preserve-3d; transition: transform .6s ease; cursor: pointer; }
 .phone-flipper.flipped { transform: rotateY(180deg); }
 .phone-front, .phone-back { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .phone-back { transform: rotateY(180deg); }
-.phone-wrapper { position: relative; width: 170px; height: 340px; background: linear-gradient(145deg,#2a2a3e,#16213e); border-radius: 4px; border: 3px solid #555; overflow: hidden; box-shadow: 0 0 40px rgba(83,52,131,.25), inset 0 0 20px rgba(0,0,0,.3); }
-.phone-screen-bg { position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px; background: linear-gradient(180deg,#0f3460,#533483); border-radius: 1px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.phone-wrapper { position: relative; width: 180px; height: 340px; background: linear-gradient(145deg,#2c2c2e,#1c1c1e); border-radius: 30px; border: 3px solid #555; overflow: hidden; box-shadow: 0 0 40px rgba(45,45,68,.3), inset 0 0 20px rgba(0,0,0,.3); }
+.phone-punchhole { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); width: 10px; height: 10px; background: radial-gradient(circle at 30% 30%,#1a1a2a,#000); border-radius: 50%; z-index: 3; border: 1px solid #222; }
+.phone-screen-bg { position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px; background: linear-gradient(180deg,#1a1a2e,#2d2d44); border-radius: 26px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .phone-screen-bg .model-label { font-family: 'Rajdhani', sans-serif; font-size: 14px; font-weight: 700; color: rgba(255,255,255,.2); letter-spacing: 1px; text-transform: uppercase; }
-.phone-top-edge { position: absolute; top: 0; left: 0; right: 0; height: 4px; background: #555; z-index: 2; }
-.phone-bottom-edge { position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: #555; z-index: 2; }
-.phone-punchhole { position: absolute; top: 18px; left: 50%; transform: translateX(-50%); width: 8px; height: 8px; background: radial-gradient(circle at 30% 30%,#1a1a3a,#0a0a1a); border-radius: 50%; z-index: 3; border: 1px solid #222; }
-.phone-bottom-bar { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); width: 30px; height: 3px; background: rgba(255,255,255,.15); border-radius: 2px; z-index: 2; }
+.phone-bottom-bar { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); width: 30px; height: 3px; background: rgba(255,255,255,.15); border-radius: 2px; z-index: 2; }
 .phone-flip-hint { font-size: 11px; color: var(--dim); margin-top: 8px; text-align: center; transition: color .2s; cursor: pointer; }
 .phone-flip-hint:hover { color: var(--purple); }
 
-/* Back design - Sony Xperia Pro */
-.phone-back .phone-wrapper { background: linear-gradient(145deg,#1a1a2e,#2a2a3e); border-color: #666; }
-.phone-back-glass { position: absolute; inset: 4px; border-radius: 1px; background: linear-gradient(135deg,rgba(15,52,96,.4),rgba(83,52,131,.2)); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
-.phone-back-texture { position: absolute; inset: 0; border-radius: 1px; background: repeating-linear-gradient(90deg,transparent,transparent 3px,rgba(255,255,255,.01) 3px,rgba(255,255,255,.01) 4px); }
-.phone-back-camera-strip { display: flex; align-items: center; gap: 8px; position: relative; z-index: 1; }
-.phone-back-camera-strip .cs-lens { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255,255,255,.08); background: radial-gradient(circle at 30% 30%,#1a1a3a,#000); }
-.phone-back-camera-strip .cs-lens.main { width: 18px; height: 18px; }
-.phone-back-xperia { font-family: 'Rajdhani', sans-serif; font-size: 16px; color: rgba(255,255,255,.08); letter-spacing: 4px; text-transform: uppercase; position: relative; z-index: 1; }
-.phone-back-text { font-size: 9px; color: rgba(255,255,255,.1); letter-spacing: 2px; text-transform: uppercase; font-family: 'Rajdhani', sans-serif; position: relative; z-index: 1; }
+/* Back design - Samsung Dream S24 */
+.phone-back .phone-wrapper { background: linear-gradient(145deg,#1c1c1e,#2a2a3e); border-color: #666; }
+.phone-back-glass { position: absolute; inset: 4px; border-radius: 26px; background: linear-gradient(135deg,rgba(99,102,241,.06),rgba(139,92,246,.04)); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+.phone-back-camera-array { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+.phone-back-camera-array .cam-lens { width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(255,255,255,.1); background: radial-gradient(circle at 30% 30%,#1a1a2a,#000); }
+.phone-back-camera-array .cam-lens.flash { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.05); }
+.phone-back-text { font-size: 9px; color: rgba(255,255,255,.12); letter-spacing: 2px; text-transform: uppercase; font-family: 'Rajdhani', sans-serif; margin-top: 6px; }
+.phone-back-brand { font-family: 'Rajdhani', sans-serif; font-size: 14px; color: rgba(255,255,255,.08); letter-spacing: 3px; text-transform: uppercase; }
 
 .info-section { max-width: 400px; min-width: 300px; flex: 1; }
-.model-name { font-family: 'Rajdhani', sans-serif; font-size: 32px; font-weight: 700; margin-bottom: 4px; background: linear-gradient(135deg,var(--text),#b8a0e0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.model-name { font-family: 'Rajdhani', sans-serif; font-size: 32px; font-weight: 700; margin-bottom: 4px; background: linear-gradient(135deg,var(--text),#8a8ac0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .model-desc { color: var(--muted); font-size: 14px; margin-bottom: 12px; line-height: 1.5; }
 .model-price { font-size: 28px; font-weight: 700; color: var(--mint); margin-bottom: 20px; }
 .specs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; }
@@ -83,14 +80,14 @@ h1 { font-family: 'Rajdhani', sans-serif; font-size: 28px; margin-bottom: 6px; }
 <div class="glow"></div><div class="glow glow2"></div>
 
 <div class="topbar">
-    <a class="brand" href="../index.html">
-        <img src="../assets/img/dlrp.png" alt="DLRP" onerror="this.style.display='none'">
+    <a class="brand" href="index.html">
+        <img src="assets/img/dlrp.png" alt="DLRP" onerror="this.style.display='none'">
         <span class="brand-title">Dream <span>Legacy</span> RolePlay</span>
     </a>
     <div class="nav-links">
-        <a href="../index.html">Panel</a>
+        <a href="index.html">Panel</a>
         <a href="index.html">Phone Shop</a>
-        <a href="os.html">DreamOS</a>
+        <a href="dreamos.html">DreamOS</a>
     </div>
 </div>
 
@@ -99,11 +96,9 @@ h1 { font-family: 'Rajdhani', sans-serif; font-size: 28px; margin-bottom: 6px; }
         <div class="phone-flipper" id="phoneFlipper">
             <div class="phone-front">
                 <div class="phone-wrapper">
-                    <div class="phone-top-edge"></div>
-                    <div class="phone-bottom-edge"></div>
                     <div class="phone-punchhole"></div>
                     <div class="phone-screen-bg">
-                        <span class="model-label">Xperia Pro</span>
+                        <span class="model-label">Dream S24</span>
                     </div>
                     <div class="phone-bottom-bar"></div>
                 </div>
@@ -111,14 +106,16 @@ h1 { font-family: 'Rajdhani', sans-serif; font-size: 28px; margin-bottom: 6px; }
             <div class="phone-back">
                 <div class="phone-wrapper">
                     <div class="phone-back-glass">
-                        <div class="phone-back-texture"></div>
-                        <div class="phone-back-camera-strip">
-                            <div class="cs-lens"></div>
-                            <div class="cs-lens main"></div>
-                            <div class="cs-lens"></div>
+                        <div class="phone-back-camera-array">
+                            <div class="cam-lens"></div>
+                            <div class="cam-lens" style="width:20px;height:20px;"></div>
+                            <div class="cam-lens"></div>
+                            <div class="cam-lens flash"></div>
+                            <div class="cam-lens"></div>
+                            <div class="cam-lens"></div>
                         </div>
-                        <div class="phone-back-xperia">XPERIA</div>
-                        <div class="phone-back-text">Pro</div>
+                        <div class="phone-back-brand">DREAM</div>
+                        <div class="phone-back-text">S24</div>
                     </div>
                 </div>
             </div>
@@ -127,16 +124,16 @@ h1 { font-family: 'Rajdhani', sans-serif; font-size: 28px; margin-bottom: 6px; }
     </div>
     <div class="info-section">
         <a href="index.html" class="back-link">&larr; Back to Shop</a>
-        <div class="model-name">Sony Xperia Pro</div>
-        <div class="model-desc">Flat square-edge design with a professional-grade 4K HDR display. Built for creators who demand precision and durability.</div>
-        <div class="model-price">$899</div>
+        <div class="model-name">Samsung Dream S24</div>
+        <div class="model-desc">Punch-hole camera with an immersive Dynamic AMOLED display. Built for productivity with the legendary S Pen support.</div>
+        <div class="model-price">$799</div>
         <div class="specs">
-            <div class="spec-item"><div class="label">RAM</div><div class="value">12GB</div></div>
-            <div class="spec-item"><div class="label">Storage</div><div class="value">512GB</div></div>
-            <div class="spec-item"><div class="label">Camera</div><div class="value">48MP</div></div>
-            <div class="spec-item"><div class="label">Display</div><div class="value">6.5" 4K HDR</div></div>
-            <div class="spec-item"><div class="label">Battery</div><div class="value">4,500mAh</div></div>
-            <div class="spec-item"><div class="label">Color</div><div class="value" style="color:#b8a0e0;">Deep Violet</div></div>
+            <div class="spec-item"><div class="label">RAM</div><div class="value">8GB</div></div>
+            <div class="spec-item"><div class="label">Storage</div><div class="value">256GB</div></div>
+            <div class="spec-item"><div class="label">Camera</div><div class="value">108MP</div></div>
+            <div class="spec-item"><div class="label">Display</div><div class="value">6.8" AMOLED</div></div>
+            <div class="spec-item"><div class="label">Battery</div><div class="value">5,000mAh</div></div>
+            <div class="spec-item"><div class="label">Color</div><div class="value" style="color:#8a8ac0;">Slate Navy</div></div>
         </div>
         <div class="card" id="buy-form">
             <div style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;margin-bottom:12px;">Buy Now</div>
@@ -148,8 +145,8 @@ h1 { font-family: 'Rajdhani', sans-serif; font-size: 28px; margin-bottom: 6px; }
 </div>
 
 <script>
-var PRICE = 899;
-var MODEL_NAME = "Sony Xperia Pro";
+var PRICE = 799;
+var MODEL_NAME = "Samsung Dream S24";
 
 function getSessionToken() {
     try {
@@ -166,7 +163,7 @@ function buyPhone() {
     // Compra el telefono mediante la funcion RPC dlrp_buy_phone, que
     // valida saldo y evita comprar dos veces desde el servidor.
     api("/api/phone/buy", "POST", { key: token, model: MODEL_NAME, price: PRICE }).then(function (profile) {
-        document.getElementById("buy-form").innerHTML = '<div style="padding:20px;text-align:center;"><div style="font-size:48px;margin-bottom:10px;">&#9989;</div><div style="font-size:20px;font-weight:700;">Purchase Complete!</div><div style="color:var(--muted);margin-top:6px;">' + MODEL_NAME + '<br>Number: ' + profile.phoneNumber + '</div><a href="os.html" class="btn primary" style="display:inline-block;margin-top:16px;text-decoration:none;">Open DreamOS</a></div>';
+        document.getElementById("buy-form").innerHTML = '<div style="padding:20px;text-align:center;"><div style="font-size:48px;margin-bottom:10px;">&#9989;</div><div style="font-size:20px;font-weight:700;">Purchase Complete!</div><div style="color:var(--muted);margin-top:6px;">' + MODEL_NAME + '<br>Number: ' + profile.phoneNumber + '</div><a href="dreamos.html" class="btn primary" style="display:inline-block;margin-top:16px;text-decoration:none;">Open DreamOS</a></div>';
     }).catch(function (err) {
         showError(err.message || "Purchase failed.");
     });

@@ -142,6 +142,10 @@
     "resetPending": "Reset to pending",
     "decidedBy": "Decided by",
     "reason": "Reason",
-    "reasonPrompt": "Reason for denying (optional, included in their DM):"
+    "reasonPrompt": "Reason for denying (optional, included in their DM):",
+    "money": "Money",
+    "bank": "Bank",
+    "cash": "Cash",
+    "save": "Save"
   }
 }

@@ -678,6 +678,16 @@ function adminCardHtml(a) {
             '</div>';
     }
 
+    var moneyEditor = "";
+    if (a.status === "approved") {
+        moneyEditor = '<div class="admin-money-editor">' +
+            '<span class="admin-money-label">' + DLRP_I18N.t("admin.money", "Money") + '</span>' +
+            '<input type="number" min="0" class="admin-money-input" id="admin-bank-' + a.id + '" value="' + (a.bank || 0) + '" placeholder="' + DLRP_I18N.t("admin.bank", "Bank") + '">' +
+            '<input type="number" min="0" class="admin-money-input" id="admin-cash-' + a.id + '" value="' + (a.cash || 0) + '" placeholder="' + DLRP_I18N.t("admin.cash", "Cash") + '">' +
+            '<button type="button" class="btn small admin-money-save" onclick="saveAdminMoney(\'' + a.id + '\')">' + DLRP_I18N.t("admin.save", "Save") + '</button>' +
+            '</div>';
+    }
+
     return '' +
         '<div class="admin-card" data-id="' + a.id + '">' +
             '<div class="admin-card-head">' +
@@ -699,8 +709,22 @@ function adminCardHtml(a) {
                 (extra ? '<p class="admin-card-extra"><strong>' + DLRP_I18N.t("whitelist.extraInfo", "More Character Info") + ':</strong><br>' + extra + '</p>' : '') +
             '</details>' +
             '<div class="admin-card-actions">' + actions + '</div>' +
+            moneyEditor +
             decidedLine +
         '</div>';
+}
+
+function saveAdminMoney(profileId) {
+    var key = getSessionKey();
+    if (!key) return;
+    var bank = parseInt(document.getElementById("admin-bank-" + profileId).value, 10) || 0;
+    var cash = parseInt(document.getElementById("admin-cash-" + profileId).value, 10) || 0;
+
+    api("/api/admin/set-money", "POST", { key: key, profileId: profileId, bank: bank, cash: cash }).then(function() {
+        notify("Admin", "Money updated.");
+    }).catch(function(err) {
+        notify("Admin", err.message);
+    });
 }
 
 function setApplicationStatus(profileId, status) {
