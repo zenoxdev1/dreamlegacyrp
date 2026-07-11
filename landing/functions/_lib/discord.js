@@ -74,3 +74,31 @@ export async function getProfileByToken(env, token) {
     if (new Date(row.expires_at) < new Date()) return null;
     return row.profiles;
 }
+
+/** Cabeceras CORS: el Panel (panel.dreamlegacyrp.xyz) es un origen
+ *  distinto a la landing (dreamlegacyrp.xyz) y necesita poder llamar
+ *  a algunas de estas Functions (p.ej. para revalidar la membresia
+ *  del servidor de Discord al entrar a DreamOS). */
+const ALLOWED_ORIGINS = [
+    "https://dreamlegacyrp.xyz",
+    "https://www.dreamlegacyrp.xyz",
+    "https://panel.dreamlegacyrp.xyz"
+];
+
+export function corsHeaders(request) {
+    const origin = request.headers.get("Origin");
+    const allowOrigin = ALLOWED_ORIGINS.indexOf(origin) !== -1 ? origin : ALLOWED_ORIGINS[0];
+    return {
+        "Access-Control-Allow-Origin": allowOrigin,
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Vary": "Origin"
+    };
+}
+
+export function jsonResponse(request, data, status) {
+    return new Response(JSON.stringify(data), {
+        status: status || 200,
+        headers: Object.assign({ "Content-Type": "application/json" }, corsHeaders(request))
+    });
+}

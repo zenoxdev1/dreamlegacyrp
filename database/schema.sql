@@ -57,6 +57,10 @@ create table if not exists public.profiles (
     -- ya que la mayoría de esas apps (bank.html, dialer.html, etc.)
     -- todavía están vacías/por construir en el proyecto original.
     phone_data    jsonb not null default '{}'::jsonb,
+    -- Administradores del panel web (Aprobar/Rechazar solicitudes).
+    -- Se activa a mano desde Table Editor: marca is_admin = true en
+    -- la fila de la persona correspondiente.
+    is_admin      boolean not null default false,
     created_at    timestamptz not null default now()
 );
 
@@ -450,6 +454,132 @@ begin
 end;
 $$;
 
+-- ---------- RPC: PANEL DE ADMINISTRACIÓN ----------
+-- Solo perfiles con is_admin = true (activado a mano en Table Editor)
+-- pueden usar estas funciones. Todas validan el token de sesión Y el
+-- flag de administrador antes de devolver o modificar nada.
+
+create or replace function public._dlrp_require_admin(p_token uuid)
+returns public.profiles
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+    v_profile public.profiles;
+begin
+    v_profile := public._dlrp_profile_from_token(p_token);
+    if v_profile.id is null then
+        raise exception 'Session expired.';
+    end if;
+    if not v_profile.is_admin then
+        raise exception 'Not authorized.';
+    end if;
+    return v_profile;
+end;
+$$;
+
+create or replace function public.dlrp_admin_is(p_token uuid)
+returns boolean
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+declare
+    v_profile public.profiles;
+begin
+    v_profile := public._dlrp_profile_from_token(p_token);
+    if v_profile.id is null then
+        return false;
+    end if;
+    return coalesce(v_profile.is_admin, false);
+end;
+$$;
+
+create or replace function public.dlrp_admin_stats(p_token uuid)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+    perform public._dlrp_require_admin(p_token);
+
+    return (
+        select jsonb_build_object(
+            'pending', count(*) filter (where status = 'pending'),
+            'approved', count(*) filter (where status = 'approved'),
+            'denied', count(*) filter (where status = 'denied'),
+            'total', count(*),
+            'inGuild', count(*) filter (where discord_in_guild)
+        )
+        from public.profiles
+        where discord_id is not null
+    );
+end;
+$$;
+
+create or replace function public.dlrp_admin_list_applications(p_token uuid, p_status text default null)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+    perform public._dlrp_require_admin(p_token);
+
+    return (
+        select coalesce(jsonb_agg(row_to_json(t) order by t.applied_at desc nulls last), '[]'::jsonb)
+        from (
+            select
+                id,
+                rp_name as "rpName",
+                discord_id as "discordId",
+                discord_username as "discordUsername",
+                discord_avatar as "discordAvatar",
+                discord_in_guild as "discordInGuild",
+                psn,
+                story,
+                extra_info as "extraInfo",
+                status,
+                applied_at as "appliedAt"
+            from public.profiles
+            where discord_id is not null
+              and (p_status is null or status = p_status)
+        ) t
+    );
+end;
+$$;
+
+create or replace function public.dlrp_admin_set_status(p_token uuid, p_profile_id uuid, p_status text)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+    v_admin public.profiles;
+begin
+    v_admin := public._dlrp_require_admin(p_token);
+
+    if p_status not in ('pending', 'approved', 'denied') then
+        raise exception 'Invalid status.';
+    end if;
+
+    update public.profiles set status = p_status where id = p_profile_id;
+
+    if not found then
+        raise exception 'Application not found.';
+    end if;
+
+    -- El envío del DM (aprobado/rechazado) lo dispara automáticamente
+    -- el Database Webhook configurado sobre esta tabla, al detectar
+    -- el cambio de status -- no hace falta duplicarlo aquí.
+    return jsonb_build_object('ok', true, 'decidedBy', v_admin.discord_username);
+end;
+$$;
+
 -- Se concede EXECUTE a "anon" (visitantes sin sesión de Supabase Auth,
 -- que es el caso de este sitio ya que usa su propio sistema de login).
 
@@ -468,7 +598,11 @@ grant execute on function
     public.dlrp_buy_phone(uuid,text,integer),
     public.dlrp_save_phone_data(uuid,jsonb),
     public.dlrp_sync_phone_profile(uuid,integer,integer,boolean,text,jsonb),
-    public.dlrp_transfer_bank(uuid,text,integer)
+    public.dlrp_transfer_bank(uuid,text,integer),
+    public.dlrp_admin_is(uuid),
+    public.dlrp_admin_stats(uuid),
+    public.dlrp_admin_list_applications(uuid,text),
+    public.dlrp_admin_set_status(uuid,uuid,text)
 to anon, authenticated;
 
 -- Bloquear cualquier acceso directo por API REST autogenerada a las tablas:
