@@ -190,12 +190,35 @@
       .hidden {
         display: none !important;
       }
+      .contact-badge {
+        display: inline-block;
+        background: var(--purple);
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 1px 6px;
+        border-radius: 8px;
+        vertical-align: middle;
+      }
     </style>
   </head>
   <body>
     <div id="contacts-view">
       <div class="app-header">
-        <span class="ah-title">&#9993; Messages</span>
+        <span class="ah-title">&#9993; Messages</span
+        ><button
+          onclick="newMessagePrompt()"
+          style="
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: var(--purple);
+            font-size: 20px;
+            cursor: pointer;
+          "
+        >
+          +
+        </button>
       </div>
       <div class="app-body" id="contact-list"></div>
     </div>
@@ -221,152 +244,195 @@
       var bridge =
         (window.parent && window.parent.dlrpBridge) || window.dlrpBridge;
       var currentContact = null;
-      function getStore() {
-        var s = bridge.msgGetStore();
-        if (!s || typeof s !== "object") s = {};
-        return s;
-      }
-      function saveStore(s) {
-        bridge.msgSetStore(s);
-      }
-      function getMyMessages() {
-        var user = bridge.currentUser();
-        var store = getStore();
-        if (!store[user]) store[user] = {};
-        return store[user];
-      }
-      function saveMyMessages(obj) {
-        var user = bridge.currentUser();
-        var store = getStore();
-        store[user] = obj;
-        saveStore(store);
-      }
-      function renderContacts() {
+      var pollTimer = null;
+
+      function contactNameFor(number) {
         var ud = bridge.getUD();
-        var list = document.getElementById("contact-list");
-        var myMsgs = getMyMessages();
-        var contacts = [];
         if (ud && ud.contacts) {
-          for (var i = 0; i < ud.contacts.length; i++)
-            contacts.push(ud.contacts[i]);
-        }
-        if (contacts.length === 0) {
-          list.innerHTML =
-            '<div class="empty-state"><div class="empty-icon">&#9993;</div>No contacts to message.</div>';
-          return;
-        }
-        var html = "";
-        var gradients = [
-          "linear-gradient(135deg,#3b82f6,#1d4ed8)",
-          "linear-gradient(135deg,#22c55e,#16a34a)",
-          "linear-gradient(135deg,#8b5cf6,#6d28d9)",
-          "linear-gradient(135deg,#f59e0b,#d97706)",
-          "linear-gradient(135deg,#ec4899,#db2777)",
-          "linear-gradient(135deg,#14b8a6,#0d9488)",
-          "linear-gradient(135deg,#f97316,#ea580c)",
-          "linear-gradient(135deg,#a855f7,#7e22ce)",
-        ];
-        for (var j = 0; j < contacts.length; j++) {
-          var c = contacts[j];
-          var letter = c.name ? c.name.charAt(0).toUpperCase() : "?";
-          var grad = gradients[j % gradients.length];
-          var msgs = myMsgs[c.name];
-          var preview = "";
-          if (msgs && msgs.length > 0) {
-            var last = msgs[msgs.length - 1];
-            preview = bridge.esc(last.text);
-            if (preview.length > 30) preview = preview.substring(0, 30) + "...";
+          for (var i = 0; i < ud.contacts.length; i++) {
+            if (ud.contacts[i].number === number) return ud.contacts[i].name;
           }
-          html +=
-            '<div class="msg-contact" onclick="openThread(\'' +
-            bridge.esc(c.name) +
-            "')\">" +
-            '<div class="mc-avatar" style="background:' +
-            grad +
-            ';">' +
-            bridge.esc(letter) +
-            "</div>" +
-            '<div class="mc-info"><div class="mc-name">' +
-            bridge.esc(c.name) +
-            '</div><div class="mc-num">' +
-            bridge.esc(c.number) +
-            "</div>" +
-            (preview ? '<div class="mc-preview">' + preview + "</div>" : "") +
-            "</div></div>";
         }
-        list.innerHTML = html;
+        return number;
       }
-      function openThread(contactName) {
-        currentContact = contactName;
+
+      function timeAgo(iso) {
+        if (!iso) return "";
+        var diff = (Date.now() - new Date(iso).getTime()) / 1000;
+        if (diff < 60) return "now";
+        if (diff < 3600) return Math.floor(diff / 60) + "m";
+        if (diff < 86400) return Math.floor(diff / 3600) + "h";
+        return Math.floor(diff / 86400) + "d";
+      }
+
+      function renderContacts() {
+        var list = document.getElementById("contact-list");
+        list.innerHTML =
+          '<div class="empty-state" style="padding:20px 10px;">Loading...</div>';
+
+        bridge
+          .getMessageThreads()
+          .then(function (threads) {
+            if (!threads || threads.length === 0) {
+              list.innerHTML =
+                '<div class="empty-state"><div class="empty-icon">&#9993;</div>No conversations yet.<br>Tap + to start one.</div>';
+              return;
+            }
+            var html = "";
+            var gradients = [
+              "linear-gradient(135deg,#3b82f6,#1d4ed8)",
+              "linear-gradient(135deg,#22c55e,#16a34a)",
+              "linear-gradient(135deg,#8b5cf6,#6d28d9)",
+              "linear-gradient(135deg,#f59e0b,#d97706)",
+              "linear-gradient(135deg,#ec4899,#db2777)",
+              "linear-gradient(135deg,#14b8a6,#0d9488)",
+              "linear-gradient(135deg,#f97316,#ea580c)",
+              "linear-gradient(135deg,#a855f7,#7e22ce)",
+            ];
+            for (var j = 0; j < threads.length; j++) {
+              var t = threads[j];
+              var name = contactNameFor(t.otherNumber);
+              var letter = name ? name.charAt(0).toUpperCase() : "?";
+              var grad = gradients[j % gradients.length];
+              var preview = bridge.esc(t.lastBody || "");
+              if (preview.length > 30)
+                preview = preview.substring(0, 30) + "...";
+              var unreadBadge =
+                t.unread > 0
+                  ? '<span class="contact-badge">' + t.unread + "</span>"
+                  : "";
+              html +=
+                '<div class="msg-contact" onclick="openThread(\'' +
+                bridge.esc(t.otherNumber) +
+                "')\">" +
+                '<div class="mc-avatar" style="background:' +
+                grad +
+                ';">' +
+                bridge.esc(letter) +
+                "</div>" +
+                '<div class="mc-info"><div class="mc-name">' +
+                bridge.esc(name) +
+                " " +
+                unreadBadge +
+                '</div><div class="mc-num">' +
+                bridge.esc(t.otherNumber) +
+                " &middot; " +
+                timeAgo(t.lastAt) +
+                "</div>" +
+                (preview
+                  ? '<div class="mc-preview">' + preview + "</div>"
+                  : "") +
+                "</div></div>";
+            }
+            list.innerHTML = html;
+          })
+          .catch(function (err) {
+            list.innerHTML =
+              '<div class="empty-state">' +
+              bridge.esc(err.message || "Could not load messages.") +
+              "</div>";
+          });
+      }
+
+      function newMessagePrompt() {
+        bridge.showCustomModal(
+          "New Message",
+          '<div class="form-field"><label>Phone Number</label><input type="text" id="cm-new-number" placeholder="e.g. 555-0101" style="width:100%;padding:11px 14px;border-radius:8px;border:1px solid rgba(124,58,237,0.15);background:rgba(255,255,255,.05);color:#e2e8f0;font-size:14px;font-family:inherit;outline:none;"></div>',
+          [
+            { label: "Cancel", class: "btn", action: function () {} },
+            {
+              label: "Start",
+              class: "btn primary",
+              action: function () {
+                var num = document.getElementById("cm-new-number").value.trim();
+                if (num) openThread(num);
+              },
+            },
+          ],
+        );
+      }
+
+      function openThread(otherNumber) {
+        currentContact = otherNumber;
         document.getElementById("contacts-view").classList.add("hidden");
         document.getElementById("thread-view").classList.remove("hidden");
-        document.getElementById("thread-title").textContent = contactName;
+        document.getElementById("thread-title").textContent =
+          contactNameFor(otherNumber);
         renderMessages();
         document.getElementById("msg-input").value = "";
         document.getElementById("msg-input").focus();
+
+        if (pollTimer) clearInterval(pollTimer);
+        pollTimer = setInterval(renderMessages, 4000);
       }
+
       function backToList() {
         currentContact = null;
+        if (pollTimer) {
+          clearInterval(pollTimer);
+          pollTimer = null;
+        }
         document.getElementById("thread-view").classList.add("hidden");
         document.getElementById("contacts-view").classList.remove("hidden");
         renderContacts();
       }
-      function getThreadMessages() {
-        if (!currentContact) return [];
-        var myMsgs = getMyMessages();
-        return myMsgs[currentContact] || [];
-      }
+
       function renderMessages() {
+        if (!currentContact) return;
         var list = document.getElementById("msg-list");
-        var msgs = getThreadMessages();
-        if (msgs.length === 0) {
-          list.innerHTML =
-            '<div class="empty-state" style="padding:20px 10px;"><div class="empty-icon">&#9993;</div>No messages yet.</div>';
-          return;
-        }
-        var html = "";
-        var user = bridge.currentUser();
-        for (var i = 0; i < msgs.length; i++) {
-          var m = msgs[i];
-          var isOut = m.from === user;
-          html +=
-            '<div class="msg-bubble ' +
-            (isOut ? "outgoing" : "incoming") +
-            '">' +
-            bridge.esc(m.text) +
-            '<div class="msg-time">' +
-            bridge.esc(m.time) +
-            "</div>" +
-            "</div>";
-        }
-        list.innerHTML = html;
-        list.scrollTop = list.scrollHeight;
+        var wasAtBottom =
+          list.scrollTop + list.clientHeight >= list.scrollHeight - 20;
+
+        bridge
+          .getThreadMessages(currentContact)
+          .then(function (msgs) {
+            if (!msgs || msgs.length === 0) {
+              list.innerHTML =
+                '<div class="empty-state" style="padding:20px 10px;"><div class="empty-icon">&#9993;</div>No messages yet.</div>';
+              return;
+            }
+            var html = "";
+            for (var i = 0; i < msgs.length; i++) {
+              var m = msgs[i];
+              var time = new Date(m.createdAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+              html +=
+                '<div class="msg-bubble ' +
+                (m.isMine ? "outgoing" : "incoming") +
+                '">' +
+                bridge.esc(m.body) +
+                '<div class="msg-time">' +
+                time +
+                "</div>" +
+                "</div>";
+            }
+            list.innerHTML = html;
+            if (wasAtBottom) list.scrollTop = list.scrollHeight;
+          })
+          .catch(function () {});
       }
+
       function sendMessage() {
         var input = document.getElementById("msg-input");
         var text = input.value.trim();
         if (!text || !currentContact) return;
-        var user = bridge.currentUser();
-        var now = new Date();
-        var time =
-          now.getHours().toString().padStart(2, "0") +
-          ":" +
-          now.getMinutes().toString().padStart(2, "0");
-        var myMsgs = getMyMessages();
-        if (!myMsgs[currentContact]) myMsgs[currentContact] = [];
-        myMsgs[currentContact].push({
-          from: user,
-          to: currentContact,
-          text: text,
-          time: time,
-        });
-        saveMyMessages(myMsgs);
         input.value = "";
-        renderMessages();
+        bridge
+          .sendMessage(currentContact, text)
+          .then(function () {
+            renderMessages();
+          })
+          .catch(function (err) {
+            bridge.notif("Error", err.message || "Could not send message.");
+          });
       }
+
       function onInputKey(e) {
-        if (e.keyCode === 13) sendMessage();
+        if (e.key === "Enter") sendMessage();
       }
+
       renderContacts();
     </script>
   </body>

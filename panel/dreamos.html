@@ -555,6 +555,35 @@ window.dlrpBridge = {
         if (!token) return Promise.reject(new Error("Not logged in."));
         return api("/api/reports/submit", "POST", { key: token, reportedName: reportedName, category: category, message: message });
     },
+    sendMessage: function(toNumber, body) {
+        var token = getSessionToken();
+        if (!token) return Promise.reject(new Error("Not logged in."));
+        return api("/api/messages/send", "POST", { key: token, toNumber: toNumber, body: body });
+    },
+    getMessageThreads: function() {
+        var token = getSessionToken();
+        if (!token) return Promise.reject(new Error("Not logged in."));
+        return api("/api/messages/threads", "POST", { key: token }).then(function(r) { return r.threads; });
+    },
+    getThreadMessages: function(otherNumber) {
+        var token = getSessionToken();
+        if (!token) return Promise.reject(new Error("Not logged in."));
+        return api("/api/messages/thread", "POST", { key: token, otherNumber: otherNumber }).then(function(r) { return r.messages; });
+    },
+    placeCall: function(toNumber) {
+        var token = getSessionToken();
+        if (!token) return Promise.reject(new Error("Not logged in."));
+        return api("/api/calls/place", "POST", { key: token, toNumber: toNumber });
+    },
+    getRecentCalls: function() {
+        var token = getSessionToken();
+        if (!token) return Promise.reject(new Error("Not logged in."));
+        return api("/api/calls/recent", "POST", { key: token }).then(function(r) { return r.calls; });
+    },
+    myNumber: function() {
+        var d = getUD();
+        return d ? d.phoneNumber : "";
+    },
     doc: document,
     el: function(id) { return document.getElementById(id); }
 };

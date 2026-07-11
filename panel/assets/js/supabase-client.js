@@ -165,6 +165,41 @@ function api(path, method, body) {
         });
     }
 
+    if (path === "/api/messages/send") {
+        return sb.rpc("dlrp_send_message", { p_token: body.key, p_to_number: body.toNumber, p_body: body.body }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
+    if (path === "/api/messages/threads") {
+        return sb.rpc("dlrp_get_message_threads", { p_token: body.key }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return { threads: r.data };
+        });
+    }
+
+    if (path === "/api/messages/thread") {
+        return sb.rpc("dlrp_get_thread_messages", { p_token: body.key, p_other_number: body.otherNumber }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return { messages: r.data };
+        });
+    }
+
+    if (path === "/api/calls/place") {
+        return sb.rpc("dlrp_place_call", { p_token: body.key, p_to_number: body.toNumber }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
+    if (path === "/api/calls/recent") {
+        return sb.rpc("dlrp_get_recent_calls", { p_token: body.key }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return { calls: r.data };
+        });
+    }
+
     return Promise.reject(new Error("Unknown endpoint: " + path));
 }
 
