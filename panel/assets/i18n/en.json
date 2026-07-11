@@ -88,5 +88,19 @@
     "openDreamOs": "Open DreamOS",
     "alreadyOwn": "You already own a phone. Sell it (Settings app in DreamOS) before buying another.",
     "alreadyOwnBanner": "You already own a phone. Buying another one isn't available yet."
+  },
+  "dreamos": {
+    "number": "Number",
+    "phone": "Phone",
+    "cash": "Cash",
+    "bank": "Bank",
+    "loginMsg": "Log in from the Panel to access your phone.",
+    "noPhoneMsg": "You don't own a phone yet. Buy one from the Phone Shop to access DreamOS.",
+    "swipeUnlock": "Swipe up to unlock",
+    "goToShop": "Go to Phone Shop",
+    "goToPanel": "Go to Panel",
+    "notInGuild": "You're no longer a member of the Discord server. Rejoin to regain access.",
+    "notApproved": "Your whitelist application hasn't been approved yet.",
+    "none": "None"
   }
 }

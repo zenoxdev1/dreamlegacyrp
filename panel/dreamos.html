@@ -102,9 +102,9 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
         <span class="brand-title">Dream Legacy RP</span>
     </a>
     <div class="nav-links">
-        <a href="index.html">Panel</a>
-        <a href="shop.html">Phone Shop</a>
-        <a href="dreamos.html" class="active">DreamOS</a>
+        <a href="index.html" data-i18n="nav.panel">Panel</a>
+        <a href="shop.html" data-i18n="nav.phoneShop">Phone Shop</a>
+        <a href="dreamos.html" class="active" data-i18n="nav.dreamOs">DreamOS</a>
     </div>
     <div class="top-right-group">
         <div class="lang-switch" id="lang-switch">
@@ -133,10 +133,10 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
 
 <div class="profile-bar hidden" id="profile-bar">
     <span class="rp-name" id="prof-name">-</span>
-    <span class="stat">Number: <strong id="prof-num">-</strong></span>
-    <span class="stat">Phone: <strong id="prof-phone">-</strong></span>
-    <span class="stat cash">Cash: <strong id="hud-cash">$0</strong></span>
-    <span class="stat bank">Bank: <strong id="hud-bank">$0</strong></span>
+    <span class="stat"><span data-i18n="dreamos.number">Number</span>: <strong id="prof-num">-</strong></span>
+    <span class="stat"><span data-i18n="dreamos.phone">Phone</span>: <strong id="prof-phone">-</strong></span>
+    <span class="stat cash"><span data-i18n="dreamos.cash">Cash</span>: <strong id="hud-cash">$0</strong></span>
+    <span class="stat bank"><span data-i18n="dreamos.bank">Bank</span>: <strong id="hud-bank">$0</strong></span>
 </div>
 
 <!-- Login Screen -->
@@ -144,13 +144,13 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
     <div style="background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:24px;width:320px;text-align:center;">
         <img src="assets/img/dlrp.png" alt="DLRP" style="height:48px;margin-bottom:12px;" onerror="this.style.display='none'">
         <h2 style="font-family:'Rajdhani',sans-serif;font-size:22px;margin-bottom:4px;">DreamOS</h2>
-        <p style="color:var(--muted);font-size:13px;margin-bottom:16px;" id="os-login-msg">Log in from the Panel to access your phone.</p>
+        <p style="color:var(--muted);font-size:13px;margin-bottom:16px;" id="os-login-msg" data-i18n="dreamos.loginMsg">Log in from the Panel to access your phone.</p>
         <p id="os-login-error" style="color:var(--red);font-size:12px;margin-bottom:16px;display:none;"></p>
         <div id="os-no-phone" class="hidden">
-            <p style="color:var(--muted);font-size:13px;margin-bottom:16px;">You don't own a phone yet. Buy one from the Phone Shop to access DreamOS.</p>
-            <a class="btn primary" href="shop.html" style="width:100%;display:block;box-sizing:border-box;text-decoration:none;margin-bottom:8px;">Go to Phone Shop</a>
+            <p style="color:var(--muted);font-size:13px;margin-bottom:16px;" data-i18n="dreamos.noPhoneMsg">You don't own a phone yet. Buy one from the Phone Shop to access DreamOS.</p>
+            <a class="btn primary" href="shop.html" style="width:100%;display:block;box-sizing:border-box;text-decoration:none;margin-bottom:8px;" data-i18n="dreamos.goToShop">Go to Phone Shop</a>
         </div>
-        <a class="btn" href="index.html" style="width:100%;display:block;box-sizing:border-box;text-decoration:none;">Go to Panel</a>
+        <a class="btn" href="index.html" style="width:100%;display:block;box-sizing:border-box;text-decoration:none;" data-i18n="dreamos.goToPanel">Go to Panel</a>
     </div>
 </div>
 
@@ -165,7 +165,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
             <div class="lock-screen" id="lock-screen">
                 <div class="ls-time" id="ls-time">00:00</div>
                 <div class="ls-date" id="ls-date">Loading...</div>
-                <div class="ls-hint">Swipe up to unlock</div>
+                <div class="ls-hint" data-i18n="dreamos.swipeUnlock">Swipe up to unlock</div>
                 <div class="ls-bar" id="ls-bar"></div>
             </div>
 
@@ -220,6 +220,10 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
 var SESSION_KEY = "dlrp_panel_session";
 var currentUser = null;
 var userCache = {};
+
+function t(key, fallback) {
+    return (window.DLRP_I18N && DLRP_I18N.t) ? DLRP_I18N.t(key, fallback) : fallback;
+}
 
 function defaultUD(rpName) {
     return {
@@ -294,6 +298,7 @@ function enterPhone() {
     document.getElementById("profile-bar").classList.remove("hidden");
     loadProfile();
     updateHUD();
+    renderHome();
     startClock();
     showLockscreen();
 }
@@ -342,11 +347,11 @@ function logoutOS() {
             return r.json().then(function (d) { if (!r.ok) throw new Error(d.error || "Request failed"); return d; });
         }).then(function (profile) {
             if (!profile.discordInGuild) {
-                showOSError("You're no longer a member of the Discord server. Rejoin to regain access.");
+                showOSError(t("dreamos.notInGuild", "You're no longer a member of the Discord server. Rejoin to regain access."));
                 return;
             }
             if (profile.status !== "approved") {
-                showOSError("Your whitelist application hasn't been approved yet.");
+                showOSError(t("dreamos.notApproved", "Your whitelist application hasn't been approved yet."));
                 return;
             }
             if (!profile.phoneOwned) {
@@ -364,7 +369,7 @@ function loadProfile() {
     var d = getUD(); if (!d) return;
     document.getElementById("prof-name").textContent = d.displayName || currentUser;
     document.getElementById("prof-num").textContent = d.phoneNumber || "-";
-    document.getElementById("prof-phone").textContent = d.purchasedPhone || "None";
+    document.getElementById("prof-phone").textContent = d.purchasedPhone || t("dreamos.none", "None");
 
     var chip = document.getElementById("nav-user-chip");
     var avatar = document.getElementById("nav-user-avatar");
@@ -465,9 +470,9 @@ function showLockscreen() {
     var h = now.getHours().toString().padStart(2,"0");
     var m = now.getMinutes().toString().padStart(2,"0");
     document.getElementById("ls-time").textContent = h + ":" + m;
-    var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-    var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    document.getElementById("ls-date").textContent = days[now.getDay()] + ", " + months[now.getMonth()] + " " + now.getDate();
+    var lang = (window.DLRP_I18N && DLRP_I18N.getLang) ? DLRP_I18N.getLang() : "en";
+    var localeMap = { en: "en-US", fr: "fr-FR", pt: "pt-BR" };
+    document.getElementById("ls-date").textContent = now.toLocaleDateString(localeMap[lang] || "en-US", { weekday: "long", month: "long", day: "numeric" });
     initLockscreenEvents();
 }
 

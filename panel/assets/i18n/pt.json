@@ -88,5 +88,19 @@
     "openDreamOs": "Abrir DreamOS",
     "alreadyOwn": "Você já possui um telefone. Venda-o (app Configurações no DreamOS) antes de comprar outro.",
     "alreadyOwnBanner": "Você já possui um telefone. Ainda não é possível comprar outro."
+  },
+  "dreamos": {
+    "number": "Número",
+    "phone": "Telefone",
+    "cash": "Dinheiro",
+    "bank": "Banco",
+    "loginMsg": "Entre pelo Painel para acessar seu telefone.",
+    "noPhoneMsg": "Você ainda não tem um telefone. Compre um na Loja para acessar o DreamOS.",
+    "swipeUnlock": "Deslize para cima para desbloquear",
+    "goToShop": "Ir para a loja",
+    "goToPanel": "Ir para o Painel",
+    "notInGuild": "Você não é mais membro do servidor do Discord. Entre novamente para recuperar o acesso.",
+    "notApproved": "Sua candidatura ainda não foi aprovada.",
+    "none": "Nenhum"
   }
 }
