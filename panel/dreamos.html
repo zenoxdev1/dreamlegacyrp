@@ -53,7 +53,9 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
 /* ---- Home Screen ---- */
 .home-screen { flex: 1; overflow: hidden; position: relative; padding: 6px 10px 10px; }
 .home-pages { display: flex; height: 100%; transition: transform .3s ease; touch-action: none; user-select: none; }
-.home-page { min-width: 100%; display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; align-content: start; padding: 8px 4px; }
+.home-page { width: 100%; min-width: 100%; max-width: 100%; box-sizing: border-box; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; align-content: start; padding: 8px 4px; overflow: hidden; }
+.app-icon { min-width: 0; }
+.app-icon .ai-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
 .app-icon { display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; padding: 6px 2px; border-radius: 10px; transition: background .15s; }
 .app-icon:active { background: rgba(255,255,255,.05); }
 .app-icon .ai-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
