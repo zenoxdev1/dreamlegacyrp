@@ -21,26 +21,17 @@
 body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; overflow: hidden; }
 .hidden { display: none !important; }
 
-/* ---- Topbar ---- */
-.topbar { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: rgba(19,19,26,.8); backdrop-filter: blur(12px); border-bottom: 1px solid var(--card-border); }
-.brand { display: flex; align-items: center; gap: 8px; text-decoration: none; }
-.brand img { height: 30px; }
-.brand-title { font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; background: linear-gradient(135deg,var(--purple),var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.nav-links { display: flex; gap: 10px; align-items: center; }
-.nav-links a { color: var(--muted); text-decoration: none; font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 6px; }
-.nav-links a:hover, .nav-links a.active { color: var(--text); background: rgba(124,58,237,.1); }
+/* Nota: .topbar, .brand, .nav-links y .btn/.card ya vienen de
+   assets/css/style.css (mismo diseno que el resto del sitio).
+   Aqui solo se define lo que es especifico del telefono. */
 
-/* ---- Money HUD ---- */
-.money-hud { display: flex; gap: 16px; padding: 8px 16px; background: rgba(19,19,26,.6); border-bottom: 1px solid var(--card-border); font-family: 'Rajdhani', sans-serif; font-size: 14px; }
-.hud-cash { color: var(--mint); }
-.hud-bank { color: var(--cyan); }
-.hud-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-right: 4px; }
-
-/* ---- Profile Bar ---- */
-.profile-bar { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: var(--card); border-bottom: 1px solid var(--card-border); }
+/* ---- Barra de estado (RP name + telefono + dinero, todo en una) ---- */
+.profile-bar { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; padding: 10px 16px; background: var(--card); border-bottom: 1px solid var(--card-border); }
 .profile-bar .rp-name { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 16px; }
-.profile-bar .stat { color: var(--muted); font-size: 11px; }
-.logout-btn { margin-left: auto; padding: 4px 12px; border-radius: 6px; border: 1px solid var(--red); background: transparent; color: var(--red); font-size: 11px; font-family: 'Rajdhani', sans-serif; font-weight: 700; cursor: pointer; }
+.profile-bar .stat { color: var(--muted); font-size: 12px; }
+.profile-bar .stat strong { color: var(--text); }
+.profile-bar .stat.cash strong { color: var(--mint); }
+.profile-bar .stat.bank strong { color: var(--cyan); }
 
 /* ---- Phone Frame ---- */
 .phone-frame { width: 375px; height: calc(100vh - 160px); max-height: 780px; min-height: 480px; margin: 6px auto; border-radius: 40px; border: 3px solid #333; background: #000; position: relative; overflow: hidden; flex-shrink: 0; }
@@ -79,9 +70,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
 .app-header .ah-title { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 15px; }
 
 /* ---- Buttons ---- */
-.btn { padding: 8px 16px; border-radius: 8px; border: 1px solid var(--card-border); background: transparent; color: var(--text); font-size: 12px; font-family: 'Rajdhani', sans-serif; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: .06em; }
-.btn.primary { background: linear-gradient(135deg,var(--purple),var(--purple-dark)); border: none; color: #fff; }
-.btn.small { padding: 4px 10px; font-size: 10px; }
+/* .btn/.btn.primary/.btn.small ya vienen de assets/css/style.css */
 
 /* ---- Notifications ---- */
 #notif-container { position: fixed; top: 72px; right: 20px; z-index: 300; display: grid; gap: 8px; max-width: 340px; }
@@ -93,7 +82,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
 .overlay { position: fixed; inset: 0; z-index: 400; display: flex; align-items: center; justify-content: center; }
 .overlay-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.7); backdrop-filter: blur(8px); }
 .overlay-card { position: relative; width: 100%; max-width: 380px; margin: 20px; }
-.card { background: var(--card); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; }
+/* .card ya viene de assets/css/style.css (usa .card + .card-inner) */
 .form-field { margin-bottom: 14px; }
 .form-field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; font-weight: 500; }
 .form-field input, .form-field select, .form-field textarea { width:100%; padding:11px 14px; border-radius:8px; border:1px solid rgba(124,58,237,0.15); background:rgba(255,255,255,.05); color:var(--text); font-size:14px; font-family:inherit; outline:none; }
@@ -142,15 +131,12 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
     </div>
 </div>
 
-<div id="money-hud" class="money-hud hidden">
-    <span class="hud-cash"><span class="hud-label">CASH</span> <span id="hud-cash">0</span></span>
-    <span class="hud-bank"><span class="hud-label">BANK</span> <span id="hud-bank">0</span></span>
-</div>
-
 <div class="profile-bar hidden" id="profile-bar">
     <span class="rp-name" id="prof-name">-</span>
     <span class="stat">Number: <strong id="prof-num">-</strong></span>
     <span class="stat">Phone: <strong id="prof-phone">-</strong></span>
+    <span class="stat cash">Cash: <strong id="hud-cash">$0</strong></span>
+    <span class="stat bank">Bank: <strong id="hud-bank">$0</strong></span>
 </div>
 
 <!-- Login Screen -->
@@ -305,7 +291,6 @@ function saveData(n) {
 function enterPhone() {
     document.getElementById("os-login").classList.add("hidden");
     document.getElementById("phone-container").classList.remove("hidden");
-    document.getElementById("money-hud").classList.remove("hidden");
     document.getElementById("profile-bar").classList.remove("hidden");
     loadProfile();
     updateHUD();
@@ -334,7 +319,6 @@ function logoutOS() {
     localStorage.removeItem(SESSION_KEY);
     document.getElementById("os-login").classList.remove("hidden");
     document.getElementById("phone-container").classList.add("hidden");
-    document.getElementById("money-hud").classList.add("hidden");
     document.getElementById("profile-bar").classList.add("hidden");
     var chip = document.getElementById("nav-user-chip");
     if (chip) chip.classList.add("hidden");

@@ -85,6 +85,8 @@
     "loginFirst": "Log in from the Panel first.",
     "complete": "Purchase Complete!",
     "number": "Number",
-    "openDreamOs": "Open DreamOS"
+    "openDreamOs": "Open DreamOS",
+    "alreadyOwn": "You already own a phone. Sell it (Settings app in DreamOS) before buying another.",
+    "alreadyOwnBanner": "You already own a phone. Buying another one isn't available yet."
   }
 }

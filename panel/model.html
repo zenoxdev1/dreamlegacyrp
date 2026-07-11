@@ -145,6 +145,20 @@ function renderModelPage() {
         '</div>';
 
     if (window.DLRP_I18N && DLRP_I18N.getLang) applyStaticTranslations();
+
+    var token = getSessionKey();
+    if (token) {
+        api("/api/profile/" + encodeURIComponent(token), "GET").then(function (profile) {
+            if (profile.phoneOwned) {
+                document.getElementById("buy-form").innerHTML =
+                    '<div style="text-align:center;color:var(--muted);">' +
+                        '<div data-i18n="shop.alreadyOwn">You already own a phone.</div>' +
+                        '<a href="dreamos.html" class="btn primary" style="display:inline-block;margin-top:12px;text-decoration:none;" data-i18n="shop.openDreamOs">Open DreamOS</a>' +
+                    '</div>';
+                if (window.DLRP_I18N) applyStaticTranslations();
+            }
+        }).catch(function () {});
+    }
 }
 
 function applyStaticTranslations() {

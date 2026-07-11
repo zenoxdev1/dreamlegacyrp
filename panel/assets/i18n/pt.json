@@ -85,6 +85,8 @@
     "loginFirst": "Entre pelo Painel primeiro.",
     "complete": "Compra concluída!",
     "number": "Número",
-    "openDreamOs": "Abrir DreamOS"
+    "openDreamOs": "Abrir DreamOS",
+    "alreadyOwn": "Você já possui um telefone. Venda-o (app Configurações no DreamOS) antes de comprar outro.",
+    "alreadyOwnBanner": "Você já possui um telefone. Ainda não é possível comprar outro."
   }
 }

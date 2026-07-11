@@ -92,7 +92,42 @@ function renderShop() {
     }).join("");
 }
 
+function checkOwnedPhone() {
+    var key = getSessionKey();
+    if (!key) return;
+    api("/api/profile/" + encodeURIComponent(key), "GET").then(function(profile) {
+        if (profile.phoneOwned) {
+            var banner = document.createElement("div");
+            banner.className = "card reveal";
+            banner.style.cssText = "max-width:640px;margin:0 auto 24px;text-align:center;";
+            banner.innerHTML = '<div class="card-inner">' +
+                '<p style="margin-bottom:12px;" data-i18n="shop.alreadyOwn">You already own a phone. Sell it (Settings app in DreamOS) before buying another.</p>' +
+                '<a href="dreamos.html" class="btn primary" style="display:inline-block;text-decoration:none;" data-i18n="shop.openDreamOs">Open DreamOS</a>' +
+                '</div>';
+            document.querySelector(".shop-header").after(banner);
+        }
+    }).catch(function() {});
+}
+
 renderShop();
+checkOwnedPhone();
+
+var shopToken = getSessionKey();
+if (shopToken) {
+    api("/api/profile/" + encodeURIComponent(shopToken), "GET").then(function (profile) {
+        if (profile.phoneOwned) {
+            var banner = document.createElement("div");
+            banner.className = "card reveal";
+            banner.style.marginBottom = "24px";
+            banner.style.textAlign = "center";
+            banner.innerHTML = '<div class="card-inner">' +
+                '<p style="margin-bottom:12px;" data-i18n="shop.alreadyOwnBanner">You already own a phone. Buying another one isn\'t available yet.</p>' +
+                '<a href="dreamos.html" class="btn primary" style="display:inline-block;text-decoration:none;" data-i18n="shop.openDreamOs">Open DreamOS</a>' +
+                '</div>';
+            document.querySelector(".shop-header").after(banner);
+        }
+    }).catch(function () {});
+}
 </script>
 </body>
 </html>
