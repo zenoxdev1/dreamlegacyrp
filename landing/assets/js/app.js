@@ -654,15 +654,12 @@ function adminCardHtml(a) {
     var extra = a.extraInfo ? escapeHtml(a.extraInfo).replace(/\n/g, "<br>") : null;
 
     var actions = "";
-    if (a.status !== "approved") {
+    if (a.status === "pending") {
         actions += '<button type="button" class="btn admin-action-btn approve" onclick="setApplicationStatus(\'' + a.id + '\',\'approved\')">' +
             DLRP_I18N.t("admin.approve", "Approve") + '</button>';
-    }
-    if (a.status !== "denied") {
         actions += '<button type="button" class="btn admin-action-btn deny" onclick="setApplicationStatus(\'' + a.id + '\',\'denied\')">' +
             DLRP_I18N.t("admin.deny", "Deny") + '</button>';
-    }
-    if (a.status !== "pending") {
+    } else {
         actions += '<button type="button" class="btn admin-action-btn reset" onclick="setApplicationStatus(\'' + a.id + '\',\'pending\')">' +
             DLRP_I18N.t("admin.resetPending", "Reset to pending") + '</button>';
     }
