@@ -176,7 +176,8 @@
         var body = document.getElementById("settings-body");
         var html = "";
         if (ud && ud.purchasedPhone) {
-          var price = PHONE_PRICES[ud.purchasedPhone] || 0;
+          var price =
+            ud.purchasedPhonePrice || PHONE_PRICES[ud.purchasedPhone] || 549;
           var sellPrice = Math.floor(price * 0.5);
           html +=
             '<div class="setting-row" style="background:rgba(124,58,237,0.06);border-bottom:2px solid rgba(124,58,237,0.15);">' +
@@ -228,7 +229,8 @@
       function sellPhone() {
         var ud = bridge.getUD();
         if (!ud || !ud.purchasedPhone) return;
-        var price = PHONE_PRICES[ud.purchasedPhone] || 0;
+        var price =
+          ud.purchasedPhonePrice || PHONE_PRICES[ud.purchasedPhone] || 549;
         var sellPrice = Math.floor(price * 0.5);
         bridge.showCustomModal(
           "Sell Phone",
@@ -254,7 +256,7 @@
                   "You sold your phone for $" + formatNum(sellPrice) + ".",
                 );
                 setTimeout(function () {
-                  if (window.top) window.top.location.href = "shop.html";
+                  if (window.top) window.top.location.href = "/shop.html";
                 }, 900);
               },
             },
