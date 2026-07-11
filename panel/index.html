@@ -20,13 +20,29 @@
         <a href="index.html" class="active" data-i18n="nav.panel">Panel</a>
         <a href="shop.html" data-i18n="nav.phoneShop">Phone Shop</a>
         <a href="dreamos.html" data-i18n="nav.dreamOs">DreamOS</a>
-        <div class="lang-switch">
-            <select id="lang-select" aria-label="Language / Idioma">
-                <option value="es">ES</option>
-                <option value="en">EN</option>
-                <option value="fr">FR</option>
-                <option value="pt">PT</option>
-            </select>
+    </div>
+    <div class="top-right-group">
+        <div class="lang-switch" id="lang-switch">
+            <button type="button" class="lang-switch-btn" id="lang-switch-btn" aria-haspopup="listbox" aria-expanded="false">
+                <span id="lang-switch-current">EN</span>
+                <span class="lang-switch-arrow">&#9662;</span>
+            </button>
+            <ul class="lang-switch-menu hidden" id="lang-switch-menu" role="listbox">
+                <li role="option" data-lang="en">English</li>
+                <li role="option" data-lang="fr">Fran&ccedil;ais</li>
+                <li role="option" data-lang="pt">Portugu&ecirc;s</li>
+            </ul>
+        </div>
+        <a href="https://dreamlegacyrp.xyz" id="nav-login-link" class="btn small hidden" data-i18n="nav.login">Log in</a>
+        <div class="nav-user-menu">
+            <button type="button" class="nav-user-chip hidden" id="nav-user-chip" aria-haspopup="menu" aria-expanded="false">
+                <img id="nav-user-avatar" src="" alt="">
+                <span id="nav-user-name">-</span>
+                <span class="lang-switch-arrow">&#9662;</span>
+            </button>
+            <ul class="nav-user-dropdown hidden" id="nav-user-dropdown" role="menu">
+                <li role="menuitem" onclick="navLogout();" data-i18n="panel.logOut">Log Out</li>
+            </ul>
         </div>
     </div>
 </div>
@@ -34,12 +50,11 @@
 <div class="main-wrap">
     <!-- Profile Bar -->
     <div id="profile-bar" class="profile-bar hidden">
-        <img id="prof-pfp" src="" style="width:36px;height:36px;border-radius:50%;object-fit:cover;display:none;border:2px solid rgba(124,58,237,0.2);">
+        <img id="prof-pfp" src="" style="width:36px;height:36px;border-radius:50%;object-fit:cover;display:none;border:2px solid var(--line-strong);">
         <span class="rp-name" id="prof-name">-</span>
         <span class="stat"><span data-i18n="panel.phone">Phone</span>: <strong id="prof-phone">None</strong></span>
         <span class="stat"><span data-i18n="panel.number">Number</span>: <strong id="prof-num">-</strong></span>
         <span class="stat"><span data-i18n="panel.bank">Bank</span>: <strong id="prof-bank">$0</strong></span>
-        <button class="logout-btn" onclick="logout()" data-i18n="panel.logOut">Log Out</button>
     </div>
 
     <!-- Auth Screen -->
@@ -109,7 +124,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <script src="assets/js/i18n.js" defer></script>
 <script src="assets/js/supabase-client.js" defer></script>
-<script src="assets/js/session-handoff.js" defer></script>
+<script src="assets/js/session.js" defer></script>
+<script src="assets/js/nav.js" defer></script>
 <script src="assets/js/app.js" defer></script>
 </body>
 </html>

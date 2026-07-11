@@ -240,33 +240,149 @@ h1, h2, h3 { font-family: "Rajdhani", "Arial Narrow", sans-serif; letter-spacing
 
 /* ---------- Selector de idioma ---------- */
 
-.lang-switch { position: relative; margin-left: 6px; }
-.lang-switch select {
-    appearance: none;
-    -webkit-appearance: none;
+.lang-switch {
+    position: relative;
+    margin-left: 6px;
+}
+
+.lang-switch-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     background: rgba(255, 255, 255, .06);
     border: 1px solid var(--line);
     color: var(--text);
     font-family: "Rajdhani", "Arial Narrow", sans-serif;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
     letter-spacing: .06em;
     text-transform: uppercase;
     border-radius: var(--radius);
-    padding: 9px 28px 9px 14px;
+    padding: 8px 12px;
     cursor: pointer;
     outline: none;
-    transition: border-color .18s;
+    transition: border-color .2s, background .2s;
 }
-.lang-switch select:hover, .lang-switch select:focus { border-color: var(--line-strong); }
-.lang-switch::after {
-    content: "\25BE";
-    position: absolute;
-    right: 10px; top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-    color: var(--muted);
+
+.lang-switch-btn:hover,
+.lang-switch-btn:focus-visible { border-color: var(--line-strong); background: rgba(255, 255, 255, .09); }
+
+.lang-switch-arrow {
     font-size: 9px;
+    color: var(--muted);
+    transition: transform .18s var(--ease);
+}
+
+.lang-switch[data-open="true"] .lang-switch-arrow,
+.lang-switch-btn[aria-expanded="true"] + .lang-switch-menu ~ .lang-switch-arrow { transform: rotate(180deg); }
+
+.lang-switch-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 148px;
+    list-style: none;
+    margin: 0;
+    padding: 6px;
+    background: var(--surface-strong);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(18px);
+    z-index: 60;
+    animation: panelIn .16s var(--ease);
+}
+
+.lang-switch-menu li {
+    padding: 9px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background .15s, color .15s;
+}
+
+.lang-switch-menu li:hover { background: rgba(255, 255, 255, .06); color: #fff; }
+
+.lang-switch-menu li.active {
+    color: #fff;
+    background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+}
+
+/* ---- Burbuja de usuario / menu desplegable ---- */
+
+.nav-user-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px 6px 6px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: transparent;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+    font-family: inherit;
+}
+
+.nav-user-chip:hover,
+.nav-user-chip[aria-expanded="true"] { border-color: var(--line-strong); background: rgba(255, 255, 255, .04); }
+
+.nav-user-chip img {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.nav-user-chip span:not(.lang-switch-arrow) {
+    font-family: "Rajdhani", "Arial Narrow", sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text);
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nav-user-chip .lang-switch-arrow { color: var(--muted); }
+.nav-user-chip[aria-expanded="true"] .lang-switch-arrow { transform: rotate(180deg); }
+
+.nav-user-menu { position: relative; }
+
+.nav-user-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 160px;
+    list-style: none;
+    margin: 0;
+    padding: 6px;
+    background: var(--surface-strong);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(18px);
+    z-index: 60;
+    animation: panelIn .16s var(--ease);
+}
+
+.nav-user-dropdown li {
+    padding: 9px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background .15s, color .15s;
+}
+
+.nav-user-dropdown li:hover { background: rgba(255, 255, 255, .06); color: #fff; }
+
+@media (max-width: 560px) {
+    .lang-switch-btn span:not(.lang-switch-arrow) { display: none; }
+    .nav-user-chip span { max-width: 72px; }
 }
 
 /* ---------- Layout ---------- */
@@ -294,4 +410,117 @@ input, select { font-size: 16px; }
     .brand-title { font-size: 16px; }
     .feature-grid { grid-template-columns: 1fr 1fr; }
     .actions { flex-direction: column; }
+}
+
+@keyframes panelIn {
+    from { opacity: 0; transform: translateY(18px) scale(.992); filter: blur(5px); }
+    to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+/* ============================================================
+   Phone Shop
+   ============================================================ */
+
+.shop-header h1 { font-size: 32px; margin-bottom: 6px; text-transform: uppercase; }
+.shop-header .sub { color: var(--muted); font-size: 15px; margin-bottom: 28px; }
+
+.models { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; }
+
+.model-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 22px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform .2s var(--ease), border-color .2s, box-shadow .2s;
+}
+.model-card:hover { border-color: var(--line-strong); transform: translateY(-4px); box-shadow: var(--shadow); }
+
+/* Siluetas de cada modelo (se mantienen -- son la unica diferencia
+   real entre modelos ahora mismo, asi que vale la pena conservarlas) */
+.phone-preview { position: relative; width: 118px; height: 216px; margin: 0 auto 14px; border-radius: 20px; overflow: hidden; border: 2px solid var(--line-strong); background: linear-gradient(135deg, #10151f, #060810); }
+.phone-notch, .phone-punchhole, .phone-pill, .phone-teardrop { position: absolute; background: #000; top: 0; left: 50%; transform: translateX(-50%); }
+.phone-notch { width: 56px; height: 16px; border-radius: 0 0 10px 10px; }
+.phone-punchhole { top: 12px; width: 7px; height: 7px; border-radius: 50%; }
+.phone-pill { top: 10px; width: 38px; height: 11px; border-radius: 6px; }
+.phone-teardrop { width: 22px; height: 12px; border-radius: 0 0 12px 12px; }
+.phone-screen {
+    position: absolute; top: 20px; left: 4px; right: 4px; bottom: 4px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(255, 255, 255, .35);
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+    padding: 8px; text-align: center;
+}
+
+.model-name { font-family: "Rajdhani", "Arial Narrow", sans-serif; font-size: 19px; font-weight: 700; margin-top: 6px; }
+.model-desc { font-size: 12px; color: var(--muted); margin: 6px 0 10px; line-height: 1.4; }
+.model-price { font-size: 22px; font-weight: 700; color: var(--mint); margin-bottom: 12px; font-family: "Rajdhani", "Arial Narrow", sans-serif; }
+
+/* ---- Overlay generico (compra, etc.) ---- */
+.overlay { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; }
+.overlay-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, .7); backdrop-filter: blur(8px); }
+.overlay-card { position: relative; width: 100%; max-width: 380px; margin: 20px; }
+.purchase-preview { text-align: center; }
+.purchase-preview .pp-model { font-size: 22px; font-weight: 700; font-family: "Rajdhani", "Arial Narrow", sans-serif; color: var(--text); margin-bottom: 4px; }
+.purchase-preview .pp-price { font-size: 24px; font-weight: 700; color: var(--mint); margin: 10px 0; }
+
+/* ============================================================
+   Página de modelo (tarjeta de teléfono con flip 3D)
+   ============================================================ */
+
+.model-page-wrap { display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap; justify-content: center; }
+
+.phone-section { display: flex; flex-direction: column; align-items: center; perspective: 1000px; }
+.phone-flipper { position: relative; width: 180px; height: 340px; transform-style: preserve-3d; transition: transform .6s var(--ease); cursor: pointer; }
+.phone-flipper.flipped { transform: rotateY(180deg); }
+.phone-front, .phone-back { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.phone-back { transform: rotateY(180deg); }
+
+.phone-wrapper {
+    position: relative; width: 180px; height: 340px;
+    background: linear-gradient(145deg, #1c2333, #0c0f17);
+    border-radius: 28px; border: 3px solid var(--line-strong);
+    overflow: hidden;
+    box-shadow: 0 0 40px rgba(47, 115, 255, .2), inset 0 0 20px rgba(0, 0, 0, .3);
+}
+.phone-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 70px; height: 22px; background: #000; border-radius: 0 0 12px 12px; z-index: 2; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.phone-notch .speaker { width: 28px; height: 3px; background: #2a2a2a; border-radius: 2px; }
+.phone-notch .cam { width: 8px; height: 8px; background: radial-gradient(circle at 30% 30%, #1a1a3a, #0a0a1a); border-radius: 50%; border: 1px solid #222; }
+.phone-screen-bg { position: absolute; top: 24px; left: 4px; right: 4px; bottom: 4px; background: linear-gradient(180deg, var(--blue), var(--blue-dark)); border-radius: 16px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.phone-screen-bg .model-label { font-family: "Rajdhani", "Arial Narrow", sans-serif; font-size: 14px; font-weight: 700; color: rgba(255, 255, 255, .25); letter-spacing: 1px; text-transform: uppercase; text-align: center; padding: 0 10px; }
+.phone-bottom-bar { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); width: 30px; height: 3px; background: rgba(255, 255, 255, .15); border-radius: 2px; }
+.phone-flip-hint { font-size: 11px; color: var(--dim); margin-top: 10px; text-align: center; transition: color .2s; cursor: pointer; }
+.phone-flip-hint:hover { color: var(--cyan); }
+
+.phone-back .phone-wrapper { background: linear-gradient(145deg, #10151f, #060810); }
+.phone-back-glass { position: absolute; inset: 4px; border-radius: 24px; background: linear-gradient(135deg, rgba(47, 115, 255, .1), rgba(89, 240, 167, .05)); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+.phone-back-logo { width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, var(--blue), var(--blue-dark)); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; color: #fff; font-family: "Rajdhani", "Arial Narrow", sans-serif; }
+.phone-back-camera { display: flex; gap: 6px; align-items: center; }
+.phone-back-camera .cam-ring { width: 14px; height: 14px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .12); background: radial-gradient(circle at 30% 30%, #1a1a3a, #000); }
+.phone-back-text { font-size: 9px; color: rgba(255, 255, 255, .15); letter-spacing: 2px; text-transform: uppercase; font-family: "Rajdhani", "Arial Narrow", sans-serif; margin-top: 4px; }
+
+.info-section { max-width: 400px; min-width: 300px; flex: 1; }
+.model-page-title { font-family: "Rajdhani", "Arial Narrow", sans-serif; font-size: 34px; font-weight: 800; margin-bottom: 6px; text-transform: uppercase; }
+.model-page-desc { color: var(--muted); font-size: 14px; margin-bottom: 14px; line-height: 1.55; }
+.model-page-price { font-size: 30px; font-weight: 800; color: var(--mint); margin-bottom: 22px; font-family: "Rajdhani", "Arial Narrow", sans-serif; }
+
+.specs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+.spec-item { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; }
+.spec-item .label { font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
+.spec-item .value { font-size: 15px; font-weight: 700; margin-top: 3px; color: var(--text); }
+
+.back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none; font-size: 13px; margin-bottom: 18px; transition: color .18s; }
+.back-link:hover { color: var(--text); }
+
+.purchase-complete { padding: 20px; text-align: center; }
+.purchase-complete .pc-icon { font-size: 48px; margin-bottom: 10px; }
+.purchase-complete .pc-title { font-size: 20px; font-weight: 700; font-family: "Rajdhani", "Arial Narrow", sans-serif; }
+.purchase-complete .pc-detail { color: var(--muted); margin-top: 6px; }
+
+@media (max-width: 720px) {
+    .model-page-wrap { gap: 24px; }
+    .info-section { min-width: 0; width: 100%; }
 }

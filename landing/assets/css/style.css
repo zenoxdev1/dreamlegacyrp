@@ -1252,3 +1252,15 @@ input, textarea, select { font-size: 16px; }
     outline: none;
 }
 .admin-money-input:focus { border-color: var(--line-strong); }
+
+.rules-warning {
+    margin-top: 18px;
+    padding: 14px 16px;
+    border: 1px solid rgba(255, 79, 100, .35);
+    background: rgba(255, 79, 100, .08);
+    border-radius: var(--radius);
+    color: var(--red);
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+}

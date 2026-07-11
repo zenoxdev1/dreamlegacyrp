@@ -5,7 +5,8 @@
   "nav": {
     "panel": "Panel",
     "phoneShop": "Phone Shop",
-    "dreamOs": "DreamOS"
+    "dreamOs": "DreamOS",
+    "login": "Log in"
   },
   "whitelist": {
     "rpName": "RP Name",
@@ -61,6 +62,29 @@
     "pendingTitle": "Application pending",
     "pendingDesc": "Your whitelist application hasn't been approved yet. You'll get a DM on Discord once it's reviewed.",
     "deniedTitle": "Application not approved",
-    "deniedDesc": "Your whitelist application wasn't approved. Reach out on Discord if you have questions."
+    "deniedDesc": "Your whitelist application wasn't approved. Reach out on Discord if you have questions.",
+    "notInGuildTitle": "You've left the Discord server",
+    "notInGuildDesc": "You need to be a member of the Dream Legacy RP Discord server to use the Panel. Rejoin and your access will be reviewed again."
+  },
+  "shop": {
+    "title": "DLRP | Phone Shop",
+    "heading": "📱 Phone Shop",
+    "sub": "Choose your device. Each model has its own look, wallpaper, and startup animation.",
+    "view": "View",
+    "flip": "⇅ Flip Phone",
+    "backToShop": "Back to Shop",
+    "specRam": "RAM",
+    "specStorage": "Storage",
+    "specCamera": "Camera",
+    "specDisplay": "Display",
+    "specBattery": "Battery",
+    "specColor": "Color",
+    "buyNow": "Buy Now",
+    "buyingAs": "Buying as your logged-in Discord account.",
+    "purchase": "Purchase",
+    "loginFirst": "Log in from the Panel first.",
+    "complete": "Purchase Complete!",
+    "number": "Number",
+    "openDreamOs": "Open DreamOS"
   }
 }

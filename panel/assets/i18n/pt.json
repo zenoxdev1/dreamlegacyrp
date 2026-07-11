@@ -5,7 +5,8 @@
   "nav": {
     "panel": "Painel",
     "phoneShop": "Loja de telefones",
-    "dreamOs": "DreamOS"
+    "dreamOs": "DreamOS",
+    "login": "Entrar"
   },
   "whitelist": {
     "rpName": "Nome RP",
@@ -61,6 +62,29 @@
     "pendingTitle": "Candidatura pendente",
     "pendingDesc": "Sua candidatura ainda nao foi aprovada. Voce recebera um DM no Discord assim que for analisada.",
     "deniedTitle": "Candidatura nao aprovada",
-    "deniedDesc": "Sua candidatura nao foi aprovada. Fale conosco no Discord se tiver duvidas."
+    "deniedDesc": "Sua candidatura nao foi aprovada. Fale conosco no Discord se tiver duvidas.",
+    "notInGuildTitle": "Voce saiu do servidor do Discord",
+    "notInGuildDesc": "Voce precisa ser membro do servidor do Discord da Dream Legacy RP para usar o Painel. Entre novamente e seu acesso sera reavaliado."
+  },
+  "shop": {
+    "title": "DLRP | Loja de telefones",
+    "heading": "📱 Loja de telefones",
+    "sub": "Escolha seu aparelho. Cada modelo tem seu próprio visual, papel de parede e animação de inicialização.",
+    "view": "Ver",
+    "flip": "⇅ Virar telefone",
+    "backToShop": "Voltar à loja",
+    "specRam": "RAM",
+    "specStorage": "Armazenamento",
+    "specCamera": "Câmera",
+    "specDisplay": "Tela",
+    "specBattery": "Bateria",
+    "specColor": "Cor",
+    "buyNow": "Comprar agora",
+    "buyingAs": "Comprando com sua conta do Discord conectada.",
+    "purchase": "Comprar",
+    "loginFirst": "Entre pelo Painel primeiro.",
+    "complete": "Compra concluída!",
+    "number": "Número",
+    "openDreamOs": "Abrir DreamOS"
   }
 }
