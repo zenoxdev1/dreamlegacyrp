@@ -316,6 +316,11 @@ function showProfile(data) {
 
     if (status === "approved") {
         showApplicationCard("application-approved-card");
+        var panelLink = document.getElementById("go-to-panel-link");
+        var key = getSessionKey();
+        if (panelLink && key) {
+            panelLink.href = "https://panel.dreamlegacyrp.xyz/?dlrp_session=" + encodeURIComponent(key);
+        }
     } else if (status === "denied") {
         showApplicationCard("application-denied-card");
         var reasonEl = document.getElementById("denied-reason-text");
