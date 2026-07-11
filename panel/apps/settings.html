@@ -253,6 +253,9 @@
                   "Phone Sold",
                   "You sold your phone for $" + formatNum(sellPrice) + ".",
                 );
+                setTimeout(function () {
+                  if (window.top) window.top.location.href = "shop.html";
+                }, 900);
               },
             },
           ],
