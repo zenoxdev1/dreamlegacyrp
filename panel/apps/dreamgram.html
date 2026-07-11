@@ -1,0 +1,986 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title>DreamGram</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --purple: #7c3aed;
+        --purple-dark: #5b21b6;
+        --cyan: #06b6d4;
+        --mint: #34d399;
+        --bg: #0a0a0f;
+        --card: #13131a;
+        --card-border: rgba(124, 58, 237, 0.12);
+        --text: #e2e8f0;
+        --muted: #64748b;
+        --dim: #475569;
+        --red: #ef4444;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Inter", sans-serif;
+        min-height: 100vh;
+        overflow: hidden;
+        padding: 0;
+        margin: 0;
+      }
+      .app-header {
+        display: flex;
+        align-items: center;
+        padding: 6px 10px;
+        background: var(--card);
+        border-bottom: 1px solid var(--card-border);
+        gap: 8px;
+      }
+      .app-header .ah-title {
+        font-family: "Rajdhani", sans-serif;
+        font-weight: 700;
+        font-size: 15px;
+        flex: 1;
+      }
+      .tab-bar {
+        display: flex;
+        background: var(--card);
+        border-bottom: 1px solid var(--card-border);
+      }
+      .tab {
+        flex: 1;
+        text-align: center;
+        padding: 10px 0;
+        font-family: "Rajdhani", sans-serif;
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--muted);
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        transition: all 0.15s;
+      }
+      .tab.active {
+        color: var(--purple);
+        border-bottom-color: var(--purple);
+      }
+      .tab:active {
+        opacity: 0.6;
+      }
+      .app-body {
+        overflow-y: auto;
+        height: calc(100vh - 80px);
+      }
+      .tab-content {
+        display: none;
+        padding: 8px 12px;
+      }
+      .tab-content.active {
+        display: block;
+      } /* Feed */
+      .new-post-area {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--card-border);
+        margin-bottom: 10px;
+      }
+      .new-post-area textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--card-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text);
+        font-size: 13px;
+        font-family: inherit;
+        outline: none;
+        resize: vertical;
+        min-height: 60px;
+      }
+      .new-post-area textarea:focus {
+        border-color: var(--purple);
+      }
+      .np-actions {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+      .np-actions button {
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: none;
+        font-family: "Rajdhani", sans-serif;
+        font-weight: 700;
+        font-size: 12px;
+        cursor: pointer;
+      }
+      .np-actions .btn-post {
+        background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+        color: #fff;
+        flex: 1;
+      }
+      .np-actions .btn-photo {
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+      } /* Post */
+      .post {
+        padding: 12px 0;
+        border-bottom: 1px solid var(--card-border);
+      }
+      .post-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .post-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 700;
+        color: #fff;
+        flex-shrink: 0;
+        background-size: cover;
+        background-position: center;
+      }
+      .post-avatar img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .post-author {
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .post-time {
+        font-size: 10px;
+        color: var(--dim);
+      }
+      .post-image {
+        width: 100%;
+        max-height: 300px;
+        object-fit: contain;
+        border-radius: 8px;
+        margin: 6px 0;
+        background: rgba(0, 0, 0, 0.3);
+      }
+      .post-text {
+        font-size: 13px;
+        line-height: 1.5;
+        margin: 4px 0;
+      }
+      .post-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        margin-top: 6px;
+      }
+      .post-actions button {
+        background: none;
+        border: none;
+        color: var(--muted);
+        cursor: pointer;
+        font-size: 13px;
+        padding: 4px 0;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .post-actions button:active {
+        opacity: 0.6;
+      }
+      .post-actions .like-btn {
+        color: var(--muted);
+      }
+      .post-actions .like-btn.liked {
+        color: var(--red);
+      }
+      .post-actions .del-btn {
+        color: var(--dim);
+        margin-left: auto;
+      }
+      .post-actions .del-btn:hover {
+        color: var(--red);
+      } /* Profile */
+      .profile-header {
+        text-align: center;
+        padding: 20px 0;
+      }
+      .profile-pfp {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin: 0 auto 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        font-weight: 700;
+        color: #fff;
+        background-size: cover;
+        background-position: center;
+      }
+      .profile-pfp img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .profile-name {
+        font-size: 18px;
+        font-weight: 700;
+      }
+      .profile-bio {
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+      .profile-edit-btn {
+        margin-top: 12px;
+        padding: 8px 24px;
+        border-radius: 8px;
+        border: 1px solid var(--purple);
+        background: transparent;
+        color: var(--purple);
+        font-family: "Rajdhani", sans-serif;
+        font-weight: 700;
+        font-size: 13px;
+        cursor: pointer;
+      }
+      .profile-edit-btn:active {
+        opacity: 0.6;
+      } /* Modal */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 100;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .modal-overlay.active {
+        display: flex;
+      }
+      .modal-box {
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        padding: 20px;
+        width: 100%;
+        max-width: 340px;
+      }
+      .modal-box h3 {
+        font-family: "Rajdhani", sans-serif;
+        font-size: 16px;
+        margin-bottom: 12px;
+      }
+      .modal-box label {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        margin: 8px 0 4px;
+      }
+      .modal-box input,
+      .modal-box textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--card-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text);
+        font-size: 13px;
+        font-family: inherit;
+        outline: none;
+      }
+      .modal-box input:focus,
+      .modal-box textarea:focus {
+        border-color: var(--purple);
+      }
+      .modal-box textarea {
+        resize: vertical;
+        min-height: 60px;
+      }
+      .modal-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 14px;
+        justify-content: flex-end;
+      }
+      .modal-actions button {
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: none;
+        font-family: "Rajdhani", sans-serif;
+        font-weight: 700;
+        font-size: 12px;
+        cursor: pointer;
+      }
+      .modal-actions .btn-cancel {
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+      }
+      .modal-actions .btn-save {
+        background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+        color: #fff;
+      }
+      .modal-pfp-preview {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin: 8px auto;
+        display: block;
+        object-fit: cover;
+        background: rgba(255, 255, 255, 0.05);
+      } /* DM */
+      .dm-contact {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        cursor: pointer;
+      }
+      .dm-contact:active {
+        opacity: 0.6;
+      }
+      .msg-thread {
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 80px);
+      }
+      .msg-list {
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding: 4px 0;
+      }
+      .msg-bubble {
+        max-width: 80%;
+        padding: 8px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        line-height: 1.4;
+      }
+      .msg-bubble.incoming {
+        align-self: flex-start;
+        background: rgba(255, 255, 255, 0.06);
+        border-bottom-left-radius: 4px;
+      }
+      .msg-bubble.outgoing {
+        align-self: flex-end;
+        background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+        border-bottom-right-radius: 4px;
+      }
+      .msg-bubble .msg-time {
+        font-size: 9px;
+        color: var(--dim);
+        margin-top: 4px;
+        text-align: right;
+      }
+      .msg-input-bar {
+        display: flex;
+        gap: 6px;
+        padding: 8px 0;
+        align-items: center;
+      }
+      .msg-input-bar input {
+        flex: 1;
+        padding: 10px 12px;
+        border-radius: 20px;
+        border: 1px solid var(--card-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text);
+        font-size: 13px;
+        font-family: inherit;
+        outline: none;
+      }
+      .msg-input-bar input:focus {
+        border-color: var(--purple);
+      }
+      .msg-input-bar button {
+        padding: 8px 16px;
+        border-radius: 20px;
+        border: none;
+        background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+        color: #fff;
+        font-size: 13px;
+        cursor: pointer;
+        font-family: "Rajdhani", sans-serif;
+        font-weight: 700;
+      }
+      .dm-back {
+        background: none;
+        border: none;
+        color: var(--purple);
+        font-size: 18px;
+        cursor: pointer;
+        padding: 2px 4px;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .empty-state .empty-icon {
+        font-size: 40px;
+        margin-bottom: 8px;
+        opacity: 0.4;
+      }
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-header">
+      <span class="ah-title">&#128247; DreamGram</span>
+    </div>
+    <div class="tab-bar" id="tab-bar">
+      <div class="tab active" data-tab="feed" onclick="switchTab('feed')">
+        Feed
+      </div>
+      <div class="tab" data-tab="profile" onclick="switchTab('profile')">
+        Profile
+      </div>
+      <div class="tab" data-tab="dms" onclick="switchTab('dms')">Messages</div>
+    </div>
+    <div class="app-body" id="app-body">
+      <div class="tab-content active" id="tab-feed">
+        <div class="new-post-area">
+          <textarea
+            id="post-text"
+            placeholder="What's on your mind?"
+          ></textarea>
+          <div class="np-actions">
+            <button class="btn-post" onclick="submitPost()">Post</button>
+            <button class="btn-photo" onclick="pickPhoto()">
+              &#128247; Photo
+            </button>
+            <input
+              type="file"
+              id="photo-input"
+              accept="image/*"
+              style="display: none"
+              onchange="onPhotoPicked(this)"
+            />
+          </div>
+        </div>
+        <div id="feed-posts"></div>
+      </div>
+      <div class="tab-content" id="tab-profile">
+        <div class="profile-header" id="profile-content"></div>
+      </div>
+      <div class="tab-content" id="tab-dms">
+        <div id="dm-contacts-view"><div id="dm-contact-list"></div></div>
+        <div id="dm-thread-view" class="hidden">
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              padding: 6px 0;
+              border-bottom: 1px solid var(--card-border);
+            "
+          >
+            <button class="dm-back" onclick="dmBackToList()">&larr;</button>
+            <span
+              id="dm-thread-title"
+              style="
+                font-family: &quot;Rajdhani&quot;, sans-serif;
+                font-weight: 700;
+                font-size: 14px;
+              "
+              >Chat</span
+            >
+          </div>
+          <div class="msg-thread">
+            <div class="msg-list" id="dm-msg-list"></div>
+            <div class="msg-input-bar">
+              <input
+                type="text"
+                id="dm-input"
+                placeholder="Type a message..."
+                onkeydown="onDmKey(event)"
+              />
+              <button onclick="sendDm()">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-overlay" id="edit-modal">
+      <div class="modal-box">
+        <h3>Edit Profile</h3>
+        <img
+          class="modal-pfp-preview"
+          id="edit-pfp-preview"
+          src=""
+          style="display: none"
+        />
+        <label>Profile Photo</label>
+        <input
+          type="file"
+          id="edit-pfp-input"
+          accept="image/*"
+          onchange="onEditPfpPick(this)"
+        />
+        <label>Display Name</label>
+        <input
+          type="text"
+          id="edit-displayname"
+          placeholder="Your display name"
+        />
+        <label>Bio</label>
+        <textarea id="edit-bio" placeholder="Tell us about yourself"></textarea>
+        <div class="modal-actions">
+          <button class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+          <button class="btn-save" onclick="saveProfile()">Save</button>
+        </div>
+      </div>
+    </div>
+    <script>
+      var bridge =
+        (window.parent && window.parent.dlrpBridge) || window.dlrpBridge;
+      /* Configure POLICE_WEBHOOK and EMS_WEBHOOK URLs */ var currentTab =
+        "feed";
+      var pendingPhotoDataUrl = null;
+      var editPfpDataUrl = null;
+      var dmCurrentContact = null;
+      function esc(s) {
+        return bridge.esc(s);
+      }
+      function getPfp(userName) {
+        var accounts = bridge.getAccounts();
+        var found = accounts[userName] || null;
+        return found ? found.pfp : null;
+      }
+      function getAvatarHtml(userName) {
+        var pfp = getPfp(userName);
+        if (pfp) {
+          return (
+            '<div class="post-avatar"><img src="' + esc(pfp) + '" alt=""></div>'
+          );
+        }
+        var letter = userName ? userName.charAt(0).toUpperCase() : "?";
+        var gradients = [
+          "linear-gradient(135deg,#3b82f6,#1d4ed8)",
+          "linear-gradient(135deg,#22c55e,#16a34a)",
+          "linear-gradient(135deg,#8b5cf6,#6d28d9)",
+          "linear-gradient(135deg,#f59e0b,#d97706)",
+          "linear-gradient(135deg,#ec4899,#db2777)",
+          "linear-gradient(135deg,#14b8a6,#0d9488)",
+          "linear-gradient(135deg,#f97316,#ea580c)",
+          "linear-gradient(135deg,#a855f7,#7e22ce)",
+        ];
+        var grad = gradients[Math.abs(hashStr(userName)) % gradients.length];
+        return (
+          '<div class="post-avatar" style="background:' +
+          grad +
+          ';">' +
+          esc(letter) +
+          "</div>"
+        );
+        function hashStr(s) {
+          var h = 0;
+          for (var i = 0; i < s.length; i++) {
+            h = (h << 5) - h + s.charCodeAt(i);
+            h |= 0;
+          }
+          return Math.abs(h);
+        }
+      }
+      function switchTab(tab) {
+        currentTab = tab;
+        var tabs = document.querySelectorAll(".tab");
+        for (var i = 0; i < tabs.length; i++)
+          tabs[i].classList.remove("active");
+        document
+          .querySelector('.tab[data-tab="' + tab + '"]')
+          .classList.add("active");
+        var contents = document.querySelectorAll(".tab-content");
+        for (var j = 0; j < contents.length; j++)
+          contents[j].classList.remove("active");
+        document.getElementById("tab-" + tab).classList.add("active");
+        if (tab === "feed") renderFeed();
+        if (tab === "profile") renderProfile();
+        if (tab === "dms") renderDmContacts();
+      }
+      /* ============ FEED ============ */ function submitPost() {
+        var text = document.getElementById("post-text").value.trim();
+        if (!text && !pendingPhotoDataUrl) {
+          bridge.notif("Error", "Add text or a photo.");
+          return;
+        }
+        var user = bridge.currentUser();
+        var ud = bridge.getUD();
+        var displayName = ud ? ud.displayName || user : user;
+        var now = new Date();
+        var time = now.toLocaleString();
+        var posts = bridge.gramGetPosts();
+        if (!posts || !Array.isArray(posts)) posts = [];
+        var post = {
+          id: Date.now() + "_" + Math.random().toString(36).substr(2, 6),
+          author: user,
+          displayName: displayName,
+          text: text,
+          image: pendingPhotoDataUrl || null,
+          time: time,
+          timestamp: now.getTime(),
+          likes: [],
+          likedBy: [],
+        };
+        posts.push(post);
+        bridge.gramSavePosts(posts);
+        document.getElementById("post-text").value = "";
+        pendingPhotoDataUrl = null;
+        renderFeed();
+      }
+      function pickPhoto() {
+        document.getElementById("photo-input").click();
+      }
+      function onPhotoPicked(input) {
+        var file = input.files && input.files[0];
+        if (!file) return;
+        bridge.openCropModal(file, function (dataUrl) {
+          pendingPhotoDataUrl = dataUrl;
+          input.value = "";
+        });
+      }
+      function renderFeed() {
+        var container = document.getElementById("feed-posts");
+        var posts = bridge.gramGetPosts();
+        if (!posts || !Array.isArray(posts) || posts.length === 0) {
+          container.innerHTML =
+            '<div class="empty-state"><div class="empty-icon">&#128247;</div>No posts yet. Be the first!</div>';
+          return;
+        }
+        var sorted = posts.slice().sort(function (a, b) {
+          return (b.timestamp || 0) - (a.timestamp || 0);
+        });
+        var user = bridge.currentUser();
+        var html = "";
+        for (var i = 0; i < sorted.length; i++) {
+          var p = sorted[i];
+          var isOwn = p.author === user;
+          var liked = p.likedBy && p.likedBy.indexOf(user) !== -1;
+          var likeCount = p.likedBy ? p.likedBy.length : p.likes || 0;
+          html +=
+            '<div class="post">' +
+            '<div class="post-header">' +
+            getAvatarHtml(p.author) +
+            '<div><div class="post-author">' +
+            esc(p.displayName || p.author) +
+            '</div><div class="post-time">' +
+            esc(p.time || "") +
+            "</div></div>" +
+            "</div>" +
+            (p.image
+              ? '<img class="post-image" src="' +
+                esc(p.image) +
+                '" alt="Post image">'
+              : "") +
+            (p.text ? '<div class="post-text">' + esc(p.text) + "</div>" : "") +
+            '<div class="post-actions">' +
+            '<button class="like-btn' +
+            (liked ? " liked" : "") +
+            '" onclick="toggleLike(\'' +
+            esc(p.id) +
+            "')\">" +
+            (liked ? "&#10084;" : "&#9825;") +
+            ' <span id="like-count-' +
+            esc(p.id) +
+            '">' +
+            likeCount +
+            "</span></button>" +
+            (isOwn
+              ? '<button class="del-btn" onclick="deletePost(\'' +
+                esc(p.id) +
+                "')\">&#10005;</button>"
+              : "") +
+            "</div>" +
+            "</div>";
+        }
+        container.innerHTML = html;
+      }
+      function toggleLike(postId) {
+        var posts = bridge.gramGetPosts();
+        if (!posts || !Array.isArray(posts)) return;
+        var user = bridge.currentUser();
+        for (var i = 0; i < posts.length; i++) {
+          if (posts[i].id === postId) {
+            if (!posts[i].likedBy) posts[i].likedBy = [];
+            var idx = posts[i].likedBy.indexOf(user);
+            if (idx === -1) {
+              posts[i].likedBy.push(user);
+            } else {
+              posts[i].likedBy.splice(idx, 1);
+            }
+            posts[i].likes = posts[i].likedBy.length;
+            break;
+          }
+        }
+        bridge.gramSavePosts(posts);
+        renderFeed();
+      }
+      function deletePost(postId) {
+        var posts = bridge.gramGetPosts();
+        if (!posts || !Array.isArray(posts)) return;
+        for (var i = 0; i < posts.length; i++) {
+          if (posts[i].id === postId) {
+            posts.splice(i, 1);
+            break;
+          }
+        }
+        bridge.gramSavePosts(posts);
+        renderFeed();
+      }
+      /* ============ PROFILE ============ */ function renderProfile() {
+        var ud = bridge.getUD();
+        var user = bridge.currentUser();
+        var displayName = ud ? ud.displayName || user : user;
+        var bio = ud ? ud.bio || "" : "";
+        var pfp = ud ? ud.pfp || null : null;
+        var container = document.getElementById("profile-content");
+        var avatarHtml = "";
+        if (pfp) {
+          avatarHtml =
+            '<div class="profile-pfp"><img src="' +
+            esc(pfp) +
+            '" alt=""></div>';
+        } else {
+          var letter = displayName.charAt(0).toUpperCase();
+          var gradients = [
+            "linear-gradient(135deg,#3b82f6,#1d4ed8)",
+            "linear-gradient(135deg,#22c55e,#16a34a)",
+            "linear-gradient(135deg,#8b5cf6,#6d28d9)",
+            "linear-gradient(135deg,#f59e0b,#d97706)",
+            "linear-gradient(135deg,#ec4899,#db2777)",
+            "linear-gradient(135deg,#14b8a6,#0d9488)",
+            "linear-gradient(135deg,#f97316,#ea580c)",
+            "linear-gradient(135deg,#a855f7,#7e22ce)",
+          ];
+          var grad = gradients[Math.abs(hashStr2(user)) % gradients.length];
+          avatarHtml =
+            '<div class="profile-pfp" style="background:' +
+            grad +
+            ';">' +
+            esc(letter) +
+            "</div>";
+        }
+        container.innerHTML =
+          avatarHtml +
+          '<div class="profile-name">' +
+          esc(displayName) +
+          "</div>" +
+          (bio ? '<div class="profile-bio">' + esc(bio) + "</div>" : "") +
+          '<button class="profile-edit-btn" onclick="openEditModal()">Edit Profile</button>';
+        function hashStr2(s) {
+          var h = 0;
+          for (var i = 0; i < s.length; i++) {
+            h = (h << 5) - h + s.charCodeAt(i);
+            h |= 0;
+          }
+          return Math.abs(h);
+        }
+      }
+      function openEditModal() {
+        var ud = bridge.getUD();
+        document.getElementById("edit-displayname").value =
+          ud && ud.displayName ? ud.displayName : "";
+        document.getElementById("edit-bio").value = ud && ud.bio ? ud.bio : "";
+        var pfpPreview = document.getElementById("edit-pfp-preview");
+        if (ud && ud.pfp) {
+          pfpPreview.src = ud.pfp;
+          pfpPreview.style.display = "block";
+        } else {
+          pfpPreview.style.display = "none";
+        }
+        editPfpDataUrl = null;
+        document.getElementById("edit-modal").classList.add("active");
+      }
+      function closeEditModal() {
+        document.getElementById("edit-modal").classList.remove("active");
+      }
+      function onEditPfpPick(input) {
+        var file = input.files && input.files[0];
+        if (!file) return;
+        bridge.openCropModal(file, function (dataUrl) {
+          editPfpDataUrl = dataUrl;
+          var preview = document.getElementById("edit-pfp-preview");
+          preview.src = dataUrl;
+          preview.style.display = "block";
+          input.value = "";
+        });
+      }
+      function saveProfile() {
+        var ud = bridge.getUD();
+        var name = document.getElementById("edit-displayname").value.trim();
+        var bio = document.getElementById("edit-bio").value.trim();
+        if (name) ud.displayName = name;
+        ud.bio = bio;
+        if (editPfpDataUrl) ud.pfp = editPfpDataUrl;
+        bridge.saveData();
+        closeEditModal();
+        renderProfile();
+      }
+      /* ============ DMs ============ */ function getDmStore() {
+        return bridge.gramGetDms();
+      }
+      function saveDmStore(store) {
+        bridge.gramSaveDms(store);
+      }
+      function getMyDms() {
+        var user = bridge.currentUser();
+        var store = getDmStore();
+        if (!store[user]) store[user] = {};
+        return store[user];
+      }
+      function saveMyDms(obj) {
+        var user = bridge.currentUser();
+        var store = getDmStore();
+        store[user] = obj;
+        saveDmStore(store);
+      }
+      function renderDmContacts() {
+        var ud = bridge.getUD();
+        var list = document.getElementById("dm-contact-list");
+        var myDms = getMyDms();
+        var contacts = [];
+        if (ud && ud.contacts) {
+          for (var i = 0; i < ud.contacts.length; i++)
+            contacts.push(ud.contacts[i]);
+        }
+        if (contacts.length === 0) {
+          list.innerHTML =
+            '<div class="empty-state"><div class="empty-icon">&#9993;</div>No contacts to message.</div>';
+          return;
+        }
+        var html = "";
+        for (var j = 0; j < contacts.length; j++) {
+          var c = contacts[j];
+          var msgs = myDms[c.name];
+          var preview = "";
+          if (msgs && msgs.length > 0) {
+            var last = msgs[msgs.length - 1];
+            preview = esc(last.text);
+            if (preview.length > 30) preview = preview.substring(0, 30) + "...";
+          }
+          html +=
+            '<div class="dm-contact" onclick="dmOpenThread(\'' +
+            esc(c.name) +
+            "')\">" +
+            getAvatarHtml(c.name) +
+            '<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;">' +
+            esc(c.name) +
+            "</div>" +
+            (preview
+              ? '<div style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' +
+                preview +
+                "</div>"
+              : "") +
+            "</div></div>";
+        }
+        list.innerHTML = html;
+      }
+      function dmOpenThread(contactName) {
+        dmCurrentContact = contactName;
+        document.getElementById("dm-contacts-view").classList.add("hidden");
+        document.getElementById("dm-thread-view").classList.remove("hidden");
+        document.getElementById("dm-thread-title").textContent = contactName;
+        renderDmMessages();
+        document.getElementById("dm-input").value = "";
+        document.getElementById("dm-input").focus();
+      }
+      function dmBackToList() {
+        dmCurrentContact = null;
+        document.getElementById("dm-thread-view").classList.add("hidden");
+        document.getElementById("dm-contacts-view").classList.remove("hidden");
+        renderDmContacts();
+      }
+      function getDmThreadMessages() {
+        if (!dmCurrentContact) return [];
+        var myDms = getMyDms();
+        return myDms[dmCurrentContact] || [];
+      }
+      function renderDmMessages() {
+        var list = document.getElementById("dm-msg-list");
+        var msgs = getDmThreadMessages();
+        if (msgs.length === 0) {
+          list.innerHTML =
+            '<div class="empty-state" style="padding:20px 10px;"><div class="empty-icon">&#9993;</div>No messages yet.</div>';
+          return;
+        }
+        var html = "";
+        var user = bridge.currentUser();
+        for (var i = 0; i < msgs.length; i++) {
+          var m = msgs[i];
+          var isOut = m.from === user;
+          html +=
+            '<div class="msg-bubble ' +
+            (isOut ? "outgoing" : "incoming") +
+            '">' +
+            esc(m.text) +
+            '<div class="msg-time">' +
+            esc(m.time) +
+            "</div>" +
+            "</div>";
+        }
+        list.innerHTML = html;
+        list.scrollTop = list.scrollHeight;
+      }
+      function sendDm() {
+        var input = document.getElementById("dm-input");
+        var text = input.value.trim();
+        if (!text || !dmCurrentContact) return;
+        var user = bridge.currentUser();
+        var now = new Date();
+        var time =
+          now.getHours().toString().padStart(2, "0") +
+          ":" +
+          now.getMinutes().toString().padStart(2, "0");
+        var myDms = getMyDms();
+        if (!myDms[dmCurrentContact]) myDms[dmCurrentContact] = [];
+        myDms[dmCurrentContact].push({
+          from: user,
+          to: dmCurrentContact,
+          text: text,
+          time: time,
+        });
+        saveMyDms(myDms);
+        input.value = "";
+        renderDmMessages();
+      }
+      function onDmKey(e) {
+        if (e.keyCode === 13) sendDm();
+      }
+      /* Init */ renderFeed();
+    </script>
+  </body>
+</html>

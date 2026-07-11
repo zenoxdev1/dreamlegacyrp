@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title>Phone</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --purple: #7c3aed;
+        --purple-dark: #5b21b6;
+        --cyan: #06b6d4;
+        --mint: #34d399;
+        --bg: #0a0a0f;
+        --card: #13131a;
+        --card-border: rgba(124, 58, 237, 0.12);
+        --text: #e2e8f0;
+        --muted: #64748b;
+        --dim: #475569;
+        --red: #ef4444;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Inter", sans-serif;
+        min-height: 100vh;
+        overflow: hidden;
+        padding: 0;
+        margin: 0;
+      }
+      .app-body {
+        overflow-y: auto;
+        padding: 8px 12px;
+        height: 100vh;
+      }
+      .dialer-contacts {
+        margin-bottom: 6px;
+      }
+      .dialer-contact {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        cursor: pointer;
+      }
+      .dialer-contact:active {
+        opacity: 0.6;
+      }
+      .dc-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 700;
+        color: #fff;
+        flex-shrink: 0;
+      }
+      .dc-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .dc-name {
+        font-size: 13px;
+        font-weight: 500;
+      }
+      .dc-num {
+        font-size: 11px;
+        color: var(--dim);
+      }
+      .dialer-display {
+        text-align: center;
+        font-size: 26px;
+        font-weight: 700;
+        padding: 10px 0;
+        letter-spacing: 2px;
+        font-family: "Rajdhani", sans-serif;
+        min-height: 40px;
+        word-break: break-all;
+      }
+      .dialer-pad {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        max-width: 220px;
+        margin: 4px auto 0;
+      }
+      .dialer-key {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        font-size: 20px;
+        font-family: "Rajdhani", sans-serif;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        transition: background 0.1s;
+      }
+      .dialer-key:active {
+        background: rgba(124, 58, 237, 0.3);
+        transform: scale(0.92);
+      }
+      .dialer-key .dk-sub {
+        display: block;
+        font-size: 8px;
+        font-weight: 400;
+        color: var(--dim);
+        line-height: 1;
+        margin-top: 1px;
+      }
+      .dialer-row {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+      }
+      .dialer-call-wrap {
+        display: flex;
+        justify-content: center;
+        margin: 10px 0 6px;
+        gap: 20px;
+        align-items: center;
+      }
+      .dialer-call {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        border: none;
+        background: var(--mint);
+        color: #000;
+        font-size: 22px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.1s;
+      }
+      .dialer-call:active {
+        transform: scale(0.9);
+      }
+      .dialer-clear {
+        background: none;
+        border: none;
+        color: var(--dim);
+        font-size: 14px;
+        cursor: pointer;
+        padding: 8px;
+        font-family: "Rajdhani", sans-serif;
+        font-weight: 600;
+      }
+      .dialer-clear:active {
+        color: var(--red);
+      }
+      .empty-contacts-msg {
+        text-align: center;
+        padding: 10px 0;
+        color: var(--muted);
+        font-size: 11px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-body" id="app-body">
+      <div id="dialer-contacts" class="dialer-contacts"></div>
+      <div class="dialer-display" id="dialer-display">&nbsp;</div>
+      <div class="dialer-pad" id="dialer-pad"></div>
+      <div class="dialer-call-wrap">
+        <button class="dialer-call" onclick="doCall()">&#128222;</button>
+        <button class="dialer-clear" onclick="clearNumber()">Clear</button>
+      </div>
+    </div>
+    <script>
+      var bridge =
+        (window.parent && window.parent.dlrpBridge) || window.dlrpBridge;
+      var dialed = "";
+      var keys = [
+        { n: "1", s: "" },
+        { n: "2", s: "ABC" },
+        { n: "3", s: "DEF" },
+        { n: "4", s: "GHI" },
+        { n: "5", s: "JKL" },
+        { n: "6", s: "MNO" },
+        { n: "7", s: "PQRS" },
+        { n: "8", s: "TUV" },
+        { n: "9", s: "WXYZ" },
+        { n: "*", s: "" },
+        { n: "0", s: "+" },
+        { n: "#", s: "" },
+      ];
+      function renderKeypad() {
+        var pad = document.getElementById("dialer-pad");
+        var html = "";
+        for (var i = 0; i < keys.length; i++) {
+          var k = keys[i];
+          var sub = k.s ? '<span class="dk-sub">' + k.s + "</span>" : "";
+          var displayVal =
+            k.n === "*" ? "&#10022;" : k.n === "#" ? "&#9837;" : k.n;
+          html +=
+            '<button class="dialer-key" onclick="pressKey(\'' +
+            k.n +
+            "')\">" +
+            displayVal +
+            sub +
+            "</button>";
+        }
+        pad.innerHTML = html;
+      }
+      function renderContacts() {
+        var ud = bridge.getUD();
+        var container = document.getElementById("dialer-contacts");
+        var contacts = [];
+        if (ud && ud.contacts) {
+          for (var i = 0; i < ud.contacts.length; i++) {
+            if (ud.contacts[i].number) contacts.push(ud.contacts[i]);
+          }
+        }
+        if (contacts.length === 0) {
+          container.innerHTML =
+            '<div class="empty-contacts-msg">No contacts with numbers</div>';
+          return;
+        }
+        var html = "";
+        var gradients = [
+          "linear-gradient(135deg,#22c55e,#16a34a)",
+          "linear-gradient(135deg,#3b82f6,#1d4ed8)",
+          "linear-gradient(135deg,#8b5cf6,#6d28d9)",
+          "linear-gradient(135deg,#f59e0b,#d97706)",
+          "linear-gradient(135deg,#ec4899,#db2777)",
+          "linear-gradient(135deg,#14b8a6,#0d9488)",
+        ];
+        for (var j = 0; j < contacts.length; j++) {
+          var c = contacts[j];
+          var letter = c.name ? c.name.charAt(0).toUpperCase() : "?";
+          var grad = gradients[j % gradients.length];
+          html +=
+            '<div class="dialer-contact" onclick="pickContact(\'' +
+            bridge.esc(c.number) +
+            "')\">" +
+            '<div class="dc-avatar" style="background:' +
+            grad +
+            ';">' +
+            bridge.esc(letter) +
+            "</div>" +
+            '<div class="dc-info"><div class="dc-name">' +
+            bridge.esc(c.name) +
+            '</div><div class="dc-num">' +
+            bridge.esc(c.number) +
+            "</div></div>" +
+            "</div>";
+        }
+        container.innerHTML = html;
+      }
+      function pressKey(val) {
+        if (dialed.length < 20) {
+          dialed += val;
+          updateDisplay();
+        }
+      }
+      function pickContact(num) {
+        dialed = num;
+        updateDisplay();
+      }
+      function updateDisplay() {
+        var el = document.getElementById("dialer-display");
+        el.textContent = dialed || "\u00A0";
+      }
+      function clearNumber() {
+        dialed = "";
+        updateDisplay();
+      }
+      function doCall() {
+        if (!dialed) {
+          bridge.notif("Phone", "Enter a number first.");
+          return;
+        }
+        bridge.notif("Calling", dialed + "...");
+        setTimeout(function () {
+          bridge.notif("Call Ended", dialed + " | Duration: 0:03");
+        }, 3000);
+      }
+      renderKeypad();
+      renderContacts();
+    </script>
+  </body>
+</html>

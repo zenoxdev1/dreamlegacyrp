@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title>Settings</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --purple: #7c3aed;
+        --purple-dark: #5b21b6;
+        --cyan: #06b6d4;
+        --mint: #34d399;
+        --bg: #0a0a0f;
+        --card: #13131a;
+        --card-border: rgba(124, 58, 237, 0.12);
+        --text: #e2e8f0;
+        --muted: #64748b;
+        --dim: #475569;
+        --red: #ef4444;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Inter", sans-serif;
+        min-height: 100vh;
+        overflow: hidden;
+        padding: 0;
+        margin: 0;
+      }
+      .app-header {
+        display: flex;
+        align-items: center;
+        padding: 6px 10px;
+        background: var(--card);
+        border-bottom: 1px solid var(--card-border);
+        gap: 8px;
+      }
+      .app-header .ah-title {
+        font-family: "Rajdhani", sans-serif;
+        font-weight: 700;
+        font-size: 15px;
+        flex: 1;
+      }
+      .app-body {
+        overflow-y: auto;
+        padding: 0;
+        height: calc(100vh - 40px);
+      }
+      .setting-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--card-border);
+      }
+      .setting-label {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text);
+      }
+      .setting-desc {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+      .setting-left {
+        flex: 1;
+      }
+      .toggle-switch {
+        position: relative;
+        width: 44px;
+        height: 24px;
+        flex-shrink: 0;
+      }
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        transition: 0.3s;
+      }
+      .toggle-slider:before {
+        content: "";
+        position: absolute;
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background: #fff;
+        border-radius: 50%;
+        transition: 0.3s;
+      }
+      .toggle-switch input:checked + .toggle-slider {
+        background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+      }
+      .toggle-switch input:checked + .toggle-slider:before {
+        transform: translateX(20px);
+      }
+      .setting-select {
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid var(--card-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text);
+        font-size: 13px;
+        font-family: inherit;
+        outline: none;
+        cursor: pointer;
+        min-width: 120px;
+      }
+      .setting-select:focus {
+        border-color: var(--purple);
+      }
+      .setting-select option {
+        background: var(--card);
+        color: var(--text);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-header"><span class="ah-title">&#9881; Settings</span></div>
+    <div class="app-body" id="settings-body"></div>
+    <script>
+      var bridge =
+        (window.parent && window.parent.dlrpBridge) || window.dlrpBridge;
+      var PHONE_PRICES = {
+        "iGlitch X": 599,
+        "Samsung Dream S24": 799,
+        "Pixel Play 8": 699,
+        "OnePlus Dark": 649,
+        "Huawei Star": 549,
+        "Sony Xperia Pro": 899,
+      };
+      function getSettings() {
+        var ud = bridge.getUD();
+        if (!ud.settings)
+          ud.settings = {
+            sound: true,
+            notifications: true,
+            fontSize: "Medium",
+          };
+        return ud.settings;
+      }
+      function saveSetting(key, value) {
+        var ud = bridge.getUD();
+        if (!ud.settings)
+          ud.settings = {
+            sound: true,
+            notifications: true,
+            fontSize: "Medium",
+          };
+        ud.settings[key] = value;
+        bridge.saveData();
+      }
+      function render() {
+        var ud = bridge.getUD();
+        var s = getSettings();
+        var body = document.getElementById("settings-body");
+        var html = "";
+        if (ud && ud.purchasedPhone) {
+          var price = PHONE_PRICES[ud.purchasedPhone] || 0;
+          var sellPrice = Math.floor(price * 0.5);
+          html +=
+            '<div class="setting-row" style="background:rgba(124,58,237,0.06);border-bottom:2px solid rgba(124,58,237,0.15);">' +
+            '<div class="setting-left"><div class="setting-label">&#128241; ' +
+            bridge.esc(ud.purchasedPhone) +
+            "</div>" +
+            '<div class="setting-desc">' +
+            bridge.esc(ud.phoneNumber || "") +
+            " &middot; Sell for $" +
+            formatNum(sellPrice) +
+            "</div></div>" +
+            '<button onclick="sellPhone()" style="padding:8px 18px;border-radius:8px;border:none;background:var(--red);color:#fff;font-family:\'Rajdhani\',sans-serif;font-weight:700;font-size:12px;cursor:pointer;">Sell</button>' +
+            "</div>";
+        } else {
+          html +=
+            '<div class="setting-row" style="opacity:.5;">' +
+            '<div class="setting-left"><div class="setting-label">&#128241; No Phone</div><div class="setting-desc">Visit the phone shop to purchase one.</div></div>' +
+            "</div>";
+        }
+        html +=
+          '<div class="setting-row">' +
+          '<div class="setting-left"><div class="setting-label">&#128266; Sound Effects</div><div class="setting-desc">Play sounds for notifications and actions</div></div>' +
+          '<label class="toggle-switch"><input type="checkbox" id="chk-sound" ' +
+          (s.sound ? "checked" : "") +
+          ' onchange="onSoundChange()"><span class="toggle-slider"></span></label>' +
+          "</div>" +
+          '<div class="setting-row">' +
+          '<div class="setting-left"><div class="setting-label">&#128276; Notifications</div><div class="setting-desc">Show notification popups</div></div>' +
+          '<label class="toggle-switch"><input type="checkbox" id="chk-notifications" ' +
+          (s.notifications ? "checked" : "") +
+          ' onchange="onNotifChange()"><span class="toggle-slider"></span></label>' +
+          "</div>" +
+          '<div class="setting-row">' +
+          '<div class="setting-left"><div class="setting-label">&#128200; Font Size</div><div class="setting-desc">Adjust text size throughout the OS</div></div>' +
+          '<select class="setting-select" id="sel-fontsize" onchange="onFontSizeChange()">' +
+          '<option value="Small" ' +
+          (s.fontSize === "Small" ? "selected" : "") +
+          ">Small</option>" +
+          '<option value="Medium" ' +
+          (s.fontSize === "Medium" ? "selected" : "") +
+          ">Medium</option>" +
+          '<option value="Large" ' +
+          (s.fontSize === "Large" ? "selected" : "") +
+          ">Large</option>" +
+          "</select>" +
+          "</div>";
+        body.innerHTML = html;
+      }
+      function sellPhone() {
+        var ud = bridge.getUD();
+        if (!ud || !ud.purchasedPhone) return;
+        var price = PHONE_PRICES[ud.purchasedPhone] || 0;
+        var sellPrice = Math.floor(price * 0.5);
+        bridge.showCustomModal(
+          "Sell Phone",
+          '<p style="color:#64748b;font-size:13px;">Sell your <strong>' +
+            bridge.esc(ud.purchasedPhone) +
+            '</strong> for <strong style="color:var(--mint);">$' +
+            formatNum(sellPrice) +
+            '</strong>?</p><p style="color:var(--dim);font-size:12px;margin-top:6px;">This will remove your current phone and phone number.</p>',
+          [
+            { label: "Cancel", class: "btn", action: function () {} },
+            {
+              label: "Sell",
+              class: "btn",
+              action: function () {
+                ud.bank = (ud.bank || 0) + sellPrice;
+                ud.purchasedPhone = "";
+                ud.phoneNumber = "";
+                bridge.saveData();
+                bridge.updateHUD();
+                render();
+                bridge.notif(
+                  "Phone Sold",
+                  "You sold your phone for $" + formatNum(sellPrice) + ".",
+                );
+              },
+            },
+          ],
+        );
+      }
+      function formatNum(n) {
+        return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }
+      function onSoundChange() {
+        var val = document.getElementById("chk-sound").checked;
+        saveSetting("sound", val);
+      }
+      function onNotifChange() {
+        var val = document.getElementById("chk-notifications").checked;
+        saveSetting("notifications", val);
+      }
+      function onFontSizeChange() {
+        var val = document.getElementById("sel-fontsize").value;
+        saveSetting("fontSize", val);
+      }
+      render();
+    </script>
+  </body>
+</html>
