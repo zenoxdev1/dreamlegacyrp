@@ -51,9 +51,8 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
 @keyframes ls-bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
 /* ---- Home Screen ---- */
-.home-screen { flex: 1; overflow: hidden; position: relative; padding: 6px 10px 10px; }
-.home-pages { display: flex; height: 100%; transition: transform .3s ease; touch-action: none; user-select: none; }
-.home-page { width: 100%; min-width: 100%; max-width: 100%; box-sizing: border-box; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; align-content: start; padding: 8px 4px; overflow: hidden; }
+.home-screen { flex: 1; overflow-y: auto; overflow-x: hidden; position: relative; padding: 6px 10px 10px; -webkit-overflow-scrolling: touch; }
+.home-page { width: 100%; box-sizing: border-box; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px 6px; align-content: start; padding: 8px 4px; }
 .app-icon { min-width: 0; }
 .app-icon .ai-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
 .app-icon { display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; padding: 6px 2px; border-radius: 10px; transition: background .15s; }
@@ -174,7 +173,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
             <!-- Home Screen -->
             <div class="home-screen" id="home-screen">
                 <div class="home-pages" id="home-pages"></div>
-                <div class="page-dots" id="page-dots"></div>
             </div>
 
             <!-- App View -->
@@ -421,43 +419,14 @@ var homeApps = [
 var openAppId = null;
 
 function renderHome() {
-    var pagesContainer = document.getElementById("home-pages");
-    var dotsContainer = document.getElementById("page-dots");
-    var appsPerPage = 8;
-    var pages = [];
-    for (var i = 0; i < homeApps.length; i += appsPerPage) pages.push(homeApps.slice(i, i + appsPerPage));
-    pagesContainer.innerHTML = "";
-    pages.forEach(function(page) {
-        var div = document.createElement("div"); div.className = "home-page";
-        page.forEach(function(app) {
-            div.innerHTML += '<div class="app-icon" onclick="openApp(\'' + app.id + '\')"><div class="ai-icon" style="background:linear-gradient(135deg,' + app.color + ',' + app.color + '88);">' + app.icon + '</div><div class="ai-label">' + app.label + '</div></div>';
-        });
-        pagesContainer.appendChild(div);
-    });
-    dotsContainer.innerHTML = "";
-    pages.forEach(function(_, idx) {
-        dotsContainer.innerHTML += '<div class="page-dot' + (idx === 0 ? " active" : "") + '" onclick="goToPage(' + idx + ')"></div>';
-    });
-    if (pages.length <= 1) dotsContainer.style.display = "none";
-    var startX = 0, currentPage = 0;
-    pagesContainer.addEventListener("touchstart", function(e) { startX = e.touches[0].clientX; }, { passive: true });
-    pagesContainer.addEventListener("touchend", function(e) {
-        var diff = e.changedTouches[0].clientX - startX;
-        if (Math.abs(diff) > 50) {
-            if (diff < 0 && currentPage < pages.length - 1) currentPage++;
-            else if (diff > 0 && currentPage > 0) currentPage--;
-            goToPage(currentPage);
-        }
-    }, { passive: true });
-}
-
-function goToPage(idx) {
-    var pages = document.querySelectorAll(".home-page");
-    if (idx < 0 || idx >= pages.length) return;
     var container = document.getElementById("home-pages");
-    container.style.transform = "translateX(-" + (idx * 100) + "%)";
-    var dots = document.querySelectorAll(".page-dot");
-    dots.forEach(function(d, i) { d.classList.toggle("active", i === idx); });
+    var div = document.createElement("div");
+    div.className = "home-page";
+    homeApps.forEach(function(app) {
+        div.innerHTML += '<div class="app-icon" onclick="openApp(\'' + app.id + '\')"><div class="ai-icon" style="background:linear-gradient(135deg,' + app.color + ',' + app.color + '88);">' + app.icon + '</div><div class="ai-label">' + app.label + '</div></div>';
+    });
+    container.innerHTML = "";
+    container.appendChild(div);
 }
 
 /* ---- Lock Screen ---- */
