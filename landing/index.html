@@ -25,6 +25,7 @@
             <button id="btn-rrp" class="tab-button active" type="button" role="tab" aria-selected="true" onclick="setTab('rrp')" data-i18n="nav.rrp">DLRP</button>
             <button id="btn-profile" class="tab-button hidden" type="button" role="tab" aria-selected="false" onclick="setTab('profile')" data-i18n="nav.profile">Profile</button>
             <button id="btn-settings" class="tab-button" type="button" role="tab" aria-selected="false" onclick="setTab('settings')" data-i18n="nav.settings">Settings</button>
+            <button id="btn-admin" class="tab-button hidden" type="button" role="tab" aria-selected="false" onclick="setTab('admin')" data-i18n="nav.admin">Admin</button>
         </div>
 
         <div class="top-right-group">
@@ -49,9 +50,16 @@
                     <svg class="discord-icon" viewBox="0 0 127.14 96.36" aria-hidden="true"><path fill="currentColor" d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>
                     <span data-i18n="nav.loginDiscord">Log in with Discord</span>
                 </button>
-                <div id="discord-user-chip" class="discord-user-chip hidden" onclick="setTab('profile')">
-                    <img id="discord-user-avatar" src="" alt="">
-                    <span id="discord-user-name">-</span>
+                <div id="discord-user-menu" class="discord-user-menu hidden">
+                    <button type="button" id="discord-user-chip" class="discord-user-chip" aria-haspopup="true" aria-expanded="false">
+                        <img id="discord-user-avatar" src="" alt="">
+                        <span id="discord-user-name">-</span>
+                        <span class="lang-switch-arrow">&#9662;</span>
+                    </button>
+                    <ul class="discord-user-dropdown hidden" id="discord-user-dropdown" role="menu">
+                        <li role="menuitem" onclick="setTab('profile'); closeUserMenu();" data-i18n="nav.profile">Profile</li>
+                        <li role="menuitem" onclick="logout();" data-i18n="profile.logOut">Log Out</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -333,24 +341,60 @@
                     <p style="color:var(--muted);" data-i18n="apply.deniedDesc">Reach out on our Discord server if you have questions or want to re-apply.</p>
                 </div>
             </div>
+        </div>
 
-            <div class="card reveal" style="max-width:640px;margin:20px auto 0;">
-                <div class="card-inner">
-                    <div class="profile-grid" id="profile-content">
-                        <div class="profile-row full" id="profile-guild-row">
-                            <span class="profile-label" data-i18n="profile.guildStatus">Discord server</span>
-                            <span id="profile-guild-badge" class="profile-badge pending" data-i18n="profile.notInGuild">Not a member</span>
-                        </div>
-                        <div class="profile-row full" id="profile-status-row">
-                            <span class="profile-label" data-i18n="profile.status">Application status</span>
-                            <span id="profile-status-badge" class="profile-badge pending" data-i18n="profile.pending">Pending</span>
-                        </div>
-                    </div>
-                    <div class="actions" style="margin-top:28px;">
-                        <button class="btn" type="button" onclick="logout()" style="width:100%;margin-top:8px;" data-i18n="profile.logOut">Log Out</button>
-                    </div>
+        <div id="tab-admin" class="tab-panel hidden" role="tabpanel" aria-labelledby="btn-admin">
+            <div class="hero" style="grid-template-columns:1fr;max-width:900px;margin:0 auto;">
+                <div class="hero-copy reveal" style="text-align:center;">
+                    <div class="eyebrow" style="margin:0 auto;" data-i18n="admin.eyebrow">Staff only</div>
+                    <h1 class="hero-title" style="font-size:clamp(40px,7vw,72px);" data-i18n="admin.title">Admin Panel</h1>
+                    <p class="lead" style="margin:0 auto;" data-i18n="admin.subtitle">Review, approve, or deny whitelist applications.</p>
                 </div>
             </div>
+
+            <!-- Estadisticas -->
+            <div class="admin-stats-grid reveal">
+                <div class="admin-stat-card">
+                    <span class="admin-stat-value" id="admin-stat-pending">0</span>
+                    <span class="admin-stat-label" data-i18n="admin.statPending">Pending</span>
+                </div>
+                <div class="admin-stat-card">
+                    <span class="admin-stat-value" id="admin-stat-approved">0</span>
+                    <span class="admin-stat-label" data-i18n="admin.statApproved">Approved</span>
+                </div>
+                <div class="admin-stat-card">
+                    <span class="admin-stat-value" id="admin-stat-denied">0</span>
+                    <span class="admin-stat-label" data-i18n="admin.statDenied">Denied</span>
+                </div>
+                <div class="admin-stat-card">
+                    <span class="admin-stat-value" id="admin-stat-total">0</span>
+                    <span class="admin-stat-label" data-i18n="admin.statTotal">Total Applications</span>
+                </div>
+                <div class="admin-stat-card">
+                    <span class="admin-stat-value" id="admin-stat-inguild">0</span>
+                    <span class="admin-stat-label" data-i18n="admin.statInGuild">In Discord Server</span>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="admin-filter-bar reveal">
+                <div class="admin-filter-tabs" role="tablist">
+                    <button type="button" class="admin-filter-btn active" data-filter="pending" onclick="setAdminFilter('pending')" data-i18n="admin.filterPending">Pending</button>
+                    <button type="button" class="admin-filter-btn" data-filter="approved" onclick="setAdminFilter('approved')" data-i18n="admin.filterApproved">Approved</button>
+                    <button type="button" class="admin-filter-btn" data-filter="denied" onclick="setAdminFilter('denied')" data-i18n="admin.filterDenied">Denied</button>
+                    <button type="button" class="admin-filter-btn" data-filter="all" onclick="setAdminFilter('all')" data-i18n="admin.filterAll">All</button>
+                </div>
+                <div class="admin-search-wrap">
+                    <input type="text" id="admin-search" class="admin-search-input" data-i18n-placeholder="admin.searchPh" placeholder="Search by RP name or Discord username..." oninput="renderAdminList()">
+                    <button type="button" class="btn" onclick="loadAdminApplications()" id="admin-refresh-btn" data-i18n="admin.refresh">Refresh</button>
+                </div>
+            </div>
+
+            <!-- Lista de solicitudes -->
+            <div id="admin-list" class="admin-list reveal">
+                <p class="admin-empty" id="admin-loading" data-i18n="admin.loading">Loading applications...</p>
+            </div>
+            <p class="admin-empty hidden" id="admin-empty-msg" data-i18n="admin.empty">No applications match this filter.</p>
         </div>
     </div>
 

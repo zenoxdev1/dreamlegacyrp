@@ -1,4 +1,4 @@
-var tabs = ["rrp", "profile", "settings"];
+var tabs = ["rrp", "profile", "settings", "admin"];
 var SESSION_KEY = "rrp_session";
 
 function getSessionKey() {
@@ -229,6 +229,7 @@ setTimeout(checkServer, 500);
 /* ---- Tab system ---- */
 
 function setTab(tab) {
+    if (tab === "admin") { loadAdminStats(); loadAdminApplications(); }
     for (var i = 0; i < tabs.length; i++) {
         var ct = tabs[i];
         var panel = document.getElementById("tab-" + ct);
@@ -265,6 +266,7 @@ function onAuthenticated(profile) {
     if (profile.musicFavorites && profile.musicFavorites.length > 0) renderFavorites(profile.musicFavorites);
     showDiscordChip(profile);
     showProfile(profile);
+    checkAdminStatus();
     if (window.DLRP_FRESH_LOGIN) {
         window.DLRP_FRESH_LOGIN = false;
         setTab("profile");
@@ -273,7 +275,7 @@ function onAuthenticated(profile) {
 
 function showDiscordChip(profile) {
     document.getElementById("discord-login-btn").classList.add("hidden");
-    var chip = document.getElementById("discord-user-chip");
+    var chip = document.getElementById("discord-user-menu");
     chip.classList.remove("hidden");
     document.getElementById("discord-user-avatar").src = profile.discordAvatar || "";
     document.getElementById("discord-user-name").textContent = profile.discordUsername || "Discord user";
@@ -293,23 +295,10 @@ function showProfile(data) {
     document.getElementById("profile-rpname").textContent = data.rpName || data.discordUsername || "-";
     document.getElementById("profile-avatar").src = data.discordAvatar || "";
 
-    var guildBadge = document.getElementById("profile-guild-badge");
-    if (data.discordInGuild) {
-        guildBadge.textContent = DLRP_I18N.t("profile.inGuild", "Member");
-        guildBadge.className = "profile-badge approved";
-    } else {
-        guildBadge.textContent = DLRP_I18N.t("profile.notInGuild", "Not a member");
-        guildBadge.className = "profile-badge denied";
-    }
-
-    var statusBadge = document.getElementById("profile-status-badge");
-
     // Primero que nada: tiene que estar en el servidor de Discord.
     // Sin esto, ni siquiera puede ver el formulario de solicitud.
     if (!data.discordInGuild) {
         showApplicationCard("join-server-card");
-        statusBadge.textContent = DLRP_I18N.t("profile.notInGuild", "Not a member");
-        statusBadge.className = "profile-badge denied";
         return;
     }
 
@@ -322,23 +311,15 @@ function showProfile(data) {
         document.getElementById("apply-story").value = data.story || "";
         document.getElementById("apply-extra").value = data.extraInfo || "";
         showApplicationCard("application-form-card");
-        statusBadge.textContent = DLRP_I18N.t("profile.notApplied", "Not applied yet");
-        statusBadge.className = "profile-badge pending";
         return;
     }
 
     if (status === "approved") {
         showApplicationCard("application-approved-card");
-        statusBadge.textContent = DLRP_I18N.t("profile.approved", "Approved");
-        statusBadge.className = "profile-badge approved";
     } else if (status === "denied") {
         showApplicationCard("application-denied-card");
-        statusBadge.textContent = DLRP_I18N.t("profile.denied", "Denied");
-        statusBadge.className = "profile-badge denied";
     } else {
         showApplicationCard("application-pending-card");
-        statusBadge.textContent = DLRP_I18N.t("profile.pending", "Pending");
-        statusBadge.className = "profile-badge pending";
     }
 }
 
@@ -409,7 +390,7 @@ if (applicationForm) {
                 rpName: res.profile.rpName,
                 discordAvatar: document.getElementById("profile-avatar").src,
                 discordUsername: document.getElementById("discord-user-name").textContent,
-                discordInGuild: !document.getElementById("profile-guild-badge").classList.contains("denied"),
+                discordInGuild: true,
                 status: res.profile.status,
                 appliedAt: res.profile.appliedAt
             });
@@ -427,9 +408,11 @@ function logout() {
     if (key) api("/api/logout", "POST", { key: key }).catch(function() {});
     localStorage.removeItem(SESSION_KEY);
     document.getElementById("btn-profile").classList.add("hidden");
+    document.getElementById("btn-admin").classList.add("hidden");
     document.getElementById("discord-login-btn").classList.remove("hidden");
-    document.getElementById("discord-user-chip").classList.add("hidden");
+    document.getElementById("discord-user-menu").classList.add("hidden");
     document.getElementById("ready-card").classList.remove("hidden");
+    DLRP_IS_ADMIN = false;
     setTab("rrp");
 }
 
@@ -517,12 +500,207 @@ function setupLangSwitch() {
             opts[j].classList.toggle("active", opts[j].getAttribute("data-lang") === lang);
         }
     });
+
+    // El idioma puede haberse detectado/aplicado ANTES de que este
+    // desplegable terminara de montarse (init() de i18n.js arranca en
+    // cuanto se carga el script, no espera a DOMContentLoaded), asi
+    // que sincronizamos el estado visible ya mismo en vez de esperar
+    // a un futuro cambio que quiza no llegue.
+    var syncedLang = DLRP_I18N.getLang();
+    current.textContent = syncedLang.toUpperCase();
+    var initialOpts = menu.querySelectorAll("[data-lang]");
+    for (var k = 0; k < initialOpts.length; k++) {
+        initialOpts[k].classList.toggle("active", initialOpts[k].getAttribute("data-lang") === syncedLang);
+    }
+}
+
+/* ---- Menu de usuario (burbuja Discord arriba a la derecha) ---- */
+
+function setupUserMenu() {
+    var wrap = document.getElementById("discord-user-menu");
+    var chip = document.getElementById("discord-user-chip");
+    var dropdown = document.getElementById("discord-user-dropdown");
+    if (!wrap || !chip || !dropdown) return;
+
+    chip.addEventListener("click", function(e) {
+        e.stopPropagation();
+        var isOpen = !dropdown.classList.contains("hidden");
+        if (isOpen) closeUserMenu(); else openUserMenu();
+    });
+
+    document.addEventListener("click", function(e) {
+        if (!wrap.contains(e.target)) closeUserMenu();
+    });
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape") closeUserMenu();
+    });
+}
+
+function openUserMenu() {
+    document.getElementById("discord-user-dropdown").classList.remove("hidden");
+    document.getElementById("discord-user-chip").setAttribute("aria-expanded", "true");
+}
+
+function closeUserMenu() {
+    document.getElementById("discord-user-dropdown").classList.add("hidden");
+    document.getElementById("discord-user-chip").setAttribute("aria-expanded", "false");
+}
+
+/* ============================================================
+   Panel de administración
+   ============================================================ */
+
+var DLRP_IS_ADMIN = false;
+var ADMIN_APPLICATIONS = [];
+var ADMIN_FILTER = "pending";
+
+function checkAdminStatus() {
+    var key = getSessionKey();
+    if (!key) return;
+    api("/api/admin/is", "POST", { key: key }).then(function(res) {
+        DLRP_IS_ADMIN = !!res.isAdmin;
+        document.getElementById("btn-admin").classList.toggle("hidden", !DLRP_IS_ADMIN);
+    }).catch(function() { DLRP_IS_ADMIN = false; });
+}
+
+function loadAdminStats() {
+    if (!DLRP_IS_ADMIN) return;
+    var key = getSessionKey();
+    if (!key) return;
+    api("/api/admin/stats", "POST", { key: key }).then(function(stats) {
+        document.getElementById("admin-stat-pending").textContent = stats.pending;
+        document.getElementById("admin-stat-approved").textContent = stats.approved;
+        document.getElementById("admin-stat-denied").textContent = stats.denied;
+        document.getElementById("admin-stat-total").textContent = stats.total;
+        document.getElementById("admin-stat-inguild").textContent = stats.inGuild;
+    }).catch(function(err) { notify("Admin", err.message); });
+}
+
+function loadAdminApplications() {
+    if (!DLRP_IS_ADMIN) return;
+    var key = getSessionKey();
+    if (!key) return;
+    document.getElementById("admin-loading").classList.remove("hidden");
+    document.getElementById("admin-list").innerHTML = "";
+    document.getElementById("admin-empty-msg").classList.add("hidden");
+
+    api("/api/admin/list", "POST", { key: key, status: null }).then(function(res) {
+        ADMIN_APPLICATIONS = res.applications || [];
+        renderAdminList();
+    }).catch(function(err) {
+        notify("Admin", err.message);
+        document.getElementById("admin-loading").classList.add("hidden");
+    });
+}
+
+function setAdminFilter(filter) {
+    ADMIN_FILTER = filter;
+    var btns = document.querySelectorAll(".admin-filter-btn");
+    for (var i = 0; i < btns.length; i++) {
+        btns[i].classList.toggle("active", btns[i].getAttribute("data-filter") === filter);
+    }
+    renderAdminList();
+}
+
+function formatAdminDate(iso) {
+    if (!iso) return "-";
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return "-";
+    return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }) +
+        " " + d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
+}
+
+function renderAdminList() {
+    document.getElementById("admin-loading").classList.add("hidden");
+    var list = document.getElementById("admin-list");
+    var emptyMsg = document.getElementById("admin-empty-msg");
+    var search = (document.getElementById("admin-search").value || "").toLowerCase().trim();
+
+    var filtered = ADMIN_APPLICATIONS.filter(function(a) {
+        if (ADMIN_FILTER !== "all" && a.status !== ADMIN_FILTER) return false;
+        if (!search) return true;
+        var haystack = ((a.rpName || "") + " " + (a.discordUsername || "") + " " + (a.psn || "")).toLowerCase();
+        return haystack.indexOf(search) !== -1;
+    });
+
+    if (filtered.length === 0) {
+        list.innerHTML = "";
+        emptyMsg.classList.remove("hidden");
+        return;
+    }
+    emptyMsg.classList.add("hidden");
+
+    var html = "";
+    for (var i = 0; i < filtered.length; i++) {
+        html += adminCardHtml(filtered[i]);
+    }
+    list.innerHTML = html;
+}
+
+function adminCardHtml(a) {
+    var statusClass = a.status === "approved" ? "approved" : (a.status === "denied" ? "denied" : "pending");
+    var guildBadge = a.discordInGuild
+        ? '<span class="admin-mini-badge in-guild">' + DLRP_I18N.t("admin.inGuild", "In server") + '</span>'
+        : '<span class="admin-mini-badge not-in-guild">' + DLRP_I18N.t("admin.notInGuild2", "Not in server") + '</span>';
+    var avatar = a.discordAvatar ? escapeHtml(a.discordAvatar) : "";
+    var story = escapeHtml(a.story || "").replace(/\n/g, "<br>");
+    var extra = a.extraInfo ? escapeHtml(a.extraInfo).replace(/\n/g, "<br>") : null;
+
+    var actions = "";
+    if (a.status !== "approved") {
+        actions += '<button type="button" class="btn admin-action-btn approve" onclick="setApplicationStatus(\'' + a.id + '\',\'approved\')">' +
+            DLRP_I18N.t("admin.approve", "Approve") + '</button>';
+    }
+    if (a.status !== "denied") {
+        actions += '<button type="button" class="btn admin-action-btn deny" onclick="setApplicationStatus(\'' + a.id + '\',\'denied\')">' +
+            DLRP_I18N.t("admin.deny", "Deny") + '</button>';
+    }
+    if (a.status !== "pending") {
+        actions += '<button type="button" class="btn admin-action-btn reset" onclick="setApplicationStatus(\'' + a.id + '\',\'pending\')">' +
+            DLRP_I18N.t("admin.resetPending", "Reset to pending") + '</button>';
+    }
+
+    return '' +
+        '<div class="admin-card" data-id="' + a.id + '">' +
+            '<div class="admin-card-head">' +
+                '<img class="admin-card-avatar" src="' + avatar + '" alt="" onerror="this.style.visibility=\'hidden\'">' +
+                '<div class="admin-card-id">' +
+                    '<strong>' + escapeHtml(a.rpName || "-") + '</strong>' +
+                    '<span>@' + escapeHtml(a.discordUsername || "-") + '</span>' +
+                '</div>' +
+                '<span class="profile-badge ' + statusClass + ' admin-card-status">' + escapeHtml(a.status) + '</span>' +
+            '</div>' +
+            '<div class="admin-card-meta">' +
+                '<span>' + DLRP_I18N.t("whitelist.psn", "PSN") + ': <strong>' + escapeHtml(a.psn || "-") + '</strong></span>' +
+                guildBadge +
+                '<span>' + DLRP_I18N.t("admin.applied", "Applied") + ': ' + formatAdminDate(a.appliedAt) + '</span>' +
+            '</div>' +
+            '<details class="admin-card-story">' +
+                '<summary>' + DLRP_I18N.t("whitelist.story", "Story") + '</summary>' +
+                '<p>' + story + '</p>' +
+                (extra ? '<p class="admin-card-extra"><strong>' + DLRP_I18N.t("whitelist.extraInfo", "More Character Info") + ':</strong><br>' + extra + '</p>' : '') +
+            '</details>' +
+            '<div class="admin-card-actions">' + actions + '</div>' +
+        '</div>';
+}
+
+function setApplicationStatus(profileId, status) {
+    var key = getSessionKey();
+    if (!key) return;
+    api("/api/admin/set-status", "POST", { key: key, profileId: profileId, status: status }).then(function() {
+        notify("Admin", "Application updated.");
+        loadAdminStats();
+        loadAdminApplications();
+    }).catch(function(err) {
+        notify("Admin", err.message);
+    });
 }
 
 document.addEventListener("DOMContentLoaded", function() {
     setupReveals();
     setupTilt();
     setupLangSwitch();
+    setupUserMenu();
     restoreSession();
 
     if (window.DLRP_DISCORD_ERROR) {
