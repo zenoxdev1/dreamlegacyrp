@@ -47,10 +47,10 @@ export async function onRequestPost(context) {
     // su propio try/catch, sin usar `await` bloqueante del resto.
     if (env.GAME_SYNC_URL && env.GAME_SYNC_SECRET) {
         if (statusChanged) {
-            await syncGameServer(env, "/sync-whitelist", { discordId: record.discord_id, whitelisted: record.status === "approved" });
+            await syncGameServer(env, "/sync-whitelist", { discordId: record.discord_id, psn: record.psn, whitelisted: record.status === "approved" });
         }
         if (banChanged) {
-            await syncGameServer(env, "/ban", { discordId: record.discord_id, banned: record.is_banned });
+            await syncGameServer(env, "/ban", { discordId: record.discord_id, psn: record.psn, banned: record.is_banned });
         }
     }
 
