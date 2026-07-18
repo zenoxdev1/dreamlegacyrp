@@ -37,24 +37,59 @@ export async function onRequestPost(context) {
     }
 
     const statusChanged = oldRecord && oldRecord.status !== record.status;
-    if (!statusChanged) return new Response("ok (no status change)", { status: 200 });
+    const banChanged = oldRecord && oldRecord.is_banned !== record.is_banned;
 
-    let message = null;
-    if (record.status === "approved") {
-        message = "**Dream Legacy RP** — Your whitelist application has been **approved**! " +
-            "You can now log in at https://panel.dreamlegacyrp.xyz to access the Panel and DreamOS. Welcome to DLRP!";
-    } else if (record.status === "denied") {
-        message = "**Dream Legacy RP** — Your whitelist application was **not approved** this time." +
-            (record.deny_reason ? "\n\n**Reason:** " + record.deny_reason : "") +
-            "\n\nYou're welcome to reach out on our Discord server if you have questions or want to re-apply.";
-    } else if (record.status === "pending" && oldRecord.status === "approved") {
-        message = "**Dream Legacy RP** — Your Panel access was put back on hold because you're no longer a " +
-            "member of our Discord server. Rejoin the server and your access will be reviewed again.";
+    if (!statusChanged && !banChanged) return new Response("ok (nothing relevant changed)", { status: 200 });
+
+    // Sincroniza con la base de datos del servidor de juego (VPS de
+    // Contabo) a traves del Worker dedicado. Si esto falla, no debe
+    // impedir que el DM de Discord se siga mandando -- por eso va en
+    // su propio try/catch, sin usar `await` bloqueante del resto.
+    if (env.GAME_SYNC_URL && env.GAME_SYNC_SECRET) {
+        if (statusChanged) {
+            await syncGameServer(env, "/sync-whitelist", { discordId: record.discord_id, whitelisted: record.status === "approved" });
+        }
+        if (banChanged) {
+            await syncGameServer(env, "/ban", { discordId: record.discord_id, banned: record.is_banned });
+        }
     }
 
-    if (message) {
-        await sendDiscordDM(env, record.discord_id, message);
+    if (statusChanged) {
+        let message = null;
+        if (record.status === "approved") {
+            message = "**Dream Legacy RP** — Your whitelist application has been **approved**! " +
+                "You can now log in at https://panel.dreamlegacyrp.xyz to access the Panel and DreamOS. Welcome to DLRP!";
+        } else if (record.status === "denied") {
+            message = "**Dream Legacy RP** — Your whitelist application was **not approved** this time." +
+                (record.deny_reason ? "\n\n**Reason:** " + record.deny_reason : "") +
+                "\n\nYou're welcome to reach out on our Discord server if you have questions or want to re-apply.";
+        } else if (record.status === "pending" && oldRecord.status === "approved") {
+            message = "**Dream Legacy RP** — Your Panel access was put back on hold because you're no longer a " +
+                "member of our Discord server. Rejoin the server and your access will be reviewed again.";
+        }
+        if (message) await sendDiscordDM(env, record.discord_id, message);
+    }
+
+    if (banChanged && record.is_banned) {
+        await sendDiscordDM(env, record.discord_id,
+            "**Dream Legacy RP** — Your access has been **revoked**." +
+            (record.ban_reason ? "\n\n**Reason:** " + record.ban_reason : "") +
+            "\n\nContact staff on Discord if you believe this is a mistake.");
+    } else if (banChanged && !record.is_banned) {
+        await sendDiscordDM(env, record.discord_id, "**Dream Legacy RP** — Your access has been **restored**.");
     }
 
     return new Response("ok", { status: 200 });
+}
+
+async function syncGameServer(env, path, body) {
+    try {
+        await fetch(env.GAME_SYNC_URL + path, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "x-sync-secret": env.GAME_SYNC_SECRET },
+            body: JSON.stringify(body)
+        });
+    } catch (err) {
+        console.error("Game server sync failed:", err.message);
+    }
 }
