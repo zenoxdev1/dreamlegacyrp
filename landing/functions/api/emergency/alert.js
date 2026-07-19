@@ -30,8 +30,8 @@ export async function onRequestPost(context) {
         const profile = await getProfileByToken(env, token);
         if (!profile) return jsonResponse(request, { error: "Session expired." }, 401);
 
-        const channelId = body.type === "ems" ? env.EMS_CHANNEL_ID : env.POLICE_CHANNEL_ID;
-        if (!channelId) {
+        const webhookUrl = body.type === "ems" ? env.EMS_WEBHOOK_URL : env.POLICE_WEBHOOK_URL;
+        if (!webhookUrl) {
             return jsonResponse(request, { error: "This department's alert channel isn't configured yet." }, 400);
         }
 
@@ -46,12 +46,9 @@ export async function onRequestPost(context) {
             timestamp: new Date().toISOString()
         };
 
-        const res = await fetch("https://discord.com/api/v10/channels/" + channelId + "/messages", {
+        const res = await fetch(webhookUrl, {
             method: "POST",
-            headers: {
-                Authorization: "Bot " + env.DISCORD_BOT_TOKEN,
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ embeds: [embed] })
         });
 
