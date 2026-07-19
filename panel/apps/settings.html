@@ -245,9 +245,9 @@
             label: "Send",
             class: "btn",
             action: function () {
-              var category = document.getElementById("report-category").value;
-              var target = document.getElementById("report-target").value;
-              var message = document.getElementById("report-message").value;
+              var category = bridge.doc.getElementById("report-category").value;
+              var target = bridge.doc.getElementById("report-target").value;
+              var message = bridge.doc.getElementById("report-message").value;
               if (!message || !message.trim()) {
                 bridge.notif("Report", "Write a message first.");
                 return;
@@ -318,6 +318,7 @@
       function onFontSizeChange() {
         var val = document.getElementById("sel-fontsize").value;
         saveSetting("fontSize", val);
+        bridge.applyFontSize();
       }
       render();
     </script>

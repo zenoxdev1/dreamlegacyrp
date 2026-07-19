@@ -344,7 +344,9 @@
               label: "Start",
               class: "btn primary",
               action: function () {
-                var num = document.getElementById("cm-new-number").value.trim();
+                var num = bridge.doc
+                  .getElementById("cm-new-number")
+                  .value.trim();
                 if (num) openThread(num);
               },
             },

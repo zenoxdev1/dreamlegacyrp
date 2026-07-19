@@ -140,10 +140,9 @@
     <script>
       var bridge =
         (window.parent && window.parent.dlrpBridge) || window.dlrpBridge;
-      /* --- Configure your Discord webhook URLs below --- */ var POLICE_WEBHOOK =
-        "";
-      var EMS_WEBHOOK = "";
-      /* ------------------------------------------------- */ var statusEl =
+      /* Los webhooks ahora viven en el servidor (Cloudflare), no aqui --
+   asi nadie puede sacarlos con las herramientas de desarrollador
+   del navegador y spamear el Discord desde fuera del juego. */ var statusEl =
         document.getElementById("status-msg");
       function setStatus(msg, type) {
         statusEl.textContent = msg;
@@ -155,99 +154,49 @@
         if (ud && ud.location) return ud.location;
         return "Unknown Location";
       }
-      function sendWebhook(webhookUrl, title, color) {
-        if (!webhookUrl) {
-          setStatus(
-            "Webhook URL not configured. Set POLICE_WEBHOOK or EMS_WEBHOOK.",
-            "error",
-          );
-          bridge.notif("Error", "Webhook URL not configured.");
-          return;
-        }
+      function sendAlert(type, title, color) {
         var ud = bridge.getUD();
         var caller = ud ? ud.displayName || ud.name || "Unknown" : "Unknown";
         var phone = ud ? ud.phoneNumber || "Unknown" : "Unknown";
         var location = getLocation();
-        var now = new Date();
-        var timestamp = now.toLocaleString();
-        var embed = {
-          title: title,
-          color: color,
-          fields: [
-            { name: "Caller", value: bridge.esc(caller), inline: true },
-            { name: "Phone", value: bridge.esc(phone), inline: true },
-            { name: "Location", value: bridge.esc(location), inline: true },
-            { name: "Time", value: bridge.esc(timestamp), inline: false },
-          ],
-          timestamp: now.toISOString(),
-        };
+
         setStatus("Sending alert...", "");
-        fetch(webhookUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ embeds: [embed] }),
-        })
-          .then(function (res) {
-            if (res.ok) {
-              setStatus("Alert sent successfully!", "success");
-              bridge.notif("Emergency", "Alert has been dispatched.");
-            } else {
-              setStatus("Webhook responded with " + res.status, "error");
-              bridge.notif("Error", "Webhook responded with " + res.status);
-            }
+        bridge
+          .sendEmergencyAlert(type, title, color, caller, phone, location)
+          .then(function () {
+            setStatus("Alert sent successfully!", "success");
+            bridge.notif("Emergency", "Alert has been dispatched.");
           })
           .catch(function (err) {
-            setStatus("Request failed: " + err.message, "error");
-            bridge.notif("Error", "Request failed: " + err.message);
+            setStatus(err.message || "Could not send the alert.", "error");
+            bridge.notif("Error", err.message || "Could not send the alert.");
           });
       }
+
       function callPolice() {
-        sendWebhook(POLICE_WEBHOOK, "🚨 Police Dispatch", 0x3b82f6);
+        sendAlert("police", "\uD83D\uDEA8 Police Dispatch", 0x3b82f6);
       }
       function callEMS() {
-        sendWebhook(EMS_WEBHOOK, "🚑 EMS Dispatch", 0xef4444);
+        sendAlert("ems", "\uD83D\uDE91 EMS Dispatch", 0xef4444);
       }
       function testWebhook() {
-        var testUrl = POLICE_WEBHOOK || EMS_WEBHOOK;
-        if (!testUrl) {
-          setStatus(
-            "No webhook URLs configured. Set POLICE_WEBHOOK or EMS_WEBHOOK first.",
-            "error",
-          );
-          bridge.notif("Error", "No webhook URLs configured.");
-          return;
-        }
-        var embed = {
-          title: "🔧 Test Webhook",
-          color: 0x64748b,
-          description: "This is a test message from the Emergency app.",
-          fields: [
-            { name: "Status", value: "Operational", inline: true },
-            { name: "Time", value: new Date().toLocaleString(), inline: true },
-          ],
-          timestamp: new Date().toISOString(),
-        };
-        setStatus("Testing webhook...", "");
-        fetch(testUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ embeds: [embed] }),
-        })
-          .then(function (res) {
-            if (res.ok) {
-              setStatus("Test webhook sent successfully!", "success");
-              bridge.notif("Success", "Test webhook sent.");
-            } else {
-              setStatus("Test webhook responded with " + res.status, "error");
-              bridge.notif(
-                "Error",
-                "Test webhook responded with " + res.status,
-              );
-            }
+        setStatus("Testing...", "");
+        bridge
+          .sendEmergencyAlert(
+            "test",
+            "\uD83D\uDD27 Test Webhook",
+            0x64748b,
+            "System",
+            "-",
+            "Test",
+          )
+          .then(function () {
+            setStatus("Test alert sent successfully!", "success");
+            bridge.notif("Success", "Test alert sent.");
           })
           .catch(function (err) {
-            setStatus("Test request failed: " + err.message, "error");
-            bridge.notif("Error", "Test request failed: " + err.message);
+            setStatus(err.message || "Test request failed.", "error");
+            bridge.notif("Error", err.message || "Test request failed.");
           });
       }
     </script>
