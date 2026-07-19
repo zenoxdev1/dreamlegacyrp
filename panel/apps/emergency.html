@@ -124,6 +124,66 @@
       <span class="ah-title">&#128680; Emergency</span>
     </div>
     <div class="app-body">
+      <div style="margin-bottom: 14px">
+        <label
+          style="
+            display: block;
+            font-size: 11px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+          "
+          >Your Location</label
+        >
+        <select
+          id="location-select"
+          style="
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(124, 58, 237, 0.15);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+          "
+        >
+          <option value="">Select your location...</option>
+          <option>Rockford Hills</option>
+          <option>Del Perro</option>
+          <option>Vespucci Beach</option>
+          <option>Vespucci Canals</option>
+          <option>Little Seoul</option>
+          <option>La Puerta</option>
+          <option>Downtown</option>
+          <option>Pillbox Hill</option>
+          <option>Strawberry</option>
+          <option>La Mesa</option>
+          <option>Davis</option>
+          <option>Chamberlain Hills</option>
+          <option>Rancho</option>
+          <option>Cypress Flats</option>
+          <option>Elysian Island</option>
+          <option>Mission Row</option>
+          <option>Textile City</option>
+          <option>Alta</option>
+          <option>Hawick</option>
+          <option>Burton</option>
+          <option>West Vinewood</option>
+          <option>East Vinewood</option>
+          <option>Vinewood</option>
+          <option>Mirror Park</option>
+          <option>Richman</option>
+          <option>Morningwood</option>
+          <option>Banning</option>
+          <option>Maze Bank Arena</option>
+          <option>Murietta Heights</option>
+          <option>Los Santos International Airport</option>
+          <option>Terminal</option>
+        </select>
+      </div>
       <div class="emergency-grid">
         <button class="emergency-btn police" onclick="callPolice()">
           &#128110; Call Police
@@ -150,9 +210,9 @@
         if (type) statusEl.classList.add(type);
       }
       function getLocation() {
-        var ud = bridge.getUD();
-        if (ud && ud.location) return ud.location;
-        return "Unknown Location";
+        var sel = document.getElementById("location-select");
+        var val = sel ? sel.value : "";
+        return val || "Not specified";
       }
       function sendAlert(type, title, color) {
         var ud = bridge.getUD();
