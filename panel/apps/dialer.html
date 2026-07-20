@@ -599,9 +599,11 @@
             .getCallOutcome(currentCallId)
             .then(function (status) {
               if (status === "answered") {
-                setCallStatus("Connected — talk over voice chat.", "ok");
                 clearInterval(outcomePollTimer);
-                setTimeout(closeCallOverlay, 2500);
+                closeCallOverlay();
+                bridge.showInCallScreen(
+                  document.getElementById("co-name").textContent,
+                );
               } else if (status === "declined") {
                 setCallStatus("Call declined.", "bad");
                 clearInterval(outcomePollTimer);
