@@ -126,6 +126,8 @@ create table if not exists public.call_logs (
     from_number   text not null,
     to_number     text not null,
     from_rp_name  text,
+    status        text not null default 'ringing' check (status in ('ringing','answered','declined','missed')),
+    answered_at   timestamptz,
     created_at    timestamptz not null default now()
 );
 
@@ -955,6 +957,7 @@ set search_path = public
 as $$
 declare
     v_me record;
+    v_call public.call_logs;
 begin
     select * into v_me from public._dlrp_my_number(p_token);
     if p_to_number is null or length(trim(p_to_number)) = 0 then raise exception 'Number is required.'; end if;
@@ -963,9 +966,10 @@ begin
     end if;
 
     insert into public.call_logs (from_number, to_number, from_rp_name)
-    values (v_me.my_number, p_to_number, v_me.my_rp_name);
+    values (v_me.my_number, p_to_number, v_me.my_rp_name)
+    returning * into v_call;
 
-    return jsonb_build_object('ok', true);
+    return jsonb_build_object('ok', true, 'callId', v_call.id);
 end;
 $$;
 
@@ -986,6 +990,7 @@ begin
             select
                 from_number as "fromNumber", to_number as "toNumber",
                 from_rp_name as "fromRpName", created_at as "createdAt",
+                status,
                 (from_number = v_me.my_number) as "outgoing"
             from public.call_logs
             where from_number = v_me.my_number or to_number = v_me.my_number
@@ -1006,11 +1011,22 @@ set search_path = public
 as $$
 declare
     v_profile public.profiles;
+    v_dob_date date;
 begin
     v_profile := public._dlrp_profile_from_token(p_token);
     if v_profile.id is null then raise exception 'Session expired.'; end if;
     if p_full_name is null or length(trim(p_full_name)) = 0 then raise exception 'Full name is required.'; end if;
+    if position(' ' in trim(p_full_name)) = 0 then raise exception 'Enter your full name (first and last name).'; end if;
     if p_dob is null or length(trim(p_dob)) = 0 then raise exception 'Date of birth is required.'; end if;
+
+    begin
+        v_dob_date := to_date(p_dob, 'DD/MM/YYYY');
+    exception when others then
+        raise exception 'That is not a valid date.';
+    end;
+    if v_dob_date > current_date then raise exception 'Date of birth cannot be in the future.'; end if;
+    if v_dob_date < current_date - interval '100 years' then raise exception 'That date of birth looks too far in the past.'; end if;
+    if v_dob_date > current_date - interval '16 years' then raise exception 'Your character must be at least 16 years old.'; end if;
 
     if exists (select 1 from public.id_requests where profile_id = v_profile.id and status = 'pending') then
         raise exception 'You already have a pending ID request.';
@@ -1115,13 +1131,102 @@ begin
                     'dob', v_request.dob,
                     'pob', v_request.pob,
                     'gender', v_request.gender,
-                    'idNum', v_id_number
+                    'idNum', v_id_number,
+                    'issued', to_char(now(), 'DD/MM/YYYY'),
+                    'expires', to_char(now() + interval '4 years', 'DD/MM/YYYY')
                 )
             )
         where id = v_request.profile_id;
     end if;
 
     return jsonb_build_object('ok', true, 'idNumber', v_id_number);
+end;
+$$;
+
+-- ---------- RPC: LLAMADAS EN TIEMPO REAL ----------
+-- No hay audio de verdad (eso sigue siendo el chat de voz normal
+-- del juego) -- esto es el "evento" de la llamada: timbre en el
+-- momento, contestar/rechazar, y saber si te han cogido.
+
+create or replace function public.dlrp_check_incoming_call(p_token uuid)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+    v_me record;
+    v_call public.call_logs;
+begin
+    select * into v_me from public._dlrp_my_number(p_token);
+
+    select * into v_call from public.call_logs
+    where to_number = v_me.my_number
+      and status = 'ringing'
+      and created_at > now() - interval '25 seconds'
+    order by created_at desc
+    limit 1;
+
+    if v_call.id is null then
+        return jsonb_build_object('ringing', false);
+    end if;
+
+    return jsonb_build_object(
+        'ringing', true,
+        'callId', v_call.id,
+        'fromNumber', v_call.from_number,
+        'fromRpName', v_call.from_rp_name
+    );
+end;
+$$;
+
+create or replace function public.dlrp_respond_call(p_token uuid, p_call_id uuid, p_answer boolean)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+    v_me record;
+begin
+    select * into v_me from public._dlrp_my_number(p_token);
+
+    update public.call_logs set
+        status = case when p_answer then 'answered' else 'declined' end,
+        answered_at = case when p_answer then now() else null end
+    where id = p_call_id and to_number = v_me.my_number and status = 'ringing';
+
+    return jsonb_build_object('ok', true);
+end;
+$$;
+
+create or replace function public.dlrp_get_call_outcome(p_token uuid, p_call_id uuid)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+    v_me record;
+    v_call public.call_logs;
+begin
+    select * into v_me from public._dlrp_my_number(p_token);
+
+    select * into v_call from public.call_logs
+    where id = p_call_id and from_number = v_me.my_number;
+
+    if v_call.id is null then
+        return jsonb_build_object('status', 'unknown');
+    end if;
+
+    -- Si lleva mas de 25 segundos sonando sin respuesta, se cuenta
+    -- como perdida (nadie la contesto a tiempo).
+    if v_call.status = 'ringing' and v_call.created_at < now() - interval '25 seconds' then
+        update public.call_logs set status = 'missed' where id = v_call.id;
+        return jsonb_build_object('status', 'missed');
+    end if;
+
+    return jsonb_build_object('status', v_call.status);
 end;
 $$;
 
@@ -1186,6 +1291,9 @@ grant execute on function
     public.dlrp_get_thread_messages(uuid,text),
     public.dlrp_place_call(uuid,text),
     public.dlrp_get_recent_calls(uuid),
+    public.dlrp_check_incoming_call(uuid),
+    public.dlrp_respond_call(uuid,uuid,boolean),
+    public.dlrp_get_call_outcome(uuid,uuid),
     public.dlrp_submit_id_request(uuid,text,text,text,text),
     public.dlrp_get_id_status(uuid),
     public.dlrp_admin_list_id_requests(uuid,text),
