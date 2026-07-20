@@ -209,6 +209,108 @@
         margin-top: 2px;
       }
 
+      .call-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, #0d0d1a, #07070d);
+        z-index: 50;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 20px;
+      }
+      .call-overlay.hidden {
+        display: none;
+      }
+      .co-avatar {
+        width: 84px;
+        height: 84px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        font-weight: 700;
+        color: #fff;
+        font-family: "Rajdhani", sans-serif;
+        animation: co-pulse 1.6s ease-in-out infinite;
+      }
+      @keyframes co-pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.4);
+        }
+        50% {
+          box-shadow: 0 0 0 14px rgba(124, 58, 237, 0);
+        }
+      }
+      .co-name {
+        font-family: "Rajdhani", sans-serif;
+        font-weight: 700;
+        font-size: 22px;
+        margin-top: 8px;
+      }
+      .co-status {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .co-cancel {
+        margin-top: 30px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        border: none;
+        background: var(--red);
+        color: #fff;
+        font-size: 22px;
+        cursor: pointer;
+      }
+
+      .contacts-tab-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 10px;
+        margin-bottom: 4px;
+        border-bottom: 1px solid var(--card-border);
+      }
+      .cth-title {
+        font-family: "Rajdhani", sans-serif;
+        font-weight: 700;
+        font-size: 16px;
+        letter-spacing: 0.02em;
+      }
+      .cth-add {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 14px 6px 10px;
+        border-radius: 20px;
+        border: 1px solid rgba(124, 58, 237, 0.35);
+        background: rgba(124, 58, 237, 0.12);
+        color: var(--purple);
+        font-family: "Rajdhani", sans-serif;
+        font-weight: 700;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      .cth-add span {
+        font-size: 14px;
+        line-height: 1;
+      }
+      .cth-add:hover {
+        background: rgba(124, 58, 237, 0.2);
+      }
+      .cth-add:active {
+        transform: scale(0.96);
+      }
+
       .contact-entry,
       .dialer-contact {
         display: flex;
@@ -312,14 +414,14 @@
           <button class="dialer-call" onclick="doCall()">&#128222;</button>
           <button class="dialer-clear" onclick="clearNumber()">Clear</button>
         </div>
-        <div class="call-status" id="call-status"></div>
       </div>
 
       <div class="tab-panel" id="panel-contacts">
-        <div
-          style="display: flex; justify-content: flex-end; margin-bottom: 6px"
-        >
-          <button class="ah-add" onclick="addContact()">+</button>
+        <div class="contacts-tab-header">
+          <span class="cth-title">Contacts</span>
+          <button class="cth-add" onclick="addContact()">
+            <span>&#43;</span> Add
+          </button>
         </div>
         <div id="contact-list"></div>
       </div>
@@ -327,6 +429,13 @@
       <div class="tab-panel" id="panel-recents">
         <div id="recents-list"></div>
       </div>
+    </div>
+
+    <div class="call-overlay hidden" id="call-overlay">
+      <div class="co-avatar" id="co-avatar">?</div>
+      <div class="co-name" id="co-name">-</div>
+      <div class="co-status" id="co-status">Calling...</div>
+      <button class="co-cancel" onclick="cancelOutgoingCall()">&#9760;</button>
     </div>
 
     <div class="bottom-nav">
@@ -414,7 +523,7 @@
       }
 
       function setCallStatus(text, cls) {
-        var el = document.getElementById("call-status");
+        var el = document.getElementById("co-status");
         el.textContent = text || "";
         el.style.color =
           cls === "ok"
@@ -424,12 +533,29 @@
               : "var(--muted)";
       }
 
+      function contactNameForNumber(number) {
+        var ud = bridge.getUD();
+        if (ud && ud.contacts) {
+          for (var i = 0; i < ud.contacts.length; i++) {
+            if (ud.contacts[i].number === number) return ud.contacts[i].name;
+          }
+        }
+        return number;
+      }
+
       function doCall() {
         if (!dialed) {
           bridge.notif("Phone", "Enter a number first.");
           return;
         }
-        setCallStatus("Calling " + dialed + "...");
+        var name = contactNameForNumber(dialed);
+        document.getElementById("co-name").textContent = name;
+        document.getElementById("co-avatar").textContent = name
+          ? name.charAt(0).toUpperCase()
+          : "?";
+        setCallStatus("Calling...");
+        document.getElementById("call-overlay").classList.remove("hidden");
+
         bridge
           .placeCall(dialed)
           .then(function (res) {
@@ -438,11 +564,26 @@
               setCallStatus("Call sent.", "ok");
               return;
             }
+            setCallStatus("Ringing...");
             pollCallOutcome();
           })
           .catch(function (err) {
             setCallStatus(err.message || "Could not place the call.", "bad");
+            setTimeout(closeCallOverlay, 1800);
           });
+      }
+
+      function closeCallOverlay() {
+        document.getElementById("call-overlay").classList.add("hidden");
+        if (outcomePollTimer) {
+          clearInterval(outcomePollTimer);
+          outcomePollTimer = null;
+        }
+        currentCallId = null;
+      }
+
+      function cancelOutgoingCall() {
+        closeCallOverlay();
       }
 
       function pollCallOutcome() {
@@ -451,21 +592,24 @@
         outcomePollTimer = setInterval(function () {
           attempts++;
           if (!currentCallId || attempts > 15) {
-            clearInterval(outcomePollTimer);
+            closeCallOverlay();
             return;
           }
           bridge
             .getCallOutcome(currentCallId)
             .then(function (status) {
               if (status === "answered") {
-                setCallStatus("Connected \u2014 talk over voice chat.", "ok");
+                setCallStatus("Connected — talk over voice chat.", "ok");
                 clearInterval(outcomePollTimer);
+                setTimeout(closeCallOverlay, 2500);
               } else if (status === "declined") {
                 setCallStatus("Call declined.", "bad");
                 clearInterval(outcomePollTimer);
+                setTimeout(closeCallOverlay, 1800);
               } else if (status === "missed") {
                 setCallStatus("No answer.", "bad");
                 clearInterval(outcomePollTimer);
+                setTimeout(closeCallOverlay, 1800);
               } else {
                 setCallStatus("Ringing...");
               }
@@ -633,6 +777,7 @@
             for (var i = 0; i < calls.length; i++) {
               var c = calls[i];
               var otherNum = c.outgoing ? c.toNumber : c.fromNumber;
+              var displayName = contactNameForNumber(otherNum);
               var arrow = c.outgoing ? "&#8599;" : "&#8601;";
               var statusClass =
                 c.status === "missed" || c.status === "declined"
@@ -640,7 +785,7 @@
                   : c.outgoing
                     ? "call-outgoing"
                     : "call-incoming";
-              var letter = otherNum ? otherNum.charAt(0) : "?";
+              var letter = displayName ? displayName.charAt(0) : "?";
               html +=
                 '<div class="dialer-contact" onclick="callBack(\'' +
                 bridge.esc(otherNum) +
@@ -655,10 +800,7 @@
                 '">' +
                 arrow +
                 " " +
-                bridge.esc(otherNum) +
-                (c.fromRpName && !c.outgoing
-                  ? " (" + bridge.esc(c.fromRpName) + ")"
-                  : "") +
+                bridge.esc(displayName) +
                 "</div>" +
                 '<div class="dc-num">' +
                 (STATUS_LABEL[c.status] || "") +
