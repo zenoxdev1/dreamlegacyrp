@@ -759,9 +759,11 @@ function setAdminSubtab(tab) {
     document.getElementById("admin-section-applications").classList.toggle("hidden", tab !== "applications");
     document.getElementById("admin-section-players").classList.toggle("hidden", tab !== "players");
     document.getElementById("admin-section-reports").classList.toggle("hidden", tab !== "reports");
+    document.getElementById("admin-section-idrequests").classList.toggle("hidden", tab !== "idrequests");
 
     if (tab === "players" && ADMIN_PLAYERS.length === 0) loadAdminPlayers();
     if (tab === "reports" && ADMIN_REPORTS.length === 0) loadAdminReports();
+    if (tab === "idrequests" && ADMIN_ID_REQUESTS.length === 0) loadAdminIdRequests();
 }
 
 /* ---- Jugadores (toda la info de su perfil/telefono) ---- */
@@ -985,6 +987,85 @@ function resolveReport(reportId, status) {
     api("/api/admin/resolve-report", "POST", { key: key, reportId: reportId, status: status }).then(function() {
         notify("Admin", "Report updated.");
         loadAdminReports();
+    }).catch(function(err) { notify("Admin", err.message); });
+}
+
+/* ---- Solicitudes de DNI ---- */
+
+var ADMIN_ID_REQUESTS = [];
+var ADMIN_IDREQ_FILTER = "pending";
+
+function setIdRequestFilter(filter) {
+    ADMIN_IDREQ_FILTER = filter;
+    var btns = document.querySelectorAll('[data-idreq-filter]');
+    for (var i = 0; i < btns.length; i++) {
+        btns[i].classList.toggle("active", btns[i].getAttribute("data-idreq-filter") === filter);
+    }
+    loadAdminIdRequests();
+}
+
+function loadAdminIdRequests() {
+    if (!DLRP_IS_ADMIN) return;
+    var key = getSessionKey();
+    if (!key) return;
+    document.getElementById("admin-idreq-loading").classList.remove("hidden");
+    document.getElementById("admin-idreq-list").innerHTML = "";
+    document.getElementById("admin-idreq-empty").classList.add("hidden");
+
+    var status = ADMIN_IDREQ_FILTER === "all" ? null : ADMIN_IDREQ_FILTER;
+    api("/api/admin/id-requests", "POST", { key: key, status: status }).then(function(res) {
+        ADMIN_ID_REQUESTS = res.requests || [];
+        renderAdminIdRequestsList();
+    }).catch(function(err) {
+        notify("Admin", err.message);
+        document.getElementById("admin-idreq-loading").classList.add("hidden");
+    });
+}
+
+function renderAdminIdRequestsList() {
+    document.getElementById("admin-idreq-loading").classList.add("hidden");
+    var list = document.getElementById("admin-idreq-list");
+    var empty = document.getElementById("admin-idreq-empty");
+
+    if (ADMIN_ID_REQUESTS.length === 0) {
+        list.innerHTML = "";
+        empty.classList.remove("hidden");
+        return;
+    }
+    empty.classList.add("hidden");
+
+    var html = "";
+    for (var i = 0; i < ADMIN_ID_REQUESTS.length; i++) {
+        var r = ADMIN_ID_REQUESTS[i];
+        html += '<div class="admin-card">' +
+            '<div class="admin-card-head">' +
+            (r.discordAvatar ? '<img class="admin-card-avatar" src="' + escapeHtml(r.discordAvatar) + '" alt="">' : '<div class="admin-card-avatar"></div>') +
+            '<div class="admin-card-id"><strong>' + escapeHtml(r.rpName || r.discordUsername || "-") + '</strong><span>@' + escapeHtml(r.discordUsername || "-") + '</span></div>' +
+            '</div>' +
+            '<div class="admin-card-meta">' +
+                '<span>Name: <strong>' + escapeHtml(r.fullName) + '</strong></span>' +
+                '<span>DOB: <strong>' + escapeHtml(r.dob) + '</strong></span>' +
+                '<span>POB: <strong>' + escapeHtml(r.pob || "-") + '</strong></span>' +
+                '<span>Gender: <strong>' + escapeHtml(r.gender || "-") + '</strong></span>' +
+                '<span>PSN: <strong>' + escapeHtml(r.psn || "-") + '</strong></span>' +
+            '</div>' +
+            (r.status === "pending"
+                ? '<div class="admin-card-actions">' +
+                    '<button type="button" class="btn admin-action-btn approve" onclick="decideIdRequest(\'' + r.id + '\',\'approved\')">' + DLRP_I18N.t("admin.approve", "Approve") + '</button>' +
+                    '<button type="button" class="btn admin-action-btn deny" onclick="decideIdRequest(\'' + r.id + '\',\'denied\')">' + DLRP_I18N.t("admin.deny", "Deny") + '</button>' +
+                  '</div>'
+                : '<div class="admin-card-decided">' + DLRP_I18N.t("admin.decidedBy", "Decided by") + ' <strong>' + escapeHtml(r.decidedByUsername || "-") + '</strong></div>') +
+            '</div>';
+    }
+    list.innerHTML = html;
+}
+
+function decideIdRequest(requestId, status) {
+    var key = getSessionKey();
+    if (!key) return;
+    api("/api/admin/decide-id-request", "POST", { key: key, requestId: requestId, status: status }).then(function() {
+        notify("Admin", "ID request updated.");
+        loadAdminIdRequests();
     }).catch(function(err) { notify("Admin", err.message); });
 }
 

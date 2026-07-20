@@ -14,8 +14,8 @@
    CONFIGURA AQUÍ tu proyecto de Supabase (Project Settings -> API):
    ============================================================ */
 
-var SUPABASE_URL = "https://cpdljnqhuealpxhpwsqk.supabase.co";
-var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNwZGxqbnFodWVhbHB4aHB3c3FrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2MjYzNjksImV4cCI6MjA5OTIwMjM2OX0.7Mkz8nOL35iOI9M55zq-CnCOd88Skc_2-voqG3c8UlE";
+var SUPABASE_URL = "https://TU-PROYECTO.supabase.co";
+var SUPABASE_ANON_KEY = "TU_ANON_KEY_PUBLICA";
 
 var _sb = null;
 function getSupabase() {
@@ -160,6 +160,22 @@ function api(path, method, body) {
         return sb.rpc("dlrp_submit_report", {
             p_token: body.key, p_reported_name: body.reportedName || null, p_category: body.category || "other", p_message: body.message
         }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
+    if (path === "/api/id/submit") {
+        return sb.rpc("dlrp_submit_id_request", {
+            p_token: body.key, p_full_name: body.fullName, p_dob: body.dob, p_pob: body.pob, p_gender: body.gender
+        }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
+    if (path === "/api/id/status") {
+        return sb.rpc("dlrp_get_id_status", { p_token: body.key }).then(function (r) {
             if (r.error) rpcFail(r.error);
             return r.data;
         });

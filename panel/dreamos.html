@@ -431,7 +431,6 @@ var homeApps = [
     { id: "businesses", icon: "&#127981;", label: "Businesses", color: "#f97316" },
     { id: "marketplace", icon: "&#128230;", label: "Marketplace", color: "#a855f7" },
     { id: "government", icon: "&#128179;", label: "Government", color: "#06b6d4" },
-    { id: "browser", icon: "&#127760;", label: "Browser", color: "#64748b" },
     { id: "dreamgram", icon: "&#128247;", label: "DreamGram", color: "#e11d48" },
     { id: "emergency", icon: "&#128737;", label: "Emergency", color: "#dc2626" },
     { id: "settings", icon: "&#9881;", label: "Settings", color: "#78716c" }
@@ -574,6 +573,16 @@ window.dlrpBridge = {
         var token = getSessionToken();
         if (!token) return Promise.reject(new Error("Not logged in."));
         return api("/api/reports/submit", "POST", { key: token, reportedName: reportedName, category: category, message: message });
+    },
+    submitIdRequest: function(fullName, dob, pob, gender) {
+        var token = getSessionToken();
+        if (!token) return Promise.reject(new Error("Not logged in."));
+        return api("/api/id/submit", "POST", { key: token, fullName: fullName, dob: dob, pob: pob, gender: gender });
+    },
+    getIdStatus: function() {
+        var token = getSessionToken();
+        if (!token) return Promise.reject(new Error("Not logged in."));
+        return api("/api/id/status", "POST", { key: token });
     },
     sendMessage: function(toNumber, body) {
         var token = getSessionToken();

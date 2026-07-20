@@ -170,7 +170,9 @@
     "dreamgramProfile": "Perfil DreamGram",
     "reportAbout": "Sobre: ",
     "markResolved": "Marcar como resolvida",
-    "dismiss": "Descartar"
+    "dismiss": "Descartar",
+    "subtabIdRequests": "Solicitações de ID",
+    "idRequestsEmpty": "Nenhuma solicitação de ID corresponde a este filtro."
   },
   "rules": {
     "kicker": "Leitura obrigatória",

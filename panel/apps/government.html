@@ -336,13 +336,30 @@
         var ud = bridge.getUD();
         if (!ud) return;
         var container = document.getElementById("government-content");
-        container.innerHTML = "";
-        var idInfo = ud.idInfo;
-        if (!idInfo || !idInfo.idNum) {
-          showNoID(container, ud);
-        } else {
-          showIDCard(container, ud, idInfo);
+        container.innerHTML =
+          '<div class="no-id-area"><div class="no-id-text">Loading...</div></div>';
+
+        if (ud.idInfo && ud.idInfo.idNum) {
+          showIDCard(container, ud, ud.idInfo);
+          return;
         }
+
+        bridge
+          .getIdStatus()
+          .then(function (res) {
+            if (res.status === "pending") {
+              container.innerHTML =
+                '<div class="no-id-area"><span class="no-id-icon">&#8987;</span><div class="no-id-text">Your ID request is under review.<br>You will be notified once it is processed.</div></div>';
+            } else if (res.status === "denied") {
+              container.innerHTML =
+                '<div class="no-id-area"><span class="no-id-icon">&#10060;</span><div class="no-id-text">Your last ID request was not approved.</div><button class="btn-primary" onclick="openForm()">Apply Again</button></div>';
+            } else {
+              showNoID(container, ud);
+            }
+          })
+          .catch(function () {
+            showNoID(container, ud);
+          });
       }
       function showNoID(container, ud) {
         container.innerHTML =
@@ -385,21 +402,22 @@
           showFormError("Please enter your place of birth.");
           return;
         }
-        var ud = bridge.getUD();
-        if (!ud) return;
-        ud.displayName = fullName;
-        ud.idInfo = {
-          dob: dob,
-          pob: pob,
-          gender: gender,
-          idNum: "SA-" + randomDigits(6),
-        };
-        bridge.saveData();
-        bridge.loadProfile();
-        bridge.notif("ID Registered", "Welcome, " + bridge.esc(fullName) + "!");
-        closeForm();
-        render();
+
+        bridge
+          .submitIdRequest(fullName, dob, pob, gender)
+          .then(function () {
+            bridge.notif(
+              "Request Sent",
+              "Your ID request was sent for review. You'll be notified once it's processed.",
+            );
+            closeForm();
+            render();
+          })
+          .catch(function (err) {
+            showFormError(err.message || "Could not submit your request.");
+          });
       }
+
       function randomDigits(n) {
         var result = "";
         for (var i = 0; i < n; i++) {

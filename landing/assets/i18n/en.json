@@ -170,7 +170,9 @@
     "dreamgramProfile": "DreamGram Profile",
     "reportAbout": "About: ",
     "markResolved": "Mark resolved",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "subtabIdRequests": "ID Requests",
+    "idRequestsEmpty": "No ID requests match this filter."
   },
   "rules": {
     "kicker": "Must read",
