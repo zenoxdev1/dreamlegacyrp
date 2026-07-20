@@ -265,7 +265,13 @@ function profileToUD(profile) {
     if (profile.phoneData && typeof profile.phoneData === "object") {
         for (var k in profile.phoneData) { ud[k] = profile.phoneData[k]; }
     }
-    if (!ud.pfp && profile.discordAvatar) ud.pfp = profile.discordAvatar;
+    // Si el pfp guardado es simplemente un avatar de Discord (no una
+    // foto subida a mano, que se guarda como "data:..."), siempre lo
+    // refrescamos con el avatar actual -- si no, se queda congelado
+    // para siempre en el que tenia la primera vez que se guardo.
+    if (profile.discordAvatar && (!ud.pfp || String(ud.pfp).indexOf("data:") !== 0)) {
+        ud.pfp = profile.discordAvatar;
+    }
     if (!ud.purchasedPhone && profile.phoneOwned) ud.purchasedPhone = ud.purchasedPhone || "Phone";
     return ud;
 }
@@ -321,6 +327,7 @@ function enterPhone() {
     startClock();
     showLockscreen();
     startCallPolling();
+    startMessagePolling();
 }
 
 /* ---- Llamadas en tiempo real: timbre + contestar/rechazar ---- */
@@ -362,6 +369,39 @@ function respondIncomingCall(answer) {
     }).catch(function() {});
 }
 
+/* ---- Mensajes: aviso en el momento de mensajes nuevos ---- */
+var _msgPollTimer = null;
+var _seenLastMessageAt = {};
+var _firstMessagePoll = true;
+
+function startMessagePolling() {
+    if (_msgPollTimer) clearInterval(_msgPollTimer);
+    _msgPollTimer = setInterval(checkForNewMessages, 6000);
+}
+
+function stopMessagePolling() {
+    if (_msgPollTimer) { clearInterval(_msgPollTimer); _msgPollTimer = null; }
+}
+
+function checkForNewMessages() {
+    var token = getSessionToken();
+    if (!token) return;
+    api("/api/messages/threads", "POST", { key: token }).then(function(res) {
+        var threads = res.threads || [];
+        for (var i = 0; i < threads.length; i++) {
+            var t = threads[i];
+            var prevSeen = _seenLastMessageAt[t.otherNumber];
+            if (t.unread > 0 && prevSeen !== t.lastAt) {
+                if (!_firstMessagePoll) {
+                    notif("New Message", (t.otherNumber) + ": " + (t.lastBody || ""));
+                }
+            }
+            _seenLastMessageAt[t.otherNumber] = t.lastAt;
+        }
+        _firstMessagePoll = false;
+    }).catch(function() {});
+}
+
 function showOSError(msg) {
     var el = document.getElementById("os-login-error");
     el.textContent = msg; el.style.display = "block";
@@ -380,6 +420,7 @@ function logoutOS() {
     var token = getSessionToken();
     if (token) api("/api/logout", "POST", { key: token }).catch(function() {});
     stopCallPolling();
+    stopMessagePolling();
     currentUser = null;
     localStorage.removeItem(SESSION_KEY);
     document.getElementById("os-login").classList.remove("hidden");
