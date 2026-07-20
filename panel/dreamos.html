@@ -18,7 +18,7 @@
     --bg: #090a0d; --card: rgba(18, 22, 29, 0.78); --card-border: rgba(255, 255, 255, 0.10);
     --text: #f4f7fb; --muted: #aab3c2; --dim: #6f7888; --red: #ff4f64; --orange: #ffd166;
 }
-body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; overflow: hidden; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; overflow-y: auto; }
 .hidden { display: none !important; }
 
 /* Nota: .topbar, .brand, .nav-links y .btn/.card ya vienen de
@@ -93,6 +93,11 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
 .actions { display: flex; gap: 8px; margin-top: 16px; }
 .actions .btn { flex: 1; }
 .purchase-preview { text-align: center; }
+
+@media (max-width: 480px), (max-height: 700px) {
+    .phone-frame { height: calc(100dvh - 190px); min-height: 380px; }
+    #phone-container { height: calc(100dvh - 130px) !important; }
+}
 </style>
 </head>
 <body>
