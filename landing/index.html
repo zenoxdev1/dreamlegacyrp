@@ -25,7 +25,6 @@
             <button id="btn-rrp" class="tab-button active" type="button" role="tab" aria-selected="true" onclick="setTab('rrp')" data-i18n="nav.rrp">DLRP</button>
             <button id="btn-profile" class="tab-button hidden" type="button" role="tab" aria-selected="false" onclick="setTab('profile')" data-i18n="nav.profile">Profile</button>
             <button id="btn-settings" class="tab-button" type="button" role="tab" aria-selected="false" onclick="setTab('settings')" data-i18n="nav.settings">Settings</button>
-            <button id="btn-admin" class="tab-button hidden" type="button" role="tab" aria-selected="false" onclick="setTab('admin')" data-i18n="nav.admin">Admin</button>
         </div>
 
         <div class="top-right-group">
@@ -409,6 +408,7 @@
                     <h3 style="margin:8px 0;" data-i18n="apply.approvedTitle">Your application was approved!</h3>
                     <p style="color:var(--muted);margin-bottom:20px;" data-i18n="apply.approvedDesc">You can now log in to the Panel to access DreamOS.</p>
                     <a class="btn primary" id="go-to-panel-link" href="https://panel.dreamlegacyrp.xyz" style="display:inline-block;" data-i18n="apply.goToPanel">Go to Panel</a>
+                <a class="btn" id="go-to-hq-link" href="https://hq.dreamlegacyrp.xyz" style="display:inline-block;margin-left:8px;" data-i18n="apply.goToHq">Go to HQ</a>
                 </div>
             </div>
 
@@ -423,119 +423,7 @@
             </div>
         </div>
 
-        <div id="tab-admin" class="tab-panel hidden" role="tabpanel" aria-labelledby="btn-admin">
-            <div class="hero" style="grid-template-columns:1fr;max-width:900px;margin:0 auto;">
-                <div class="hero-copy reveal" style="text-align:center;">
-                    <div class="eyebrow" style="margin:0 auto;" data-i18n="admin.eyebrow">Staff only</div>
-                    <h1 class="hero-title" style="font-size:clamp(40px,7vw,72px);" data-i18n="admin.title">Admin Panel</h1>
-                    <p class="lead" style="margin:0 auto;" data-i18n="admin.subtitle">Review, approve, or deny whitelist applications.</p>
-                </div>
-            </div>
-
-            <!-- Sub-pestanas del panel de administracion -->
-            <div class="admin-subtabs reveal">
-                <button type="button" class="admin-subtab-btn active" data-subtab="applications" onclick="setAdminSubtab('applications')" data-i18n="admin.subtabApplications">Applications</button>
-                <button type="button" class="admin-subtab-btn" data-subtab="players" onclick="setAdminSubtab('players')" data-i18n="admin.subtabPlayers">Players</button>
-                <button type="button" class="admin-subtab-btn" data-subtab="reports" onclick="setAdminSubtab('reports')" data-i18n="admin.subtabReports">Reports</button>
-                <button type="button" class="admin-subtab-btn" data-subtab="idrequests" onclick="setAdminSubtab('idrequests')" data-i18n="admin.subtabIdRequests">ID Requests</button>
-            </div>
-
-            <div id="admin-section-applications">
-            <!-- Estadisticas -->
-            <div class="admin-stats-grid reveal">
-                <div class="admin-stat-card">
-                    <span class="admin-stat-value" id="admin-stat-pending">0</span>
-                    <span class="admin-stat-label" data-i18n="admin.statPending">Pending</span>
-                </div>
-                <div class="admin-stat-card">
-                    <span class="admin-stat-value" id="admin-stat-approved">0</span>
-                    <span class="admin-stat-label" data-i18n="admin.statApproved">Approved</span>
-                </div>
-                <div class="admin-stat-card">
-                    <span class="admin-stat-value" id="admin-stat-denied">0</span>
-                    <span class="admin-stat-label" data-i18n="admin.statDenied">Denied</span>
-                </div>
-                <div class="admin-stat-card">
-                    <span class="admin-stat-value" id="admin-stat-total">0</span>
-                    <span class="admin-stat-label" data-i18n="admin.statTotal">Total Applications</span>
-                </div>
-                <div class="admin-stat-card">
-                    <span class="admin-stat-value" id="admin-stat-inguild">0</span>
-                    <span class="admin-stat-label" data-i18n="admin.statInGuild">In Discord Server</span>
-                </div>
-            </div>
-
-            <!-- Filtros -->
-            <div class="admin-filter-bar reveal">
-                <div class="admin-filter-tabs" role="tablist">
-                    <button type="button" class="admin-filter-btn active" data-filter="pending" onclick="setAdminFilter('pending')" data-i18n="admin.filterPending">Pending</button>
-                    <button type="button" class="admin-filter-btn" data-filter="approved" onclick="setAdminFilter('approved')" data-i18n="admin.filterApproved">Approved</button>
-                    <button type="button" class="admin-filter-btn" data-filter="denied" onclick="setAdminFilter('denied')" data-i18n="admin.filterDenied">Denied</button>
-                    <button type="button" class="admin-filter-btn" data-filter="all" onclick="setAdminFilter('all')" data-i18n="admin.filterAll">All</button>
-                </div>
-                <div class="admin-search-wrap">
-                    <input type="text" id="admin-search" class="admin-search-input" data-i18n-placeholder="admin.searchPh" placeholder="Search by RP name or Discord username..." oninput="renderAdminList()">
-                    <button type="button" class="btn" onclick="loadAdminApplications()" id="admin-refresh-btn" data-i18n="admin.refresh">Refresh</button>
-                </div>
-            </div>
-
-            <!-- Lista de solicitudes -->
-            <p class="admin-empty" id="admin-loading" data-i18n="admin.loading">Loading applications...</p>
-            <div id="admin-list" class="admin-list reveal"></div>
-            <p class="admin-empty hidden" id="admin-empty-msg" data-i18n="admin.empty">No applications match this filter.</p>
-            </div>
-
-            <!-- Jugadores -->
-            <div id="admin-section-players" class="hidden">
-                <div class="admin-filter-bar reveal">
-                    <div class="admin-search-wrap" style="margin-left:0;max-width:none;flex:1;">
-                        <input type="text" id="admin-player-search" class="admin-search-input" data-i18n-placeholder="admin.playerSearchPh" placeholder="Search by RP name or Discord username..." oninput="loadAdminPlayers()">
-                        <button type="button" class="btn" onclick="loadAdminPlayers()" data-i18n="admin.refresh">Refresh</button>
-                    </div>
-                </div>
-                <p class="admin-empty" id="admin-players-loading" data-i18n="admin.loading">Loading applications...</p>
-                <div id="admin-players-list" class="admin-list reveal"></div>
-                <p class="admin-empty hidden" id="admin-players-empty" data-i18n="admin.playersEmpty">No players found.</p>
-
-                <!-- Detalle de un jugador -->
-                <div id="admin-player-detail" class="hidden">
-                    <button type="button" class="btn small" onclick="closeAdminPlayerDetail()" style="margin-bottom:16px;" data-i18n="admin.backToPlayers">&larr; Back to Players</button>
-                    <div id="admin-player-detail-content"></div>
-                </div>
-            </div>
-
-            <!-- Reportes -->
-            <div id="admin-section-reports" class="hidden">
-                <div class="admin-filter-bar reveal">
-                    <div class="admin-filter-tabs" role="tablist">
-                        <button type="button" class="admin-filter-btn active" data-report-filter="open" onclick="setReportFilter('open')" data-i18n="admin.reportOpen">Open</button>
-                        <button type="button" class="admin-filter-btn" data-report-filter="resolved" onclick="setReportFilter('resolved')" data-i18n="admin.reportResolved">Resolved</button>
-                        <button type="button" class="admin-filter-btn" data-report-filter="dismissed" onclick="setReportFilter('dismissed')" data-i18n="admin.reportDismissed">Dismissed</button>
-                        <button type="button" class="admin-filter-btn" data-report-filter="all" onclick="setReportFilter('all')" data-i18n="admin.filterAll">All</button>
-                    </div>
-                    <button type="button" class="btn" onclick="loadAdminReports()" data-i18n="admin.refresh">Refresh</button>
-                </div>
-                <p class="admin-empty" id="admin-reports-loading" data-i18n="admin.loading">Loading applications...</p>
-                <div id="admin-reports-list" class="admin-list reveal"></div>
-                <p class="admin-empty hidden" id="admin-reports-empty" data-i18n="admin.reportsEmpty">No reports match this filter.</p>
-            </div>
-
-            <!-- Solicitudes de DNI -->
-            <div id="admin-section-idrequests" class="hidden">
-                <div class="admin-filter-bar reveal">
-                    <div class="admin-filter-tabs" role="tablist">
-                        <button type="button" class="admin-filter-btn active" data-idreq-filter="pending" onclick="setIdRequestFilter('pending')" data-i18n="admin.reportOpen">Open</button>
-                        <button type="button" class="admin-filter-btn" data-idreq-filter="approved" onclick="setIdRequestFilter('approved')" data-i18n="admin.statApproved">Approved</button>
-                        <button type="button" class="admin-filter-btn" data-idreq-filter="denied" onclick="setIdRequestFilter('denied')" data-i18n="admin.statDenied">Denied</button>
-                        <button type="button" class="admin-filter-btn" data-idreq-filter="all" onclick="setIdRequestFilter('all')" data-i18n="admin.filterAll">All</button>
-                    </div>
-                    <button type="button" class="btn" onclick="loadAdminIdRequests()" data-i18n="admin.refresh">Refresh</button>
-                </div>
-                <p class="admin-empty" id="admin-idreq-loading" data-i18n="admin.loading">Loading applications...</p>
-                <div id="admin-idreq-list" class="admin-list reveal"></div>
-                <p class="admin-empty hidden" id="admin-idreq-empty" data-i18n="admin.idRequestsEmpty">No ID requests match this filter.</p>
-            </div>
-        </div>
+        
     </div>
 
     <!-- Global Footer -->
