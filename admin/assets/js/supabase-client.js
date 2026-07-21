@@ -261,6 +261,20 @@ function api(path, method, body) {
         });
     }
 
+    if (path === "/api/admin/license-requests") {
+        return sb.rpc("dlrp_admin_list_license_requests", { p_token: body.key, p_status: body.status || null }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return { requests: r.data };
+        });
+    }
+
+    if (path === "/api/admin/decide-license-request") {
+        return sb.rpc("dlrp_admin_decide_license_request", { p_token: body.key, p_request_id: body.requestId, p_status: body.status }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
     return Promise.reject(new Error("Unknown endpoint: " + path));
 }
 

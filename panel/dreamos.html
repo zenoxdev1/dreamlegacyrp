@@ -341,8 +341,6 @@ function enterPhone() {
     renderHome();
     startClock();
     showLockscreen();
-    startCallPolling();
-    startMessagePolling();
 }
 
 /* ---- Llamadas en tiempo real: timbre + contestar/rechazar ---- */
@@ -497,7 +495,6 @@ function logoutOS() {
     var token = getSessionToken();
     if (token) api("/api/logout", "POST", { key: token }).catch(function() {});
     stopCallPolling();
-    stopMessagePolling();
     currentUser = null;
     localStorage.removeItem(SESSION_KEY);
     document.getElementById("os-login").classList.remove("hidden");
@@ -599,8 +596,6 @@ function startClock() {
 
 /* ---- Home Screen Apps ---- */
 var homeApps = [
-    { id: "dialer", icon: "&#128222;", label: "Phone", color: "#22c55e" },
-    { id: "messages", icon: "&#9993;", label: "Messages", color: "#8b5cf6" },
     { id: "bank", icon: "&#128184;", label: "Bank", color: "#f59e0b" },
     { id: "jobs", icon: "&#128188;", label: "Jobs", color: "#6366f1" },
     { id: "vehicles", icon: "&#128662;", label: "Vehicles", color: "#ec4899" },
@@ -689,7 +684,7 @@ function unlockPhone() {
 }
 
 /* ---- App System (iframe-based, isolated context) ---- */
-var APP_NAME_MAP = { dialer:"Phone", messages:"Messages", bank:"Bank", jobs:"Jobs", vehicles:"Vehicles", property:"Property", businesses:"Businesses", marketplace:"Marketplace", government:"Government", dreamgram:"DreamGram", emergency:"Emergency", settings:"Settings" };
+var APP_NAME_MAP = { bank:"Bank", jobs:"Jobs", vehicles:"Vehicles", property:"Property", businesses:"Businesses", marketplace:"Marketplace", government:"Government", dreamgram:"DreamGram", emergency:"Emergency", settings:"Settings" };
 
 function openApp(id) {
     openAppId = id;
@@ -760,6 +755,35 @@ window.dlrpBridge = {
         var token = getSessionToken();
         if (!token) return Promise.reject(new Error("Not logged in."));
         return api("/api/id/status", "POST", { key: token });
+    },
+    applyJob: function(jobName) {
+        var token = getSessionToken();
+        if (!token) return Promise.reject(new Error("Not logged in."));
+        return api("/api/jobs/apply-v2", "POST", { key: token, jobName: jobName });
+    },
+    getJobApplicationStatus: function() {
+        var token = getSessionToken();
+        if (!token) return Promise.reject(new Error("Not logged in."));
+        return api("/api/jobs/application-status", "POST", { key: token });
+    },
+    quitJob: function() {
+        var token = getSessionToken();
+        if (!token) return Promise.reject(new Error("Not logged in."));
+        return api("/api/jobs/quit", "POST", { key: token }).then(function(profile) {
+            var d = getUD();
+            if (d) d.currentJob = "";
+            return profile;
+        });
+    },
+    submitLicenseRequest: function(licenseType) {
+        var token = getSessionToken();
+        if (!token) return Promise.reject(new Error("Not logged in."));
+        return api("/api/licenses/submit", "POST", { key: token, licenseType: licenseType });
+    },
+    getMyLicenses: function() {
+        var token = getSessionToken();
+        if (!token) return Promise.reject(new Error("Not logged in."));
+        return api("/api/licenses/mine", "POST", { key: token }).then(function(r) { return r.licenses; });
     },
     sendMessage: function(toNumber, body) {
         var token = getSessionToken();

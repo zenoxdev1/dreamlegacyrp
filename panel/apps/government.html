@@ -440,7 +440,10 @@
     <div class="app-header">
       <span class="ah-title">&#127987; Government</span>
     </div>
-    <div class="app-body"><div id="government-content"></div></div>
+    <div class="app-body">
+      <div id="government-content"></div>
+      <div id="licenses-section" style="margin-top: 16px"></div>
+    </div>
     <div class="form-overlay" id="form-overlay">
       <div class="form-box">
         <div class="form-title">&#127912; Citizen ID Application</div>
@@ -497,6 +500,7 @@
         var container = document.getElementById("government-content");
         container.innerHTML =
           '<div class="no-id-area"><div class="no-id-text">Loading...</div></div>';
+        renderLicenses();
 
         if (ud.idInfo && ud.idInfo.idNum) {
           showIDCard(container, ud, ud.idInfo);
@@ -540,6 +544,78 @@
       function closeForm() {
         document.getElementById("form-overlay").classList.remove("active");
       }
+      var LICENSE_TYPES = [
+        { id: "A", name: "Motorcycle License (A)" },
+        { id: "B", name: "Driver's License (B) — Car" },
+        { id: "C", name: "Heavy Goods License (C) — Truck" },
+        { id: "D", name: "Passenger Transport License (D) — Bus" },
+        { id: "E", name: "Trailer Endorsement (E)" },
+        { id: "weapons", name: "Weapons Permit" },
+      ];
+
+      function renderLicenses() {
+        var section = document.getElementById("licenses-section");
+        if (!section) return;
+        bridge
+          .getMyLicenses()
+          .then(function (reqs) {
+            var latestByType = {};
+            for (var i = 0; i < reqs.length; i++) {
+              var r = reqs[i];
+              if (!latestByType[r.licenseType]) latestByType[r.licenseType] = r;
+            }
+
+            var html =
+              '<div class="idc-title" style="margin-bottom:10px;">Licenses &amp; Permits</div>';
+            for (var j = 0; j < LICENSE_TYPES.length; j++) {
+              var lt = LICENSE_TYPES[j];
+              var existing = latestByType[lt.id];
+              var statusHtml;
+              if (existing && existing.status === "pending") {
+                statusHtml =
+                  '<span style="color:var(--muted);font-size:12px;">Pending review</span>';
+              } else if (existing && existing.status === "approved") {
+                statusHtml =
+                  '<span style="color:var(--mint);font-size:12px;">&#10003; Issued</span>';
+              } else {
+                statusHtml =
+                  '<button class="btn-primary" style="padding:6px 14px;font-size:12px;" onclick="requestLicense(\'' +
+                  lt.id +
+                  "')\">Apply</button>";
+              }
+              html +=
+                '<div class="idc-row" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
+                "<span>" +
+                lt.name +
+                "</span>" +
+                statusHtml +
+                "</div>";
+            }
+            section.innerHTML = html;
+          })
+          .catch(function () {
+            section.innerHTML = "";
+          });
+      }
+
+      function requestLicense(type) {
+        bridge
+          .submitLicenseRequest(type)
+          .then(function () {
+            bridge.notif(
+              "License",
+              "Application submitted, awaiting staff review.",
+            );
+            renderLicenses();
+          })
+          .catch(function (err) {
+            bridge.notif(
+              "Error",
+              err.message || "Could not submit the request.",
+            );
+          });
+      }
+
       function formatDobInput(el) {
         var digits = el.value.replace(/\D/g, "").substring(0, 8);
         var formatted = digits;

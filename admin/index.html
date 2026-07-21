@@ -48,6 +48,7 @@
                 <button type="button" class="admin-subtab-btn" data-subtab="reports" onclick="setAdminSubtab('reports')" data-i18n="admin.subtabReports">Reports</button>
                 <button type="button" class="admin-subtab-btn" data-subtab="idrequests" onclick="setAdminSubtab('idrequests')" data-i18n="admin.subtabIdRequests">ID Requests</button>
                 <button type="button" class="admin-subtab-btn" data-subtab="jobapps" onclick="setAdminSubtab('jobapps')" data-i18n="admin.subtabJobApps">Job Applications</button>
+                <button type="button" class="admin-subtab-btn" data-subtab="licenses" onclick="setAdminSubtab('licenses')" data-i18n="admin.subtabLicenses">Licenses</button>
             </div>
 
             <div id="admin-section-applications">
@@ -160,6 +161,22 @@
                 <p class="admin-empty" id="admin-jobapp-loading" data-i18n="admin.loading">Loading applications...</p>
                 <div id="admin-jobapp-list" class="admin-list reveal"></div>
                 <p class="admin-empty hidden" id="admin-jobapp-empty" data-i18n="admin.jobAppsEmpty">No job applications match this filter.</p>
+            </div>
+
+            <!-- Permisos -->
+            <div id="admin-section-licenses" class="hidden">
+                <div class="admin-filter-bar reveal">
+                    <div class="admin-filter-tabs" role="tablist">
+                        <button type="button" class="admin-filter-btn active" data-license-filter="pending" onclick="setLicenseFilter('pending')" data-i18n="admin.reportOpen">Open</button>
+                        <button type="button" class="admin-filter-btn" data-license-filter="approved" onclick="setLicenseFilter('approved')" data-i18n="admin.statApproved">Approved</button>
+                        <button type="button" class="admin-filter-btn" data-license-filter="denied" onclick="setLicenseFilter('denied')" data-i18n="admin.statDenied">Denied</button>
+                        <button type="button" class="admin-filter-btn" data-license-filter="all" onclick="setLicenseFilter('all')" data-i18n="admin.filterAll">All</button>
+                    </div>
+                    <button type="button" class="btn" onclick="loadAdminLicenses()" data-i18n="admin.refresh">Refresh</button>
+                </div>
+                <p class="admin-empty" id="admin-license-loading" data-i18n="admin.loading">Loading applications...</p>
+                <div id="admin-license-list" class="admin-list reveal"></div>
+                <p class="admin-empty hidden" id="admin-license-empty" data-i18n="admin.licensesEmpty">No license requests match this filter.</p>
             </div>
         </div>
 </div>

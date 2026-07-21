@@ -126,6 +126,16 @@ h1, h2, h3 { font-family: 'Rajdhani', sans-serif; }
         <div class="tab-panel" id="tab-emergencies">
             <div id="emergencies-list"></div>
         </div>
+
+        <div class="tab-panel" id="tab-lookup">
+            <div class="card">
+                <div class="form-field"><label>Search by RP Name or PSN</label>
+                    <input type="text" id="lookup-query" placeholder="e.g. John Travolta" onkeydown="if(event.key==='Enter') lookupCitizen();">
+                </div>
+                <button class="btn primary small" onclick="lookupCitizen()">Search</button>
+            </div>
+            <div id="lookup-result"></div>
+        </div>
     </div>
 </div>
 
@@ -205,8 +215,8 @@ function init() {
 
 function renderTabs(isChief) {
     var tabs = isChief
-        ? [["roster","Roster"],["vehicles","Vehicles"],["announcements","Announcements"],["emergencies","Emergencies"]]
-        : [["announcements","Announcements"],["emergencies","Emergencies"]];
+        ? [["roster","Roster"],["vehicles","Vehicles"],["lookup","Lookup"],["announcements","Announcements"],["emergencies","Emergencies"]]
+        : [["lookup","Lookup"],["announcements","Announcements"],["emergencies","Emergencies"]];
 
     document.getElementById("tabs").innerHTML = tabs.map(function(t, i) {
         return '<button class="tab-btn' + (i === 0 ? " active" : "") + '" data-tab="' + t[0] + '" onclick="switchTab(\'' + t[0] + '\')">' + t[1] + '</button>';
@@ -218,7 +228,7 @@ function renderTabs(isChief) {
 
 function switchTab(tab) {
     activeTab = tab;
-    ["roster","vehicles","announcements","emergencies"].forEach(function(t) {
+    ["roster","vehicles","lookup","announcements","emergencies"].forEach(function(t) {
         document.getElementById("tab-" + t).classList.toggle("active", t === tab);
     });
     var btns = document.querySelectorAll(".tab-btn");
@@ -333,6 +343,35 @@ function loadEmergencies() {
 }
 
 function esc(s) { if (typeof s !== "string") return s; var d = document.createElement("div"); d.appendChild(document.createTextNode(s)); return d.innerHTML; }
+
+function lookupCitizen() {
+    var query = document.getElementById("lookup-query").value.trim();
+    var result = document.getElementById("lookup-result");
+    if (!query) return;
+    result.innerHTML = '<div class="empty">Searching...</div>';
+
+    hqApi("/lookup", { department: currentWhoami.department, query: query }).then(function(res) {
+        if (!res.found) { result.innerHTML = '<div class="empty">No citizen found matching "' + esc(query) + '".</div>'; return; }
+
+        var idInfo = res.idInfo || null;
+        var licensesHtml = res.licenses && res.licenses.length
+            ? res.licenses.map(function(l) {
+                return '<div class="alert-row"><span>' + esc(l.type.toUpperCase()) + '</span><span class="' + (l.valid ? 'badge-unlocked' : 'badge-locked') + '">' + (l.valid ? 'Valid until ' + esc(l.expires) : 'Expired') + '</span></div>';
+              }).join("")
+            : '<div class="empty">No licenses on file.</div>';
+
+        result.innerHTML = '<div class="card">' +
+            '<div class="dept-header" style="margin-bottom:12px;"><div><h2 style="font-size:20px;">' + esc(res.rpName) + '</h2>' +
+            '<div class="dh-rank">PSN: ' + esc(res.psn || "-") + (res.job ? ' &middot; Job: ' + esc(res.job) : '') + '</div></div></div>' +
+            (res.isBanned ? '<p class="badge-locked" style="margin-bottom:8px;">BANNED' + (res.banReason ? ': ' + esc(res.banReason) : '') + '</p>' : '') +
+            '<p style="margin-bottom:10px;">Reports on file: <strong>' + res.reportsOnFile + '</strong></p>' +
+            (idInfo ? '<div class="announcement-meta">Registered ID: ' + esc(idInfo.name || "-") + ' &middot; DOB ' + esc(idInfo.dob || "-") + '</div>' : '<div class="empty">No government ID on file.</div>') +
+            '</div>' +
+            '<div class="card"><h3 style="margin-bottom:10px;font-size:15px;">Licenses</h3>' + licensesHtml + '</div>';
+    }).catch(function(err) {
+        result.innerHTML = '<div class="empty">' + esc(err.message) + '</div>';
+    });
+}
 
 init();
 </script>

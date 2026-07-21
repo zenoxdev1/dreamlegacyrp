@@ -181,6 +181,41 @@ function api(path, method, body) {
         });
     }
 
+    if (path === "/api/jobs/apply-v2") {
+        return sb.rpc("dlrp_apply_job_v2", { p_token: body.key, p_job_name: body.jobName }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
+    if (path === "/api/jobs/application-status") {
+        return sb.rpc("dlrp_get_job_application_status", { p_token: body.key }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
+    if (path === "/api/jobs/quit") {
+        return sb.rpc("dlrp_quit_job", { p_token: body.key }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
+    if (path === "/api/licenses/submit") {
+        return sb.rpc("dlrp_submit_license_request", { p_token: body.key, p_license_type: body.licenseType }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
+    if (path === "/api/licenses/mine") {
+        return sb.rpc("dlrp_get_my_licenses", { p_token: body.key }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return { licenses: r.data };
+        });
+    }
+
     if (path === "/api/messages/send") {
         return sb.rpc("dlrp_send_message", { p_token: body.key, p_to_number: body.toNumber, p_body: body.body }).then(function (r) {
             if (r.error) rpcFail(r.error);

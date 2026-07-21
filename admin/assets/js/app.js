@@ -234,11 +234,13 @@ function setAdminSubtab(tab) {
     document.getElementById("admin-section-reports").classList.toggle("hidden", tab !== "reports");
     document.getElementById("admin-section-idrequests").classList.toggle("hidden", tab !== "idrequests");
     document.getElementById("admin-section-jobapps").classList.toggle("hidden", tab !== "jobapps");
+    document.getElementById("admin-section-licenses").classList.toggle("hidden", tab !== "licenses");
 
     if (tab === "players" && ADMIN_PLAYERS.length === 0) loadAdminPlayers();
     if (tab === "reports" && ADMIN_REPORTS.length === 0) loadAdminReports();
     if (tab === "idrequests" && ADMIN_ID_REQUESTS.length === 0) loadAdminIdRequests();
     if (tab === "jobapps" && ADMIN_JOB_APPS.length === 0) loadAdminJobApps();
+    if (tab === "licenses" && ADMIN_LICENSES.length === 0) loadAdminLicenses();
 }
 
 /* ---- Jugadores (toda la info de su perfil/telefono) ---- */
@@ -617,6 +619,79 @@ function decideJobApp(applicationId, status) {
     }).catch(function(err) { notify("Admin", err.message); });
 }
 
+
+/* ---- Permisos ---- */
+
+var ADMIN_LICENSES = [];
+var ADMIN_LICENSE_FILTER = "pending";
+
+function setLicenseFilter(filter) {
+    ADMIN_LICENSE_FILTER = filter;
+    var btns = document.querySelectorAll('[data-license-filter]');
+    for (var i = 0; i < btns.length; i++) {
+        btns[i].classList.toggle("active", btns[i].getAttribute("data-license-filter") === filter);
+    }
+    loadAdminLicenses();
+}
+
+function loadAdminLicenses() {
+    if (!DLRP_IS_ADMIN) return;
+    var key = getSessionKey();
+    if (!key) return;
+    document.getElementById("admin-license-loading").classList.remove("hidden");
+    document.getElementById("admin-license-list").innerHTML = "";
+    document.getElementById("admin-license-empty").classList.add("hidden");
+
+    var status = ADMIN_LICENSE_FILTER === "all" ? null : ADMIN_LICENSE_FILTER;
+    api("/api/admin/license-requests", "POST", { key: key, status: status }).then(function(res) {
+        ADMIN_LICENSES = res.requests || [];
+        renderAdminLicensesList();
+    }).catch(function(err) {
+        notify("Admin", err.message);
+        document.getElementById("admin-license-loading").classList.add("hidden");
+    });
+}
+
+function renderAdminLicensesList() {
+    document.getElementById("admin-license-loading").classList.add("hidden");
+    var list = document.getElementById("admin-license-list");
+    var empty = document.getElementById("admin-license-empty");
+
+    if (ADMIN_LICENSES.length === 0) {
+        list.innerHTML = "";
+        empty.classList.remove("hidden");
+        return;
+    }
+    empty.classList.add("hidden");
+
+    var html = "";
+    for (var i = 0; i < ADMIN_LICENSES.length; i++) {
+        var r = ADMIN_LICENSES[i];
+        html += '<div class="admin-card">' +
+            '<div class="admin-card-head">' +
+            (r.discordAvatar ? '<img class="admin-card-avatar" src="' + escapeHtml(r.discordAvatar) + '" alt="">' : '<div class="admin-card-avatar"></div>') +
+            '<div class="admin-card-id"><strong>' + escapeHtml(r.rpName || r.discordUsername || "-") + '</strong><span>@' + escapeHtml(r.discordUsername || "-") + '</span></div>' +
+            '</div>' +
+            '<div class="admin-card-meta"><span>License: <strong>' + escapeHtml(r.licenseType.toUpperCase()) + '</strong></span><span>' + formatAdminDate(r.createdAt) + '</span></div>' +
+            (r.status === "pending"
+                ? '<div class="admin-card-actions">' +
+                    '<button type="button" class="btn admin-action-btn approve" onclick="decideLicense(\'' + r.id + '\',\'approved\')">Approve</button>' +
+                    '<button type="button" class="btn admin-action-btn deny" onclick="decideLicense(\'' + r.id + '\',\'denied\')">Deny</button>' +
+                  '</div>'
+                : '<div class="admin-card-decided">Decided by <strong>' + escapeHtml(r.decidedByUsername || "-") + '</strong></div>') +
+            '</div>';
+    }
+    list.innerHTML = html;
+}
+
+function decideLicense(requestId, status) {
+    var key = getSessionKey();
+    if (!key) return;
+    api("/api/admin/decide-license-request", "POST", { key: key, requestId: requestId, status: status }).then(function() {
+        notify("Admin", "License request updated.");
+        loadAdminLicenses();
+    }).catch(function(err) { notify("Admin", err.message); });
+}
 
 document.addEventListener("DOMContentLoaded", function() {
     checkAdminStatus();
