@@ -26,7 +26,13 @@ var ADMIN_FILTER = "pending";
 function checkAdminStatus() {
     var key = getSessionKey();
     if (!key) { showAdminNoAccess("Log in from the main site first, then come back here."); return; }
-    api("/api/admin/is", "POST", { key: key }).then(function(res) {
+    fetch("https://dreamlegacyrp.xyz/api/admin/whoami", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key: key })
+    }).then(function(r) {
+        return r.json().then(function(d) { if (!r.ok) throw new Error(d.error || "Request failed"); return d; });
+    }).then(function(res) {
         DLRP_IS_ADMIN = !!res.isAdmin;
         if (!DLRP_IS_ADMIN) { showAdminNoAccess("Your account doesn't have staff access."); return; }
         document.getElementById("admin-no-access").classList.add("hidden");

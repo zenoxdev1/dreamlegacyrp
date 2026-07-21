@@ -333,7 +333,11 @@ function showProfile(data) {
                 if (hqLink) hqLink.classList.toggle("hidden", !res.department);
             }).catch(function() {});
 
-            api("/api/admin/is", "POST", { key: key }).then(function(res) {
+            fetch("/api/admin/whoami", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ key: key })
+            }).then(function(r) { return r.json(); }).then(function(res) {
                 if (adminLink) adminLink.classList.toggle("hidden", !res.isAdmin);
             }).catch(function() {});
         }

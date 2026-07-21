@@ -7,6 +7,19 @@
    y Anuncios.
    ============================================================ */
 
+// Roles de Discord que dan acceso a admin.dreamlegacyrp.xyz -- nada
+// que ver con los departamentos de HQ (LSPD/EMS), es aparte.
+export const ADMIN_ROLE_IDS = [
+    "1508291739994030241", // Owner
+    "1508291930998702373", // Co-Owner
+    "1508292052788576359", // Developer
+    "1508292146896048248"  // Head Admin
+];
+
+export function isAdminRole(discordRoleIds) {
+    return discordRoleIds.some((id) => ADMIN_ROLE_IDS.includes(id));
+}
+
 export const DEPARTMENTS = {
     police: {
         label: "LSPD",
