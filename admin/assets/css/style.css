@@ -1300,3 +1300,8 @@ input, textarea, select { font-size: 16px; }
 @media (max-width: 480px) {
     .admin-subtabs { width: 100%; overflow-x: auto; max-width: none; }
 }
+
+/* En este sitio no hay animacion de scroll-reveal (era solo para
+   la landing) -- todo el contenido se queda visible desde el
+   principio, sin depender de un script que nunca se copio aqui. */
+.reveal { opacity: 1 !important; transform: none !important; }
