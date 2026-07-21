@@ -88,7 +88,8 @@
     "deniedKicker": "Atualização da candidatura",
     "deniedTitle": "Sua candidatura não foi aprovada",
     "deniedDesc": "Fale conosco no nosso servidor do Discord se tiver dúvidas ou quiser se candidatar novamente.",
-    "reasonLabel": "Motivo informado: "
+    "reasonLabel": "Motivo informado: ",
+    "goToAdmin": "Ir para o Admin"
   },
   "profile": {
     "eyebrow": "Bem-vindo de volta",
@@ -172,7 +173,9 @@
     "markResolved": "Marcar como resolvida",
     "dismiss": "Descartar",
     "subtabIdRequests": "Solicitações de ID",
-    "idRequestsEmpty": "Nenhuma solicitação de ID corresponde a este filtro."
+    "idRequestsEmpty": "Nenhuma solicitação de ID corresponde a este filtro.",
+    "subtabJobApps": "Candidaturas de emprego",
+    "jobAppsEmpty": "Nenhuma candidatura de emprego corresponde a este filtro."
   },
   "rules": {
     "kicker": "Leitura obrigatória",

@@ -88,7 +88,8 @@
     "deniedKicker": "Application update",
     "deniedTitle": "Your application wasn't approved",
     "deniedDesc": "Reach out on our Discord server if you have questions or want to re-apply.",
-    "reasonLabel": "Reason given: "
+    "reasonLabel": "Reason given: ",
+    "goToAdmin": "Go to Admin"
   },
   "profile": {
     "eyebrow": "Welcome back",
@@ -172,7 +173,9 @@
     "markResolved": "Mark resolved",
     "dismiss": "Dismiss",
     "subtabIdRequests": "ID Requests",
-    "idRequestsEmpty": "No ID requests match this filter."
+    "idRequestsEmpty": "No ID requests match this filter.",
+    "subtabJobApps": "Job Applications",
+    "jobAppsEmpty": "No job applications match this filter."
   },
   "rules": {
     "kicker": "Must read",

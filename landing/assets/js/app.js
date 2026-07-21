@@ -316,12 +316,26 @@ function showProfile(data) {
         showApplicationCard("application-approved-card");
         var panelLink = document.getElementById("go-to-panel-link");
         var hqLink = document.getElementById("go-to-hq-link");
+        var adminLink = document.getElementById("go-to-admin-link");
         var key = getSessionKey();
         if (panelLink && key) {
             panelLink.href = "https://panel.dreamlegacyrp.xyz/?dlrp_session=" + encodeURIComponent(key);
         }
-        if (hqLink && key) {
-            hqLink.href = "https://hq.dreamlegacyrp.xyz/?dlrp_session=" + encodeURIComponent(key);
+        if (key) {
+            if (hqLink) hqLink.href = "https://hq.dreamlegacyrp.xyz/?dlrp_session=" + encodeURIComponent(key);
+            if (adminLink) adminLink.href = "https://admin.dreamlegacyrp.xyz/?dlrp_session=" + encodeURIComponent(key);
+
+            fetch("/api/hq/whoami", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ key: key })
+            }).then(function(r) { return r.json(); }).then(function(res) {
+                if (hqLink) hqLink.classList.toggle("hidden", !res.department);
+            }).catch(function() {});
+
+            api("/api/admin/is", "POST", { key: key }).then(function(res) {
+                if (adminLink) adminLink.classList.toggle("hidden", !res.isAdmin);
+            }).catch(function() {});
         }
     } else if (status === "denied") {
         showApplicationCard("application-denied-card");

@@ -88,7 +88,8 @@
     "deniedKicker": "Mise à jour de la candidature",
     "deniedTitle": "Votre candidature n'a pas été approuvée",
     "deniedDesc": "Contactez-nous sur notre serveur Discord si vous avez des questions ou souhaitez repostuler.",
-    "reasonLabel": "Motif indiqué : "
+    "reasonLabel": "Motif indiqué : ",
+    "goToAdmin": "Aller à l'Admin"
   },
   "profile": {
     "eyebrow": "Content de vous revoir",
@@ -172,7 +173,9 @@
     "markResolved": "Marquer comme résolu",
     "dismiss": "Rejeter",
     "subtabIdRequests": "Demandes d'ID",
-    "idRequestsEmpty": "Aucune demande d'ID ne correspond à ce filtre."
+    "idRequestsEmpty": "Aucune demande d'ID ne correspond à ce filtre.",
+    "subtabJobApps": "Candidatures d'emploi",
+    "jobAppsEmpty": "Aucune candidature d'emploi ne correspond à ce filtre."
   },
   "rules": {
     "kicker": "À lire absolument",
