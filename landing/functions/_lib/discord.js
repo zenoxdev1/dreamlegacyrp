@@ -79,6 +79,21 @@ export async function sendDiscordChannelMessage(env, channelId, content) {
 
 /** Cabeceras estandar para hablar con la API REST de Supabase usando
  *  la Service Role Key (bypassa RLS; solo usar server-side). */
+/** Consulta los roles ACTUALES de una persona en el servidor de Discord
+ *  (en vivo, no algo guardado -- asi un ascenso/descenso/despido en
+ *  Discord se refleja al instante en HQ, sin depender de que nadie
+ *  sincronice nada a mano). */
+export async function getDiscordMemberRoles(env, discordUserId) {
+    const res = await fetch(
+        "https://discord.com/api/v10/guilds/" + env.DISCORD_GUILD_ID + "/members/" + discordUserId,
+        { headers: { Authorization: "Bot " + env.DISCORD_BOT_TOKEN } }
+    );
+    if (res.status === 404) return []; // ya no esta en el servidor
+    if (!res.ok) throw new Error("Discord member lookup failed: " + (await res.text()));
+    const member = await res.json();
+    return member.roles || [];
+}
+
 export function supabaseHeaders(env, extra) {
     return Object.assign({
         "Content-Type": "application/json",
@@ -108,7 +123,9 @@ export async function getProfileByToken(env, token) {
 const ALLOWED_ORIGINS = [
     "https://dreamlegacyrp.xyz",
     "https://www.dreamlegacyrp.xyz",
-    "https://panel.dreamlegacyrp.xyz"
+    "https://panel.dreamlegacyrp.xyz",
+    "https://hq.dreamlegacyrp.xyz",
+    "https://admin.dreamlegacyrp.xyz"
 ];
 
 export function corsHeaders(request) {

@@ -9,7 +9,7 @@
    Aquí, el bot manda el mensaje usando IDs de canal guardados
    como variables de entorno -- nunca visibles para el cliente.
    ============================================================ */
-import { getProfileByToken, corsHeaders, jsonResponse } from "../../_lib/discord.js";
+import { getProfileByToken, supabaseHeaders, corsHeaders, jsonResponse } from "../../_lib/discord.js";
 
 export async function onRequestOptions(context) {
     return new Response(null, { status: 204, headers: corsHeaders(context.request) });
@@ -55,6 +55,23 @@ export async function onRequestPost(context) {
         if (!res.ok) {
             const errText = await res.text();
             throw new Error("Discord rejected the alert: " + errText);
+        }
+
+        if (body.type === "police" || body.type === "ems") {
+            try {
+                await fetch(env.SUPABASE_URL + "/rest/v1/emergency_alerts", {
+                    method: "POST",
+                    headers: supabaseHeaders(env),
+                    body: JSON.stringify({
+                        department: body.type,
+                        caller_name: body.caller || null,
+                        caller_phone: body.phone || null,
+                        location: body.location || null
+                    })
+                });
+            } catch (logErr) {
+                console.error("Failed to log emergency alert:", logErr.message);
+            }
         }
 
         return jsonResponse(request, { ok: true });

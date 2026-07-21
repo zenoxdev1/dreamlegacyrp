@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>DLRP | HQ</title>
+<link rel="icon" href="https://dreamlegacyrp.xyz/assets/img/dlrp.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+    --bg: #090a0d; --surface: rgba(18,22,29,0.78); --line: rgba(255,255,255,0.10);
+    --line-strong: rgba(120,168,255,0.35); --text: #f4f7fb; --muted: #aab3c2;
+    --blue: #2f73ff; --blue-dark: #1746a8; --cyan: #36d6ff; --mint: #59f0a7;
+    --amber: #ffd166; --red: #ff4f64; --radius: 10px;
+}
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+h1, h2, h3 { font-family: 'Rajdhani', sans-serif; }
+.glow { position: fixed; top: -300px; left: -300px; width: 700px; height: 700px; border-radius: 50%; background: radial-gradient(circle, rgba(47,115,255,.14) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+
+.topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px clamp(18px,4vw,48px); border-bottom: 1px solid var(--line); background: rgba(9,10,13,.82); backdrop-filter: blur(18px); position: relative; z-index: 5; }
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.brand-badge { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg,var(--blue),var(--blue-dark)); font-weight: 800; font-size: 12px; color: #fff; }
+.brand-title { font-size: 18px; font-weight: 800; text-transform: uppercase; }
+.user-chip { display: flex; align-items: center; gap: 8px; }
+.user-chip img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
+.logout-btn { background: none; border: 1px solid var(--line); color: var(--muted); padding: 7px 14px; border-radius: var(--radius); cursor: pointer; font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 12px; text-transform: uppercase; }
+
+.main-wrap { max-width: 900px; margin: 0 auto; padding: 32px 20px 60px; position: relative; z-index: 1; }
+.center-card { max-width: 420px; margin: 80px auto; text-align: center; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 32px 24px; }
+.center-card h2 { font-size: 22px; margin-bottom: 10px; }
+.center-card p { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 22px; border-radius: var(--radius); border: 1px solid var(--line); background: rgba(255,255,255,.06); color: var(--text); font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 14px; text-transform: uppercase; cursor: pointer; text-decoration: none; }
+.btn.primary { background: linear-gradient(135deg,var(--blue),var(--blue-dark)); border-color: rgba(151,195,255,.28); }
+.btn.small { padding: 7px 14px; font-size: 12px; }
+.btn.red { border-color: rgba(255,79,100,.35); color: var(--red); background: rgba(255,79,100,.08); }
+
+.dept-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+.dept-header .dh-icon { font-size: 36px; }
+.dept-header h1 { font-size: 26px; text-transform: uppercase; }
+.dept-header .dh-rank { color: var(--muted); font-size: 13px; }
+
+.tabs { display: flex; gap: 6px; padding: 5px; border: 1px solid var(--line); border-radius: var(--radius); background: rgba(255,255,255,.04); max-width: fit-content; margin-bottom: 24px; }
+.tab-btn { border: 0; background: transparent; color: var(--muted); font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: .03em; text-transform: uppercase; padding: 9px 18px; border-radius: 6px; cursor: pointer; }
+.tab-btn.active { background: linear-gradient(135deg,var(--blue),var(--blue-dark)); color: #fff; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; margin-bottom: 12px; padding: 16px 18px; }
+.roster-row { display: flex; align-items: center; gap: 12px; }
+.roster-row img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: var(--blue); }
+.roster-info { flex: 1; min-width: 0; }
+.roster-name { font-weight: 600; }
+.roster-role { font-size: 12px; color: var(--cyan); }
+.roster-actions { display: flex; gap: 6px; }
+
+.vehicle-row { display: flex; align-items: center; gap: 14px; }
+.vehicle-icon { font-size: 26px; width: 36px; text-align: center; }
+.vehicle-info { flex: 1; }
+.vehicle-name { font-weight: 600; }
+.vehicle-meta { font-size: 12px; color: var(--muted); }
+.badge-unlocked { color: var(--mint); font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.badge-locked { color: var(--red); font-size: 11px; font-weight: 700; text-transform: uppercase; }
+
+.announcement-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.announcement-meta { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+.announcement-body { font-size: 13px; color: var(--text); white-space: pre-wrap; line-height: 1.5; }
+
+.alert-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.alert-loc { font-weight: 700; color: var(--amber); }
+.alert-meta { font-size: 12px; color: var(--muted); }
+
+.empty { text-align: center; color: var(--muted); padding: 30px 0; font-size: 13px; }
+
+.form-field { margin-bottom: 12px; }
+.form-field label { display: block; font-size: 11px; color: var(--muted); text-transform: uppercase; margin-bottom: 5px; }
+.form-field input, .form-field textarea { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--line); background: rgba(255,255,255,.05); color: var(--text); font-size: 14px; font-family: inherit; outline: none; }
+.form-field textarea { min-height: 90px; resize: vertical; }
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="glow"></div>
+
+<div class="topbar">
+    <a class="brand" href="#"><span class="brand-badge">DLRP</span><span class="brand-title">HQ</span></a>
+    <div class="user-chip hidden" id="user-chip">
+        <img id="user-avatar" src="" alt="">
+        <span id="user-name">-</span>
+        <button class="logout-btn" onclick="logout()">Log Out</button>
+    </div>
+</div>
+
+<div class="main-wrap">
+    <div id="no-access" class="center-card hidden">
+        <h2 id="no-access-title">No Access</h2>
+        <p id="no-access-desc">You don't currently hold a staff role in any department.</p>
+        <a class="btn primary" href="https://dreamlegacyrp.xyz">Back to Main Site</a>
+    </div>
+
+    <div id="dept-panel" class="hidden">
+        <div class="dept-header">
+            <div class="dh-icon" id="dh-icon">🏢</div>
+            <div><h1 id="dh-label">-</h1><div class="dh-rank" id="dh-rank">-</div></div>
+        </div>
+
+        <div class="tabs" id="tabs"></div>
+
+        <div class="tab-panel" id="tab-roster">
+            <div id="roster-list"></div>
+        </div>
+
+        <div class="tab-panel" id="tab-vehicles">
+            <div id="vehicles-list"></div>
+        </div>
+
+        <div class="tab-panel" id="tab-announcements">
+            <div id="post-announcement-area" class="card hidden">
+                <div class="form-field"><label>Title</label><input type="text" id="ann-title"></div>
+                <div class="form-field"><label>Message</label><textarea id="ann-body"></textarea></div>
+                <button class="btn primary small" onclick="postAnnouncement()">Post Announcement</button>
+            </div>
+            <div id="announcements-list"></div>
+        </div>
+
+        <div class="tab-panel" id="tab-emergencies">
+            <div id="emergencies-list"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+var SESSION_KEY = "dlrp_panel_session";
+var API_BASE = "https://dreamlegacyrp.xyz/api/hq";
+var currentWhoami = null;
+var activeTab = null;
+
+(function pickUpSession() {
+    var params = new URLSearchParams(window.location.search);
+    var token = params.get("dlrp_session");
+    if (token) {
+        localStorage.setItem(SESSION_KEY, JSON.stringify({ key: token }));
+        params.delete("dlrp_session");
+        var clean = window.location.pathname + (params.toString() ? "?" + params.toString() : "");
+        window.history.replaceState({}, document.title, clean);
+    }
+})();
+
+function getSessionKey() {
+    try { var raw = JSON.parse(localStorage.getItem(SESSION_KEY)); return raw && raw.key ? raw.key : null; }
+    catch (e) { return null; }
+}
+
+function logout() {
+    localStorage.removeItem(SESSION_KEY);
+    window.location.href = "https://dreamlegacyrp.xyz";
+}
+
+function hqApi(path, body) {
+    var key = getSessionKey();
+    if (!key) return Promise.reject(new Error("Not logged in."));
+    body = body || {};
+    body.key = key;
+    return fetch(API_BASE + path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+    }).then(function(r) {
+        return r.json().then(function(d) { if (!r.ok) throw new Error(d.error || "Request failed."); return d; });
+    });
+}
+
+function showNoAccess(msg) {
+    document.getElementById("no-access-desc").textContent = msg || "You don't currently hold a staff role in any department.";
+    document.getElementById("no-access").classList.remove("hidden");
+    document.getElementById("dept-panel").classList.add("hidden");
+}
+
+function init() {
+    var key = getSessionKey();
+    if (!key) { showNoAccess("Log in from the main site first, then come back to HQ."); return; }
+
+    hqApi("/whoami").then(function(res) {
+        currentWhoami = res;
+        document.getElementById("user-chip").classList.remove("hidden");
+        document.getElementById("user-avatar").src = res.discordAvatar || "";
+        document.getElementById("user-name").textContent = res.rpName;
+
+        if (!res.department) {
+            showNoAccess("You don't currently hold a staff role in any department (LSPD, EMS...).");
+            return;
+        }
+
+        document.getElementById("no-access").classList.add("hidden");
+        document.getElementById("dept-panel").classList.remove("hidden");
+        document.getElementById("dh-icon").textContent = res.department === "police" ? "👮" : "🚑";
+        document.getElementById("dh-label").textContent = res.departmentLabel;
+        document.getElementById("dh-rank").textContent = res.roleName + (res.rank === "chief" ? " — Full Access" : " — Limited Access");
+
+        renderTabs(res.rank === "chief");
+    }).catch(function(err) {
+        showNoAccess(err.message || "Could not verify your access.");
+    });
+}
+
+function renderTabs(isChief) {
+    var tabs = isChief
+        ? [["roster","Roster"],["vehicles","Vehicles"],["announcements","Announcements"],["emergencies","Emergencies"]]
+        : [["announcements","Announcements"],["emergencies","Emergencies"]];
+
+    document.getElementById("tabs").innerHTML = tabs.map(function(t, i) {
+        return '<button class="tab-btn' + (i === 0 ? " active" : "") + '" data-tab="' + t[0] + '" onclick="switchTab(\'' + t[0] + '\')">' + t[1] + '</button>';
+    }).join("");
+
+    document.getElementById("post-announcement-area").classList.toggle("hidden", !isChief);
+    switchTab(tabs[0][0]);
+}
+
+function switchTab(tab) {
+    activeTab = tab;
+    ["roster","vehicles","announcements","emergencies"].forEach(function(t) {
+        document.getElementById("tab-" + t).classList.toggle("active", t === tab);
+    });
+    var btns = document.querySelectorAll(".tab-btn");
+    for (var i = 0; i < btns.length; i++) {
+        btns[i].classList.toggle("active", btns[i].getAttribute("data-tab") === tab);
+    }
+    if (tab === "roster") loadRoster();
+    if (tab === "vehicles") loadVehicles();
+    if (tab === "announcements") loadAnnouncements();
+    if (tab === "emergencies") loadEmergencies();
+}
+
+/* ---- Roster ---- */
+function loadRoster() {
+    var list = document.getElementById("roster-list");
+    list.innerHTML = '<div class="empty">Loading...</div>';
+    hqApi("/roster", { department: currentWhoami.department }).then(function(res) {
+        if (!res.roster.length) { list.innerHTML = '<div class="empty">No staff found.</div>'; return; }
+        var html = "";
+        for (var i = 0; i < res.roster.length; i++) {
+            var m = res.roster[i];
+            html += '<div class="card roster-row">'
+                + (m.avatar ? '<img src="' + m.avatar + '">' : '<img src="">')
+                + '<div class="roster-info"><div class="roster-name">' + esc(m.username) + '</div><div class="roster-role">' + esc(m.roleName) + '</div></div>'
+                + '<div class="roster-actions">'
+                + '<button class="btn small" onclick="setRole(\'' + m.discordId + '\',\'promote\')">Promote</button>'
+                + '<button class="btn small" onclick="setRole(\'' + m.discordId + '\',\'demote\')">Demote</button>'
+                + '<button class="btn small red" onclick="setRole(\'' + m.discordId + '\',\'fire\')">Fire</button>'
+                + '</div></div>';
+        }
+        list.innerHTML = html;
+    }).catch(function(err) { list.innerHTML = '<div class="empty">' + esc(err.message) + '</div>'; });
+}
+
+function setRole(targetDiscordId, action) {
+    if (action === "fire" && !confirm("Fire this person from the department?")) return;
+    hqApi("/set-role", { department: currentWhoami.department, targetDiscordId: targetDiscordId, action: action }).then(function() {
+        loadRoster();
+    }).catch(function(err) { alert(err.message); });
+}
+
+/* ---- Vehicles ---- */
+function loadVehicles() {
+    var list = document.getElementById("vehicles-list");
+    list.innerHTML = '<div class="empty">Loading...</div>';
+    hqApi("/vehicles", { department: currentWhoami.department }).then(function(res) {
+        var html = "";
+        for (var i = 0; i < res.vehicles.length; i++) {
+            var v = res.vehicles[i];
+            var actionBtn = v.unlocked
+                ? '<span class="badge-unlocked">Unlocked</span>'
+                : (v.rankQualifies ? '<button class="btn small primary" onclick="unlockVehicle(\'' + v.id + '\')">Unlock — $' + v.price.toLocaleString() + '</button>' : '<span class="badge-locked">Requires ' + esc(v.rankRequired) + '</span>');
+            html += '<div class="card vehicle-row">'
+                + '<div class="vehicle-icon">🚗</div>'
+                + '<div class="vehicle-info"><div class="vehicle-name">' + esc(v.name) + '</div><div class="vehicle-meta">Requires: ' + esc(v.rankRequired) + '+</div></div>'
+                + actionBtn
+                + '</div>';
+        }
+        list.innerHTML = html;
+    }).catch(function(err) { list.innerHTML = '<div class="empty">' + esc(err.message) + '</div>'; });
+}
+
+function unlockVehicle(vehicleId) {
+    hqApi("/vehicles", { department: currentWhoami.department, action: "unlock", vehicleId: vehicleId }).then(function() {
+        loadVehicles();
+    }).catch(function(err) { alert(err.message); });
+}
+
+/* ---- Announcements ---- */
+function loadAnnouncements() {
+    var list = document.getElementById("announcements-list");
+    list.innerHTML = '<div class="empty">Loading...</div>';
+    hqApi("/announcements", { department: currentWhoami.department }).then(function(res) {
+        if (!res.announcements.length) { list.innerHTML = '<div class="empty">No announcements yet.</div>'; return; }
+        var html = "";
+        for (var i = 0; i < res.announcements.length; i++) {
+            var a = res.announcements[i];
+            html += '<div class="card"><div class="announcement-title">' + esc(a.title) + '</div>'
+                + '<div class="announcement-meta">' + esc(a.postedByUsername || "-") + ' &middot; ' + new Date(a.createdAt).toLocaleString() + '</div>'
+                + '<div class="announcement-body">' + esc(a.body) + '</div></div>';
+        }
+        list.innerHTML = html;
+    }).catch(function(err) { list.innerHTML = '<div class="empty">' + esc(err.message) + '</div>'; });
+}
+
+function postAnnouncement() {
+    var title = document.getElementById("ann-title").value.trim();
+    var body = document.getElementById("ann-body").value.trim();
+    if (!title || !body) { alert("Title and message are required."); return; }
+    hqApi("/announcements", { department: currentWhoami.department, action: "post", title: title, body: body }).then(function() {
+        document.getElementById("ann-title").value = "";
+        document.getElementById("ann-body").value = "";
+        loadAnnouncements();
+    }).catch(function(err) { alert(err.message); });
+}
+
+/* ---- Emergencies ---- */
+function loadEmergencies() {
+    var list = document.getElementById("emergencies-list");
+    list.innerHTML = '<div class="empty">Loading...</div>';
+    hqApi("/emergencies", { department: currentWhoami.department }).then(function(res) {
+        if (!res.alerts.length) { list.innerHTML = '<div class="empty">No recent alerts.</div>'; return; }
+        var html = "";
+        for (var i = 0; i < res.alerts.length; i++) {
+            var a = res.alerts[i];
+            html += '<div class="card alert-row"><div><div class="alert-loc">' + esc(a.location || "Unknown") + '</div>'
+                + '<div class="alert-meta">' + esc(a.callerName || "Unknown") + ' &middot; ' + esc(a.callerPhone || "-") + '</div></div>'
+                + '<div class="alert-meta">' + new Date(a.createdAt).toLocaleString() + '</div></div>';
+        }
+        list.innerHTML = html;
+    }).catch(function(err) { list.innerHTML = '<div class="empty">' + esc(err.message) + '</div>'; });
+}
+
+function esc(s) { if (typeof s !== "string") return s; var d = document.createElement("div"); d.appendChild(document.createTextNode(s)); return d.innerHTML; }
+
+init();
+</script>
+</body>
+</html>
