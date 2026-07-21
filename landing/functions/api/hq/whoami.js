@@ -1,5 +1,5 @@
-import { getProfileByToken, getDiscordMemberRoles, supabaseHeaders, corsHeaders, jsonResponse } from "../../_lib/discord.js";
-import { isAdminRole } from "../../_lib/hq-config.js";
+import { getProfileByToken, getDiscordMemberRoles, corsHeaders, jsonResponse } from "../../_lib/discord.js";
+import { resolveDepartment } from "../../_lib/hq-config.js";
 
 export async function onRequestOptions(context) {
     return new Response(null, { status: 204, headers: corsHeaders(context.request) });
@@ -13,24 +13,23 @@ export async function onRequestPost(context) {
     try {
         const profile = await getProfileByToken(env, body.key);
         if (!profile) return jsonResponse(request, { error: "Session expired." }, 401);
+        if (profile.is_banned) return jsonResponse(request, { error: "Account banned." }, 403);
 
         const roleIds = await getDiscordMemberRoles(env, profile.discord_id);
-        const isAdmin = isAdminRole(roleIds);
+        const match = resolveDepartment(roleIds);
 
-        // Mantiene sincronizada la columna is_admin (la usan todas las
-        // funciones RPC del panel por dentro) con el rol real de
-        // Discord -- si alguien pierde el rol, tambien pierde el
-        // acceso a las funciones de admin, sin que nadie tenga que
-        // acordarse de tocar la base de datos a mano.
-        if (!!profile.is_admin !== isAdmin) {
-            await fetch(env.SUPABASE_URL + "/rest/v1/profiles?id=eq." + profile.id, {
-                method: "PATCH",
-                headers: supabaseHeaders(env),
-                body: JSON.stringify({ is_admin: isAdmin })
-            });
-        }
-
-        return jsonResponse(request, { ok: true, isAdmin: isAdmin });
+        return jsonResponse(request, {
+            ok: true,
+            rpName: profile.rp_name || profile.discord_username,
+            discordId: profile.discord_id,
+            discordAvatar: profile.discord_avatar,
+            bank: profile.bank,
+            cash: profile.cash,
+            department: match ? match.department : null,
+            departmentLabel: match ? match.label : null,
+            roleName: match ? match.roleName : null,
+            rank: match ? match.rank : null
+        });
     } catch (err) {
         return jsonResponse(request, { error: err.message }, 500);
     }
