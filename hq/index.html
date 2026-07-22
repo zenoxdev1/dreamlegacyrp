@@ -102,6 +102,7 @@ h1, h2, h3 { font-family: 'Rajdhani', sans-serif; }
         <div class="dept-header">
             <div class="dh-icon" id="dh-icon">🏢</div>
             <div><h1 id="dh-label">-</h1><div class="dh-rank" id="dh-rank">-</div></div>
+            <select id="dept-switcher" class="hidden" style="margin-left:auto;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);font-family:'Rajdhani',sans-serif;font-weight:700;" onchange="switchDepartment(this.value)"></select>
         </div>
 
         <div class="tabs" id="tabs"></div>
@@ -196,6 +197,16 @@ function init() {
         document.getElementById("user-avatar").src = res.discordAvatar || "";
         document.getElementById("user-name").textContent = res.rpName;
 
+        var switcher = document.getElementById("dept-switcher");
+        if (res.isSuperAdmin && res.allDepartments && res.allDepartments.length) {
+            switcher.innerHTML = res.allDepartments.map(function(d) {
+                return '<option value="' + d.key + '"' + (d.key === res.department ? " selected" : "") + '>' + d.label + '</option>';
+            }).join("");
+            switcher.classList.remove("hidden");
+        } else {
+            switcher.classList.add("hidden");
+        }
+
         if (!res.department) {
             showNoAccess("You don't currently hold a staff role in any department (LSPD, EMS...).");
             return;
@@ -203,14 +214,25 @@ function init() {
 
         document.getElementById("no-access").classList.add("hidden");
         document.getElementById("dept-panel").classList.remove("hidden");
-        document.getElementById("dh-icon").textContent = res.department === "police" ? "👮" : "🚑";
-        document.getElementById("dh-label").textContent = res.departmentLabel;
-        document.getElementById("dh-rank").textContent = res.roleName + (res.rank === "chief" ? " — Full Access" : " — Limited Access");
-
-        renderTabs(res.rank === "chief");
+        applyDepartment(res.department, res.departmentLabel, res.roleName, res.rank);
     }).catch(function(err) {
         showNoAccess(err.message || "Could not verify your access.");
     });
+}
+
+function applyDepartment(department, label, roleName, rank) {
+    currentWhoami.department = department;
+    currentWhoami.departmentLabel = label;
+    currentWhoami.rank = rank;
+    document.getElementById("dh-icon").textContent = department === "police" ? "👮" : "🚑";
+    document.getElementById("dh-label").textContent = label;
+    document.getElementById("dh-rank").textContent = roleName + (rank === "chief" ? " — Full Access" : " — Limited Access") + (currentWhoami.isSuperAdmin ? " (Staff Override)" : "");
+    renderTabs(rank === "chief");
+}
+
+function switchDepartment(deptKey) {
+    var opt = document.querySelector('#dept-switcher option[value="' + deptKey + '"]');
+    applyDepartment(deptKey, opt ? opt.textContent : deptKey, "Staff Override", "chief");
 }
 
 function renderTabs(isChief) {
