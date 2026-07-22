@@ -379,6 +379,13 @@ function renderAdminPlayerDetail(p) {
             '</div></div>';
     }
 
+    html += '<div class="card reveal" style="margin-bottom:16px;"><div class="card-inner">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">' +
+        '<h3>Game Stats (mpstats.json)</h3>' +
+        '<button type="button" class="btn small" onclick="loadPlayerGameStats(\'' + escapeHtml(p.psn || "") + '\')">Load</button>' +
+        '</div><div id="player-game-stats-area"><p style="color:var(--muted);font-size:12px;">Click Load to fetch this player\'s raw game stats.</p></div>' +
+        '</div></div>';
+
     document.getElementById("admin-player-detail-content").innerHTML = html;
 }
 
@@ -691,6 +698,34 @@ function decideLicense(requestId, status) {
         notify("Admin", "License request updated.");
         loadAdminLicenses();
     }).catch(function(err) { notify("Admin", err.message); });
+}
+
+function loadPlayerGameStats(psn) {
+    var area = document.getElementById("player-game-stats-area");
+    if (!psn) { area.innerHTML = '<p style="color:var(--muted);font-size:12px;">This player has no PSN on file.</p>'; return; }
+    area.innerHTML = '<p style="color:var(--muted);font-size:12px;">Loading...</p>';
+
+    fetch("https://dreamlegacyrp.xyz/api/admin/player-stats", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key: getSessionKey(), psn: psn })
+    }).then(function(r) {
+        return r.json().then(function(d) { if (!r.ok) throw new Error(d.error || "Request failed"); return d; });
+    }).then(function(res) {
+        if (!res.found) { area.innerHTML = '<p style="color:var(--muted);font-size:12px;">No game stats synced for this player yet.</p>'; return; }
+
+        var html = '<p style="color:var(--muted);font-size:11px;margin-bottom:8px;">' + res.decodedCount + ' of ' + res.totalStats + ' stats decoded &middot; last synced ' + formatAdminDate(res.updatedAt) + '</p>';
+        html += '<div style="max-height:340px;overflow-y:auto;">';
+        for (var i = 0; i < res.stats.length; i++) {
+            var s = res.stats[i];
+            var label = s.name ? s.name : ('Hash ' + s.hash);
+            html += '<div class="profile-row"><span class="profile-label" style="' + (s.name ? '' : 'opacity:.5;') + '">' + escapeHtml(label) + '</span><span>' + escapeHtml(String(s.value)) + '</span></div>';
+        }
+        html += '</div>';
+        area.innerHTML = html;
+    }).catch(function(err) {
+        area.innerHTML = '<p style="color:var(--red);font-size:12px;">' + escapeHtml(err.message) + '</p>';
+    });
 }
 
 document.addEventListener("DOMContentLoaded", function() {
