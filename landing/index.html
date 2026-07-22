@@ -2,448 +2,400 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title data-i18n="meta.title">Dream Legacy RP</title>
-<meta name="description" content="Dream Legacy RP - PS3 roleplay community">
-<link rel="icon" href="assets/img/dlrp.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>DLRP | HQ</title>
+<link rel="icon" href="https://dreamlegacyrp.xyz/assets/img/dlrp.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+    --bg: #090a0d; --surface: rgba(18,22,29,0.78); --line: rgba(255,255,255,0.10);
+    --line-strong: rgba(120,168,255,0.35); --text: #f4f7fb; --muted: #aab3c2;
+    --blue: #2f73ff; --blue-dark: #1746a8; --cyan: #36d6ff; --mint: #59f0a7;
+    --amber: #ffd166; --red: #ff4f64; --radius: 10px;
+}
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+h1, h2, h3 { font-family: 'Rajdhani', sans-serif; }
+.glow { position: fixed; top: -300px; left: -300px; width: 700px; height: 700px; border-radius: 50%; background: radial-gradient(circle, rgba(47,115,255,.14) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+
+.topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px clamp(18px,4vw,48px); border-bottom: 1px solid var(--line); background: rgba(9,10,13,.82); backdrop-filter: blur(18px); position: relative; z-index: 5; }
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.brand-badge { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg,var(--blue),var(--blue-dark)); font-weight: 800; font-size: 12px; color: #fff; }
+.brand-title { font-size: 18px; font-weight: 800; text-transform: uppercase; }
+.user-chip { display: flex; align-items: center; gap: 8px; }
+.user-chip img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
+.logout-btn { background: none; border: 1px solid var(--line); color: var(--muted); padding: 7px 14px; border-radius: var(--radius); cursor: pointer; font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 12px; text-transform: uppercase; }
+
+.main-wrap { max-width: 900px; margin: 0 auto; padding: 32px 20px 60px; position: relative; z-index: 1; }
+.center-card { max-width: 420px; margin: 80px auto; text-align: center; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 32px 24px; }
+.center-card h2 { font-size: 22px; margin-bottom: 10px; }
+.center-card p { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 22px; border-radius: var(--radius); border: 1px solid var(--line); background: rgba(255,255,255,.06); color: var(--text); font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 14px; text-transform: uppercase; cursor: pointer; text-decoration: none; }
+.btn.primary { background: linear-gradient(135deg,var(--blue),var(--blue-dark)); border-color: rgba(151,195,255,.28); }
+.btn.small { padding: 7px 14px; font-size: 12px; }
+.btn.red { border-color: rgba(255,79,100,.35); color: var(--red); background: rgba(255,79,100,.08); }
+
+.dept-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+.dept-header .dh-icon { font-size: 36px; }
+.dept-header h1 { font-size: 26px; text-transform: uppercase; }
+.dept-header .dh-rank { color: var(--muted); font-size: 13px; }
+
+.tabs { display: flex; gap: 6px; padding: 5px; border: 1px solid var(--line); border-radius: var(--radius); background: rgba(255,255,255,.04); max-width: fit-content; margin-bottom: 24px; }
+.tab-btn { border: 0; background: transparent; color: var(--muted); font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: .03em; text-transform: uppercase; padding: 9px 18px; border-radius: 6px; cursor: pointer; }
+.tab-btn.active { background: linear-gradient(135deg,var(--blue),var(--blue-dark)); color: #fff; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; margin-bottom: 12px; padding: 16px 18px; }
+.roster-row { display: flex; align-items: center; gap: 12px; }
+.roster-row img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: var(--blue); }
+.roster-info { flex: 1; min-width: 0; }
+.roster-name { font-weight: 600; }
+.roster-role { font-size: 12px; color: var(--cyan); }
+.roster-actions { display: flex; gap: 6px; }
+
+.vehicle-row { display: flex; align-items: center; gap: 14px; }
+.vehicle-icon { font-size: 26px; width: 36px; text-align: center; }
+.vehicle-info { flex: 1; }
+.vehicle-name { font-weight: 600; }
+.vehicle-meta { font-size: 12px; color: var(--muted); }
+.badge-unlocked { color: var(--mint); font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.badge-locked { color: var(--red); font-size: 11px; font-weight: 700; text-transform: uppercase; }
+
+.announcement-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.announcement-meta { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+.announcement-body { font-size: 13px; color: var(--text); white-space: pre-wrap; line-height: 1.5; }
+
+.alert-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.alert-loc { font-weight: 700; color: var(--amber); }
+.alert-meta { font-size: 12px; color: var(--muted); }
+
+.empty { text-align: center; color: var(--muted); padding: 30px 0; font-size: 13px; }
+
+.form-field { margin-bottom: 12px; }
+.form-field label { display: block; font-size: 11px; color: var(--muted); text-transform: uppercase; margin-bottom: 5px; }
+.form-field input, .form-field textarea { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--line); background: rgba(255,255,255,.05); color: var(--text); font-size: 14px; font-family: inherit; outline: none; }
+.form-field textarea { min-height: 90px; resize: vertical; }
+.hidden { display: none !important; }
+</style>
 </head>
 <body>
-<div class="site-shell">
-    <nav class="topbar" aria-label="Main navigation">
-        <a class="brand" href="#" onclick="setTab('rrp'); return false;" aria-label="Dream Legacy RP home">
-            <span class="brand-badge">DLRP</span>
-            <span class="brand-title">
-                <strong>Dream Legacy RP</strong>
-            </span>
-        </a>
+<div class="glow"></div>
 
-        <div class="tabs" role="tablist" aria-label="Site sections">
-            <button id="btn-rrp" class="tab-button active" type="button" role="tab" aria-selected="true" onclick="setTab('rrp')" data-i18n="nav.rrp">DLRP</button>
-            <button id="btn-profile" class="tab-button hidden" type="button" role="tab" aria-selected="false" onclick="setTab('profile')" data-i18n="nav.profile">Profile</button>
-            <button id="btn-settings" class="tab-button" type="button" role="tab" aria-selected="false" onclick="setTab('settings')" data-i18n="nav.settings">Settings</button>
-        </div>
-
-        <div class="top-right-group">
-            <span class="status-dot" id="status-dot" data-i18n-title="nav.checkingServer" title="Checking server..."></span>
-
-            <!-- Selector de idioma a medida (reemplaza el <select> nativo) -->
-            <div class="lang-switch" id="lang-switch">
-                <button type="button" class="lang-switch-btn" id="lang-switch-btn" aria-haspopup="listbox" aria-expanded="false">
-                    <span id="lang-switch-current">EN</span>
-                    <span class="lang-switch-arrow">&#9662;</span>
-                </button>
-                <ul class="lang-switch-menu hidden" id="lang-switch-menu" role="listbox">
-                    <li role="option" data-lang="en">English</li>
-                    <li role="option" data-lang="fr">Fran&ccedil;ais</li>
-                    <li role="option" data-lang="pt">Portugu&ecirc;s</li>
-                </ul>
-            </div>
-
-            <!-- Login / cuenta de Discord -->
-            <div id="discord-login-area">
-                <button type="button" class="btn discord-login-btn" id="discord-login-btn" onclick="loginWithDiscord()">
-                    <svg class="discord-icon" viewBox="0 0 127.14 96.36" aria-hidden="true"><path fill="currentColor" d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>
-                    <span data-i18n="nav.loginDiscord">Log in with Discord</span>
-                </button>
-                <div id="discord-user-menu" class="discord-user-menu hidden">
-                    <button type="button" id="discord-user-chip" class="discord-user-chip" aria-haspopup="true" aria-expanded="false">
-                        <img id="discord-user-avatar" src="" alt="">
-                        <span id="discord-user-name">-</span>
-                        <span class="lang-switch-arrow">&#9662;</span>
-                    </button>
-                    <ul class="discord-user-dropdown hidden" id="discord-user-dropdown" role="menu">
-                        <li role="menuitem" onclick="logout();" data-i18n="profile.logOut">Log Out</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <div class="main-wrap">
-        <div id="tab-rrp" class="tab-panel" role="tabpanel" aria-labelledby="btn-rrp">
-            <div class="hero rrp-hero">
-                <div class="hero-copy reveal">
-                    <div class="eyebrow" data-i18n="hero.eyebrow">Roleplay setup</div>
-                    <h1 class="hero-title">Dream Legacy RP</h1>
-                    <p class="lead" data-i18n="hero.lead">Dream Legacy RP is a PlayStation 3 roleplay project. Join our Discord server, log in with Discord, and get ready to connect.</p>
-                    <div class="label-row">
-                        <span class="chip" data-i18n="hero.chip1">PS3 console</span>
-                        <span class="chip" data-i18n="hero.chip2">CFW or HEN</span>
-                        <span class="chip" data-i18n="hero.chip3">Discord required</span>
-                    </div>
-                    <div class="actions">
-                        <a class="btn discord" href="https://discord.gg/fywDbAzPg6" target="_blank" rel="noopener" data-i18n="hero.discordDlrp">Join the DLRP Discord</a>
-                    </div>
-                </div>
-                <div class="map-frame reveal" data-tilt>
-                    <img src="assets/img/gtav-neighborhoods.png" alt="Map of Los Santos neighborhoods">
-                </div>
-            </div>
-
-            <div class="section-head reveal">
-                <div><div class="section-kicker text-accent" data-i18n="join.kicker">Access flow</div><h2 data-i18n="join.title">How to Join</h2></div>
-                <p data-i18n="join.desc">The steps below keep the community organized and make sure each player is ready before joining.</p>
-            </div>
-
-            <div class="grid two setup-grid">
-                <div class="card reveal" data-tilt>
-                    <div class="card-inner">
-                        <h3 data-i18n="join.reqTitle">Requirements</h3>
-                        <ol class="step-list">
-                            <li data-i18n="join.req1">PlayStation 3 console.</li>
-                            <li data-i18n="join.req2">Custom Firmware (CFW) or HEN installed.</li>
-                            <li data-i18n="join.req3">A valid Discord account.</li>
-                            <li data-i18n="join.req5">A new PSN account for roleplay.</li>
-                            <li data-i18n="join.req6">A new GTA Online character.</li>
-                        </ol>
-                    </div>
-                </div>
-                <div class="card reveal" data-tilt>
-                    <div class="card-inner">
-                        <h3 data-i18n="join.enlistTitle">Enlistment</h3>
-                        <ol class="step-list">
-                            <li data-i18n="join.enlist1">Join the Dream Legacy RP Discord server.</li>
-                            <li data-i18n="join.enlist2">Complete the required verification.</li>
-                            <li data-i18n="join.enlist3">Log in on this site with Discord.</li>
-                            <li data-i18n="join.enlist4">Once verified, you are ready to connect.</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-
-            <div class="section-head reveal">
-                <div><div class="section-kicker text-accent" data-i18n="rules.kicker">Must read</div><h2 data-i18n="rules.title">Server Rules</h2></div>
-                <p data-i18n="rules.desc">Read this before you connect. Breaking any of these is an immediate and final ban.</p>
-            </div>
-
-            <div class="grid two setup-grid">
-                <div class="card reveal" data-tilt>
-                    <div class="card-inner">
-                        <h3 data-i18n="rules.serverTitle">Server Rules</h3>
-                        <ol class="step-list">
-                            <li data-i18n="rules.server1">You must use the GTA:ODT Services.</li>
-                            <li data-i18n="rules.server2">No .sprx other than the one currently in use (chaos modz).</li>
-                            <li data-i18n="rules.server3">No plugins, RCE, or RTM.</li>
-                        </ol>
-                    </div>
-                </div>
-                <div class="card reveal" data-tilt>
-                    <div class="card-inner">
-                        <h3 data-i18n="rules.rpTitle">RP In-Game Rules</h3>
-                        <ol class="step-list">
-                            <li data-i18n="rules.rp1">No freezing, crashing, or kicking other players without permission.</li>
-                            <li data-i18n="rules.rp2">No abuse mods: god mode, vehicle upgrade, no-clip, etc.</li>
-                            <li data-i18n="rules.rp3">Avoid unrealistic movement: bunny hopping, running everywhere, super jumps, or glitches.</li>
-                            <li data-i18n="rules.rp4">No metagaming &mdash; don't use outside information (like voice recognition) inside the RP.</li>
-                            <li data-i18n="rules.rp5">NLR (New Life Rule): if you die, you must forget past events.</li>
-                            <li data-i18n="rules.rp6">No free killing &mdash; killing without a proper reason is not allowed.</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid two setup-grid">
-                <div class="card reveal" data-tilt>
-                    <div class="card-inner">
-                        <h3 data-i18n="rules.menuTitle">Mod Menu Setup</h3>
-                        <p style="color:var(--muted);margin-bottom:12px;" data-i18n="rules.menuDesc">Open the menu and enable the following:</p>
-                        <ol class="step-list">
-                            <li data-i18n="rules.menu1">Wanted level: 0 lock, so AI police won't disturb scenes.</li>
-                            <li data-i18n="rules.menu2">Off the radar &mdash; like FiveM, you won't see other players on the map (avoids metagaming too).</li>
-                            <li data-i18n="rules.menu3">Check the Animations tab and note the most useful ones.</li>
-                            <li data-i18n="rules.menu4">The menu will keep getting updated to be more RP-friendly.</li>
-                        </ol>
-                    </div>
-                </div>
-                <div class="card reveal" data-tilt>
-                    <div class="card-inner">
-                        <h3 data-i18n="rules.excusesTitle">Bug / Lag Excuses</h3>
-                        <p style="color:var(--muted);margin-bottom:12px;" data-i18n="rules.excusesDesc">In-character cover stories for real-life issues:</p>
-                        <ul class="step-list">
-                            <li><span class="rule-line"><strong data-i18n="rules.excuseLagLabel">Lag:</strong> <span data-i18n="rules.excuseLag">"I'm tired"</span></span></li>
-                            <li><span class="rule-line"><strong data-i18n="rules.excuseMicLabel">Microphone problem:</strong> <span data-i18n="rules.excuseMic">"I'm sick" / voice issue / chewing gum</span></span></li>
-                            <li><span class="rule-line"><strong data-i18n="rules.excuseDmLabel">DM Groups:</strong> <span data-i18n="rules.excuseDm">"Radio"</span></span></li>
-                            <li><span class="rule-line"><strong data-i18n="rules.excuseServerLabel">Server Groups:</strong> <span data-i18n="rules.excuseServer">"Near me"</span></span></li>
-                            <li><span class="rule-line"><strong data-i18n="rules.excuseDcLabel">Disconnect:</strong> <span data-i18n="rules.excuseDc">"Passed out"</span></span></li>
-                            <li><span class="rule-line"><strong data-i18n="rules.excuseGlitchLabel">Glitch:</strong> <span data-i18n="rules.excuseGlitch">"Black magic"</span></span></li>
-                            <li><span class="rule-line"><strong data-i18n="rules.excuseOtherLabel">Other:</strong> <span data-i18n="rules.excuseOther">Make up an excuse, or ignore it.</span></span></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card reveal">
-                <div class="card-inner">
-                    <h3 data-i18n="rules.assetsTitle">Banned Assets &mdash; Only Use What's Yours</h3>
-                    <p style="color:var(--muted);margin-bottom:12px;" data-i18n="rules.assetsDesc">Everything in-game must match what's actually on your account:</p>
-                    <ol class="step-list">
-                        <li><span class="rule-line"><strong data-i18n="rules.assetWeaponsLabel">In-game weapons:</strong> <span data-i18n="rules.assetWeapons">only what's in your Assets tab on the website.</span></span></li>
-                        <li><span class="rule-line"><strong data-i18n="rules.assetMoneyLabel">In-game money:</strong> <span data-i18n="rules.assetMoney">only what's in your Bank tab on the website.</span></span></li>
-                        <li><span class="rule-line"><strong data-i18n="rules.assetClothesLabel">Mod menu / invisible clothing:</strong> <span data-i18n="rules.assetClothes">only clothes from stores, paid for with your money.</span></span></li>
-                        <li><span class="rule-line"><strong data-i18n="rules.assetPhoneLabel">In-game phone:</strong> <span data-i18n="rules.assetPhone">only the phone you bought in the DreamOS tab.</span></span></li>
-                        <li><span class="rule-line"><strong data-i18n="rules.assetVehiclesLabel">Modded vehicles:</strong> <span data-i18n="rules.assetVehicles">only vehicles you bought or rented.</span></span></li>
-                        <li><span class="rule-line"><strong data-i18n="rules.assetOpLabel">Op / Job assets:</strong> <span data-i18n="rules.assetOp">no military, police, or OP weapons.</span></span></li>
-                        <li><span class="rule-line"><strong data-i18n="rules.assetSkinsLabel">Skins / models:</strong> <span data-i18n="rules.assetSkins">no weird skins or animal models unless given permission.</span></span></li>
-                        <li><span class="rule-line"><strong data-i18n="rules.assetSpawnLabel">Mod menu spawned assets:</strong> <span data-i18n="rules.assetSpawn">don't spawn anything using your menu.</span></span></li>
-                    </ol>
-                    <div class="rules-warning">
-                        <span data-i18n="rules.warning">Breaking any of these rules results in an immediate and final ban. Questions? Ask in #general-chat.</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card reveal">
-                <div class="card-inner">
-                    <div class="section-head" style="border-bottom:0;padding-bottom:20px;">
-                        <div><div class="section-kicker text-accent" data-i18n="map.kicker">The city</div><h2 data-i18n="map.title">Neighborhood Map</h2></div>
-                        <p data-i18n="map.desc">Use the city map as a visual reference for districts, routes, scenes, and roleplay planning.</p>
-                    </div>
-                    <div class="map-frame"><img src="assets/img/gtav-neighborhoods.png" alt="Detailed Los Santos neighborhood map"></div>
-                </div>
-            </div>
-
-            <div class="card reveal" id="ready-card">
-                <div class="card-inner">
-                    <div class="section-head" style="border-bottom:0;padding-bottom:0;">
-                        <div><div class="section-kicker text-accent" data-i18n="ready.kicker">Ready?</div><h2 data-i18n="ready.title">Start the Process</h2></div>
-                        <div class="actions">
-                            <button type="button" class="btn discord-login-btn" onclick="loginWithDiscord()">
-                                <svg class="discord-icon" viewBox="0 0 127.14 96.36" aria-hidden="true"><path fill="currentColor" d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>
-                                <span data-i18n="ready.loginDiscord">Log in with Discord</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="tab-settings" class="tab-panel hidden" role="tabpanel" aria-labelledby="btn-settings">
-            <div class="hero" style="grid-template-columns:1fr;max-width:800px;margin:0 auto;">
-                <div class="hero-copy reveal" style="text-align:center;">
-                    <div class="eyebrow" style="margin:0 auto;" data-i18n="settings.eyebrow">Preferences</div>
-                    <h1 class="hero-title" style="font-size:clamp(48px,8vw,96px);" data-i18n="settings.title">Settings</h1>
-                    <p class="lead" style="margin:0 auto;" data-i18n="settings.lead">Choose your theme, music, and more.</p>
-                </div>
-            </div>
-
-            <div class="settings-grid">
-                <div class="card reveal">
-                    <div class="card-inner">
-                        <div class="section-head" style="border-bottom:0;padding-bottom:16px;">
-                            <div>
-                                <div class="section-kicker text-accent" data-i18n="settings.appearance">Appearance</div>
-                                <h3 data-i18n="settings.theme">Theme</h3>
-                            </div>
-                            <span id="current-theme-label" style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);padding:6px 12px;border:1px solid var(--line);border-radius:999px;">Michael</span>
-                        </div>
-                        <p style="color:var(--muted);margin-bottom:18px;" data-i18n="settings.themeDesc">Pick a color palette inspired by the three protagonists.</p>
-                        <div class="theme-grid">
-                            <div class="theme-option" onclick="setTheme('michael')" data-theme="michael">
-                                <div class="theme-swatch" style="background:linear-gradient(135deg,#2f73ff,#1746a8);"></div>
-                                <div class="theme-info">
-                                    <strong>Michael</strong>
-                                    <span data-i18n="settings.themeMichael">Original blue</span>
-                                </div>
-                                <div class="theme-check">&#10003;</div>
-                            </div>
-                            <div class="theme-option" onclick="setTheme('trevor')" data-theme="trevor">
-                                <div class="theme-swatch" style="background:linear-gradient(135deg,#e84c1d,#a8320a);"></div>
-                                <div class="theme-info">
-                                    <strong>Trevor</strong>
-                                    <span data-i18n="settings.themeTrevor">Bloody orange</span>
-                                </div>
-                                <div class="theme-check">&#10003;</div>
-                            </div>
-                            <div class="theme-option" onclick="setTheme('franklin')" data-theme="franklin">
-                                <div class="theme-swatch" style="background:linear-gradient(135deg,#2eaa5f,#1a7a3f);"></div>
-                                <div class="theme-info">
-                                    <strong>Franklin</strong>
-                                    <span data-i18n="settings.themeFranklin">Green</span>
-                                </div>
-                                <div class="theme-check">&#10003;</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card reveal">
-                    <div class="card-inner">
-                        <div class="section-head" style="border-bottom:0;padding-bottom:16px;">
-                            <div>
-                                <div class="section-kicker text-accent" data-i18n="settings.acknowledgments">Acknowledgments</div>
-                                <h3 data-i18n="settings.credits">Credits</h3>
-                            </div>
-                        </div>
-                        <div class="credit-list">
-                            <div class="credit-entry">
-                                <div class="credit-avatar" style="background:linear-gradient(135deg,var(--blue),var(--blue-dark));">AD</div>
-                                <div class="credit-info">
-                                    <strong>ArisuDev</strong>
-                                    <span data-i18n="settings.founderCredit">Founder</span>
-                                </div>
-                            </div>
-                            <div class="credit-entry">
-                                <div class="credit-avatar" style="background:linear-gradient(135deg,#5865f2,#4050d8);">ZD</div>
-                                <div class="credit-info">
-                                    <strong>ZenoxDev</strong>
-                                    <span data-i18n="settings.zenoxCredit">Developer</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card reveal" style="grid-column:1/-1;">
-                    <div class="card-inner">
-                        <div class="section-head" style="border-bottom:0;padding-bottom:16px;">
-                            <div>
-                                <div class="section-kicker text-accent" data-i18n="settings.audio">Audio</div>
-                                <h3 data-i18n="settings.musicPlayer">Music Player</h3>
-                            </div>
-                            <span id="music-status" style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);padding:6px 12px;border:1px solid var(--line);border-radius:999px;" data-i18n="settings.stopped">Stopped</span>
-                        </div>
-                        <p style="color:var(--muted);margin-bottom:18px;" data-i18n="settings.musicDesc">Paste a YouTube link to play music in the background.</p>
-                        <div class="music-input-row">
-                            <input type="text" id="music-url" class="music-input" data-i18n-placeholder="settings.musicPh" placeholder="https://youtube.com/watch?v=..." onkeydown="if(event.key==='Enter')playMusic()">
-                            <button class="btn primary" type="button" onclick="playMusic()" id="music-play-btn" data-i18n="settings.play">Play</button>
-                        </div>
-                        <div class="music-controls" id="music-controls" style="display:none;">
-                            <div class="music-info">
-                                <span id="music-title" style="color:#fff;font-size:14px;font-weight:600;">-</span>
-                            </div>
-                            <div class="music-buttons">
-                                <button class="btn music-btn" type="button" onclick="toggleMusic()" id="music-toggle-btn" title="Play/Pause">&#9646;&#9646;</button>
-                                <button class="btn music-btn" type="button" onclick="stopMusic()" title="Stop">&#9632;</button>
-                            </div>
-                            <div class="music-volume-row">
-                                <span class="music-vol-label" data-i18n="settings.vol">Vol</span>
-                                <input type="range" id="music-volume" class="music-slider" min="0" max="100" value="50" oninput="setMusicVolume(this.value)">
-                            </div>
-                        </div>
-                        <div id="favorites-section" style="margin-top:18px;display:none;">
-                            <div class="section-head" style="border-bottom:0;padding:12px 0 8px;">
-                                <div><div class="section-kicker text-accent" data-i18n="settings.saved">Saved</div><h3 style="font-size:18px;" data-i18n="settings.favorites">Favorites</h3></div>
-                            </div>
-                            <div id="favorites-list" style="display:grid;gap:8px;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="tab-profile" class="tab-panel hidden" role="tabpanel" aria-labelledby="btn-profile">
-            <div class="hero" style="grid-template-columns:1fr;max-width:640px;margin:0 auto;">
-                <div class="hero-copy reveal" style="text-align:center;">
-                    <img id="profile-avatar" src="" alt="" style="width:88px;height:88px;border-radius:50%;margin:0 auto 16px;display:block;border:3px solid var(--line-strong);">
-                    <div class="eyebrow" style="margin:0 auto;" id="profile-eyebrow" data-i18n="profile.eyebrow">Welcome back</div>
-                    <h1 class="hero-title" id="profile-rpname" style="font-size:clamp(40px,7vw,72px);">-</h1>
-                    <p class="lead" style="margin:0 auto;" id="profile-subtitle" data-i18n="profile.subtitle">Your Dream Legacy RP account</p>
-                </div>
-            </div>
-
-            <!-- Estado: no esta en el servidor de Discord -->
-            <div id="join-server-card" class="card reveal hidden" style="max-width:640px;margin:0 auto;">
-                <div class="card-inner" style="text-align:center;">
-                    <div class="section-kicker text-accent" data-i18n="apply.joinKicker">One more step</div>
-                    <h3 style="margin:8px 0;" data-i18n="apply.joinTitle">Join our Discord server first</h3>
-                    <p style="color:var(--muted);margin-bottom:20px;" data-i18n="apply.joinDesc">You need to be a member of the Dream Legacy RP Discord server before you can apply.</p>
-                    <div class="actions" style="justify-content:center;">
-                        <a class="btn discord" href="https://discord.gg/fywDbAzPg6" target="_blank" rel="noopener" data-i18n="hero.discordDlrp">Join the DLRP Discord</a>
-                        <button type="button" class="btn primary" onclick="recheckGuildMembership()" id="recheck-btn" data-i18n="apply.recheck">I've joined — Check again</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Estado: sin solicitud enviada todavia -> formulario -->
-            <div id="application-form-card" class="card reveal hidden" style="max-width:640px;margin:0 auto;">
-                <div class="card-inner">
-                    <div class="section-head" style="border-bottom:0;padding-bottom:16px;">
-                        <div><div class="section-kicker text-accent" data-i18n="apply.kicker">One more step</div><h2 data-i18n="apply.title">Apply for Whitelist</h2></div>
-                        <p data-i18n="apply.desc">Tell us about your character. We review every application manually and you'll get a DM on Discord once it's decided.</p>
-                    </div>
-                    <form id="application-form">
-                        <div class="form-grid">
-                            <div class="form-field">
-                                <label for="apply-rp-name" data-i18n="whitelist.rpName">RP Name</label>
-                                <input type="text" id="apply-rp-name" data-i18n-placeholder="whitelist.rpNamePh" placeholder="e.g. John_Marston" required>
-                            </div>
-                            <div class="form-field">
-                                <label for="apply-psn" data-i18n="whitelist.psn">PSN</label>
-                                <input type="text" id="apply-psn" data-i18n-placeholder="whitelist.psnPh" placeholder="e.g. PSN_Username" required>
-                            </div>
-                            <div class="form-field full">
-                                <label for="apply-story" data-i18n="whitelist.story">Story</label>
-                                <textarea id="apply-story" rows="5" data-i18n-placeholder="whitelist.storyPh" placeholder="Tell us about your character's backstory, motivations, and personality..." required></textarea>
-                            </div>
-                            <div class="form-field full">
-                                <label for="apply-extra"><span data-i18n="whitelist.extraInfo">More Character Info</span> <span class="optional" data-i18n="whitelist.optional">(optional)</span></label>
-                                <textarea id="apply-extra" rows="4" data-i18n-placeholder="whitelist.extraInfoPh" placeholder="Any additional details - appearance, skills, affiliations, etc."></textarea>
-                            </div>
-                        </div>
-                        <div id="application-error" class="form-error hidden"></div>
-                        <div class="actions" style="margin-top:28px;">
-                            <button class="btn primary" type="submit" style="width:100%;" id="application-submit-btn" data-i18n="apply.submit">Submit Application</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Estado: pendiente de revision -->
-            <div id="application-pending-card" class="card reveal hidden" style="max-width:640px;margin:0 auto;">
-                <div class="card-inner" style="text-align:center;">
-                    <div class="section-kicker text-accent" data-i18n="apply.pendingKicker">Under review</div>
-                    <h3 style="margin:8px 0;" data-i18n="apply.pendingTitle">Your application is pending</h3>
-                    <p style="color:var(--muted);" data-i18n="apply.pendingDesc">We've received your application and sent you a confirmation on Discord. We'll DM you as soon as it's reviewed.</p>
-                </div>
-            </div>
-
-            <!-- Estado: aprobada -->
-            <div id="application-approved-card" class="card reveal hidden" style="max-width:640px;margin:0 auto;">
-                <div class="card-inner" style="text-align:center;">
-                    <div class="section-kicker text-accent" data-i18n="apply.approvedKicker">Welcome to DLRP</div>
-                    <h3 style="margin:8px 0;" data-i18n="apply.approvedTitle">Your application was approved!</h3>
-                    <p style="color:var(--muted);margin-bottom:20px;" data-i18n="apply.approvedDesc">You can now log in to the Panel to access DreamOS.</p>
-                    <a class="btn primary" id="go-to-panel-link" href="https://panel.dreamlegacyrp.xyz" style="display:inline-block;" data-i18n="apply.goToPanel">Go to Panel</a>
-                <a class="btn hidden" id="go-to-hq-link" href="https://hq.dreamlegacyrp.xyz" style="display:inline-block;margin-left:8px;" data-i18n="apply.goToHq">Go to HQ</a>
-                <a class="btn hidden" id="go-to-admin-link" href="https://admin.dreamlegacyrp.xyz" style="display:inline-block;margin-left:8px;" data-i18n="apply.goToAdmin">Go to Admin</a>
-                </div>
-            </div>
-
-            <!-- Estado: rechazada -->
-            <div id="application-denied-card" class="card reveal hidden" style="max-width:640px;margin:0 auto;">
-                <div class="card-inner" style="text-align:center;">
-                    <div class="section-kicker text-accent" data-i18n="apply.deniedKicker">Application update</div>
-                    <h3 style="margin:8px 0;" data-i18n="apply.deniedTitle">Your application wasn't approved</h3>
-                    <p style="color:var(--muted);" data-i18n="apply.deniedDesc">Reach out on our Discord server if you have questions or want to re-apply.</p>
-                    <p id="denied-reason-text" style="color:var(--text);margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:var(--radius);text-align:left;display:none;"></p>
-                </div>
-            </div>
-        </div>
-
-        
-    </div>
-
-    <!-- Global Footer -->
-    <div class="site-footer">
-        <a href="https://panel.dreamlegacyrp.xyz" target="_blank" rel="noopener">Dream Legacy RP</a>
-        <span>&copy; <span id="footer-year">2026</span> Dream Legacy RP</span>
+<div class="topbar">
+    <a class="brand" href="#"><span class="brand-badge">DLRP</span><span class="brand-title">HQ</span></a>
+    <div class="user-chip hidden" id="user-chip">
+        <img id="user-avatar" src="" alt="">
+        <span id="user-name">-</span>
+        <button class="logout-btn" onclick="logout()">Log Out</button>
     </div>
 </div>
 
-<!-- Hidden YouTube Player -->
-<div id="youtube-player" style="position:fixed;bottom:0;left:0;width:1px;height:1px;opacity:0;pointer-events:none;z-index:-1;"></div>
+<div class="main-wrap">
+    <div id="no-access" class="center-card hidden">
+        <h2 id="no-access-title">No Access</h2>
+        <p id="no-access-desc">You don't currently hold a staff role in any department.</p>
+        <a class="btn primary" href="https://dreamlegacyrp.xyz">Back to Main Site</a>
+    </div>
 
-<!-- Notifications -->
-<div id="notif-container"></div>
+    <div id="dept-panel" class="hidden">
+        <div class="dept-header">
+            <div class="dh-icon" id="dh-icon">🏢</div>
+            <div><h1 id="dh-label">-</h1><div class="dh-rank" id="dh-rank">-</div></div>
+            <select id="dept-switcher" class="hidden" style="margin-left:auto;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--text);font-family:'Rajdhani',sans-serif;font-weight:700;" onchange="switchDepartment(this.value)"></select>
+        </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-<script src="assets/js/i18n.js" defer></script>
-<script src="assets/js/supabase-client.js" defer></script>
-<script src="assets/js/discord-auth.js" defer></script>
-<script src="assets/js/app.js" defer></script>
+        <div class="tabs" id="tabs"></div>
+
+        <div class="tab-panel" id="tab-roster">
+            <div id="roster-list"></div>
+        </div>
+
+        <div class="tab-panel" id="tab-vehicles">
+            <div id="vehicles-list"></div>
+        </div>
+
+        <div class="tab-panel" id="tab-announcements">
+            <div id="post-announcement-area" class="card hidden">
+                <div class="form-field"><label>Title</label><input type="text" id="ann-title"></div>
+                <div class="form-field"><label>Message</label><textarea id="ann-body"></textarea></div>
+                <button class="btn primary small" onclick="postAnnouncement()">Post Announcement</button>
+            </div>
+            <div id="announcements-list"></div>
+        </div>
+
+        <div class="tab-panel" id="tab-emergencies">
+            <div id="emergencies-list"></div>
+        </div>
+
+        <div class="tab-panel" id="tab-lookup">
+            <div class="card">
+                <div class="form-field"><label>Search by RP Name or PSN</label>
+                    <input type="text" id="lookup-query" placeholder="e.g. John Travolta" onkeydown="if(event.key==='Enter') lookupCitizen();">
+                </div>
+                <button class="btn primary small" onclick="lookupCitizen()">Search</button>
+            </div>
+            <div id="lookup-result"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+var SESSION_KEY = "dlrp_panel_session";
+var API_BASE = "https://dreamlegacyrp.xyz/api/hq";
+var currentWhoami = null;
+var activeTab = null;
+
+(function pickUpSession() {
+    var params = new URLSearchParams(window.location.search);
+    var token = params.get("dlrp_session");
+    if (token) {
+        localStorage.setItem(SESSION_KEY, JSON.stringify({ key: token }));
+        params.delete("dlrp_session");
+        var clean = window.location.pathname + (params.toString() ? "?" + params.toString() : "");
+        window.history.replaceState({}, document.title, clean);
+    }
+})();
+
+function getSessionKey() {
+    try { var raw = JSON.parse(localStorage.getItem(SESSION_KEY)); return raw && raw.key ? raw.key : null; }
+    catch (e) { return null; }
+}
+
+function logout() {
+    localStorage.removeItem(SESSION_KEY);
+    window.location.href = "https://dreamlegacyrp.xyz";
+}
+
+function hqApi(path, body) {
+    var key = getSessionKey();
+    if (!key) return Promise.reject(new Error("Not logged in."));
+    body = body || {};
+    body.key = key;
+    return fetch(API_BASE + path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+    }).then(function(r) {
+        return r.json().then(function(d) { if (!r.ok) throw new Error(d.error || "Request failed."); return d; });
+    });
+}
+
+function showNoAccess(msg) {
+    document.getElementById("no-access-desc").textContent = msg || "You don't currently hold a staff role in any department.";
+    document.getElementById("no-access").classList.remove("hidden");
+    document.getElementById("dept-panel").classList.add("hidden");
+}
+
+function init() {
+    var key = getSessionKey();
+    if (!key) { showNoAccess("Log in from the main site first, then come back to HQ."); return; }
+
+    hqApi("/whoami").then(function(res) {
+        currentWhoami = res;
+        document.getElementById("user-chip").classList.remove("hidden");
+        document.getElementById("user-avatar").src = res.discordAvatar || "";
+        document.getElementById("user-name").textContent = res.rpName;
+
+        var switcher = document.getElementById("dept-switcher");
+        if (res.isSuperAdmin && res.allDepartments && res.allDepartments.length) {
+            switcher.innerHTML = res.allDepartments.map(function(d) {
+                return '<option value="' + d.key + '"' + (d.key === res.department ? " selected" : "") + '>' + d.label + '</option>';
+            }).join("");
+            switcher.classList.remove("hidden");
+        } else {
+            switcher.classList.add("hidden");
+        }
+
+        if (!res.department) {
+            showNoAccess("You don't currently hold a staff role in any department (LSPD, EMS...).");
+            return;
+        }
+
+        document.getElementById("no-access").classList.add("hidden");
+        document.getElementById("dept-panel").classList.remove("hidden");
+        applyDepartment(res.department, res.departmentLabel, res.roleName, res.rank);
+    }).catch(function(err) {
+        showNoAccess(err.message || "Could not verify your access.");
+    });
+}
+
+function applyDepartment(department, label, roleName, rank) {
+    currentWhoami.department = department;
+    currentWhoami.departmentLabel = label;
+    currentWhoami.rank = rank;
+    document.getElementById("dh-icon").textContent = department === "police" ? "👮" : "🚑";
+    document.getElementById("dh-label").textContent = label;
+    document.getElementById("dh-rank").textContent = roleName + (rank === "chief" ? " — Full Access" : " — Limited Access") + (currentWhoami.isSuperAdmin ? " (Staff Override)" : "");
+    renderTabs(rank === "chief");
+}
+
+function switchDepartment(deptKey) {
+    var opt = document.querySelector('#dept-switcher option[value="' + deptKey + '"]');
+    applyDepartment(deptKey, opt ? opt.textContent : deptKey, "Staff Override", "chief");
+}
+
+function renderTabs(isChief) {
+    var tabs = isChief
+        ? [["roster","Roster"],["vehicles","Vehicles"],["lookup","Lookup"],["announcements","Announcements"],["emergencies","Emergencies"]]
+        : [["lookup","Lookup"],["announcements","Announcements"],["emergencies","Emergencies"]];
+
+    document.getElementById("tabs").innerHTML = tabs.map(function(t, i) {
+        return '<button class="tab-btn' + (i === 0 ? " active" : "") + '" data-tab="' + t[0] + '" onclick="switchTab(\'' + t[0] + '\')">' + t[1] + '</button>';
+    }).join("");
+
+    document.getElementById("post-announcement-area").classList.toggle("hidden", !isChief);
+    switchTab(tabs[0][0]);
+}
+
+function switchTab(tab) {
+    activeTab = tab;
+    ["roster","vehicles","lookup","announcements","emergencies"].forEach(function(t) {
+        document.getElementById("tab-" + t).classList.toggle("active", t === tab);
+    });
+    var btns = document.querySelectorAll(".tab-btn");
+    for (var i = 0; i < btns.length; i++) {
+        btns[i].classList.toggle("active", btns[i].getAttribute("data-tab") === tab);
+    }
+    if (tab === "roster") loadRoster();
+    if (tab === "vehicles") loadVehicles();
+    if (tab === "announcements") loadAnnouncements();
+    if (tab === "emergencies") loadEmergencies();
+}
+
+/* ---- Roster ---- */
+function loadRoster() {
+    var list = document.getElementById("roster-list");
+    list.innerHTML = '<div class="empty">Loading...</div>';
+    hqApi("/roster", { department: currentWhoami.department }).then(function(res) {
+        if (!res.roster.length) { list.innerHTML = '<div class="empty">No staff found.</div>'; return; }
+        var html = "";
+        for (var i = 0; i < res.roster.length; i++) {
+            var m = res.roster[i];
+            html += '<div class="card roster-row">'
+                + (m.avatar ? '<img src="' + m.avatar + '">' : '<img src="">')
+                + '<div class="roster-info"><div class="roster-name">' + esc(m.username) + '</div><div class="roster-role">' + esc(m.roleName) + '</div></div>'
+                + '<div class="roster-actions">'
+                + '<button class="btn small" onclick="setRole(\'' + m.discordId + '\',\'promote\')">Promote</button>'
+                + '<button class="btn small" onclick="setRole(\'' + m.discordId + '\',\'demote\')">Demote</button>'
+                + '<button class="btn small red" onclick="setRole(\'' + m.discordId + '\',\'fire\')">Fire</button>'
+                + '</div></div>';
+        }
+        list.innerHTML = html;
+    }).catch(function(err) { list.innerHTML = '<div class="empty">' + esc(err.message) + '</div>'; });
+}
+
+function setRole(targetDiscordId, action) {
+    if (action === "fire" && !confirm("Fire this person from the department?")) return;
+    hqApi("/set-role", { department: currentWhoami.department, targetDiscordId: targetDiscordId, action: action }).then(function() {
+        loadRoster();
+    }).catch(function(err) { alert(err.message); });
+}
+
+/* ---- Vehicles ---- */
+function loadVehicles() {
+    var list = document.getElementById("vehicles-list");
+    list.innerHTML = '<div class="empty">Loading...</div>';
+    hqApi("/vehicles", { department: currentWhoami.department }).then(function(res) {
+        var html = "";
+        for (var i = 0; i < res.vehicles.length; i++) {
+            var v = res.vehicles[i];
+            var actionBtn = v.unlocked
+                ? '<span class="badge-unlocked">Unlocked</span>'
+                : (v.rankQualifies ? '<button class="btn small primary" onclick="unlockVehicle(\'' + v.id + '\')">Unlock — $' + v.price.toLocaleString() + '</button>' : '<span class="badge-locked">Requires ' + esc(v.rankRequired) + '</span>');
+            html += '<div class="card vehicle-row">'
+                + '<div class="vehicle-icon">🚗</div>'
+                + '<div class="vehicle-info"><div class="vehicle-name">' + esc(v.name) + '</div><div class="vehicle-meta">Requires: ' + esc(v.rankRequired) + '+</div></div>'
+                + actionBtn
+                + '</div>';
+        }
+        list.innerHTML = html;
+    }).catch(function(err) { list.innerHTML = '<div class="empty">' + esc(err.message) + '</div>'; });
+}
+
+function unlockVehicle(vehicleId) {
+    hqApi("/vehicles", { department: currentWhoami.department, action: "unlock", vehicleId: vehicleId }).then(function() {
+        loadVehicles();
+    }).catch(function(err) { alert(err.message); });
+}
+
+/* ---- Announcements ---- */
+function loadAnnouncements() {
+    var list = document.getElementById("announcements-list");
+    list.innerHTML = '<div class="empty">Loading...</div>';
+    hqApi("/announcements", { department: currentWhoami.department }).then(function(res) {
+        if (!res.announcements.length) { list.innerHTML = '<div class="empty">No announcements yet.</div>'; return; }
+        var html = "";
+        for (var i = 0; i < res.announcements.length; i++) {
+            var a = res.announcements[i];
+            html += '<div class="card"><div class="announcement-title">' + esc(a.title) + '</div>'
+                + '<div class="announcement-meta">' + esc(a.postedByUsername || "-") + ' &middot; ' + new Date(a.createdAt).toLocaleString() + '</div>'
+                + '<div class="announcement-body">' + esc(a.body) + '</div></div>';
+        }
+        list.innerHTML = html;
+    }).catch(function(err) { list.innerHTML = '<div class="empty">' + esc(err.message) + '</div>'; });
+}
+
+function postAnnouncement() {
+    var title = document.getElementById("ann-title").value.trim();
+    var body = document.getElementById("ann-body").value.trim();
+    if (!title || !body) { alert("Title and message are required."); return; }
+    hqApi("/announcements", { department: currentWhoami.department, action: "post", title: title, body: body }).then(function() {
+        document.getElementById("ann-title").value = "";
+        document.getElementById("ann-body").value = "";
+        loadAnnouncements();
+    }).catch(function(err) { alert(err.message); });
+}
+
+/* ---- Emergencies ---- */
+function loadEmergencies() {
+    var list = document.getElementById("emergencies-list");
+    list.innerHTML = '<div class="empty">Loading...</div>';
+    hqApi("/emergencies", { department: currentWhoami.department }).then(function(res) {
+        if (!res.alerts.length) { list.innerHTML = '<div class="empty">No recent alerts.</div>'; return; }
+        var html = "";
+        for (var i = 0; i < res.alerts.length; i++) {
+            var a = res.alerts[i];
+            html += '<div class="card alert-row"><div><div class="alert-loc">' + esc(a.location || "Unknown") + '</div>'
+                + '<div class="alert-meta">' + esc(a.callerName || "Unknown") + ' &middot; ' + esc(a.callerPhone || "-") + '</div></div>'
+                + '<div class="alert-meta">' + new Date(a.createdAt).toLocaleString() + '</div></div>';
+        }
+        list.innerHTML = html;
+    }).catch(function(err) { list.innerHTML = '<div class="empty">' + esc(err.message) + '</div>'; });
+}
+
+function esc(s) { if (typeof s !== "string") return s; var d = document.createElement("div"); d.appendChild(document.createTextNode(s)); return d.innerHTML; }
+
+function lookupCitizen() {
+    var query = document.getElementById("lookup-query").value.trim();
+    var result = document.getElementById("lookup-result");
+    if (!query) return;
+    result.innerHTML = '<div class="empty">Searching...</div>';
+
+    hqApi("/lookup", { department: currentWhoami.department, query: query }).then(function(res) {
+        if (!res.found) { result.innerHTML = '<div class="empty">No citizen found matching "' + esc(query) + '".</div>'; return; }
+
+        var idInfo = res.idInfo || null;
+        var licensesHtml = res.licenses && res.licenses.length
+            ? res.licenses.map(function(l) {
+                return '<div class="alert-row"><span>' + esc(l.type.toUpperCase()) + '</span><span class="' + (l.valid ? 'badge-unlocked' : 'badge-locked') + '">' + (l.valid ? 'Valid until ' + esc(l.expires) : 'Expired') + '</span></div>';
+              }).join("")
+            : '<div class="empty">No licenses on file.</div>';
+
+        result.innerHTML = '<div class="card">' +
+            '<div class="dept-header" style="margin-bottom:12px;"><div><h2 style="font-size:20px;">' + esc(res.rpName) + '</h2>' +
+            '<div class="dh-rank">PSN: ' + esc(res.psn || "-") + (res.job ? ' &middot; Job: ' + esc(res.job) : '') + '</div></div></div>' +
+            (res.isBanned ? '<p class="badge-locked" style="margin-bottom:8px;">BANNED' + (res.banReason ? ': ' + esc(res.banReason) : '') + '</p>' : '') +
+            '<p style="margin-bottom:10px;">Reports on file: <strong>' + res.reportsOnFile + '</strong></p>' +
+            (idInfo ? '<div class="announcement-meta">Registered ID: ' + esc(idInfo.name || "-") + ' &middot; DOB ' + esc(idInfo.dob || "-") + '</div>' : '<div class="empty">No government ID on file.</div>') +
+            '</div>' +
+            '<div class="card"><h3 style="margin-bottom:10px;font-size:15px;">Licenses</h3>' + licensesHtml + '</div>';
+    }).catch(function(err) {
+        result.innerHTML = '<div class="empty">' + esc(err.message) + '</div>';
+    });
+}
+
+init();
+</script>
 </body>
 </html>

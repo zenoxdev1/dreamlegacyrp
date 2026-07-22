@@ -1,5 +1,5 @@
 import { getProfileByToken, getDiscordMemberRoles, supabaseHeaders, corsHeaders, jsonResponse } from "../../_lib/discord.js";
-import { DEPARTMENTS, resolveDepartment } from "../../_lib/hq-config.js";
+import { DEPARTMENTS, resolveAccess } from "../../_lib/hq-config.js";
 
 export async function onRequestOptions(context) {
     return new Response(null, { status: 204, headers: corsHeaders(context.request) });
@@ -15,13 +15,13 @@ export async function onRequestPost(context) {
         if (!profile) return jsonResponse(request, { error: "Session expired." }, 401);
 
         const roleIds = await getDiscordMemberRoles(env, profile.discord_id);
-        const match = resolveDepartment(roleIds);
-        if (!match || match.department !== body.department) {
+        const access = resolveAccess(roleIds, body.department);
+        if (!access.allowed) {
             return jsonResponse(request, { error: "You don't have access to this department." }, 403);
         }
 
         const dept = DEPARTMENTS[body.department];
-        const isChief = match.rank === "chief";
+        const isChief = access.rank === "chief";
 
         const unlocksRes = await fetch(
             env.SUPABASE_URL + "/rest/v1/hq_vehicle_unlocks?profile_id=eq." + profile.id +
@@ -34,7 +34,7 @@ export async function onRequestPost(context) {
         if (body.action === "unlock") {
             const vehicle = dept.vehicles.find((v) => v.id === body.vehicleId);
             if (!vehicle) return jsonResponse(request, { error: "Unknown vehicle." }, 400);
-            if (!isChief && match.roleIndex > vehicle.minRoleIndex) {
+            if (!isChief && access.roleIndex > vehicle.minRoleIndex) {
                 return jsonResponse(request, { error: "Your rank doesn't qualify for this vehicle yet." }, 403);
             }
             if (unlockedIds.includes(vehicle.id)) return jsonResponse(request, { ok: true, alreadyUnlocked: true });
@@ -68,7 +68,7 @@ export async function onRequestPost(context) {
             name: v.name,
             price: v.price,
             rankRequired: dept.roles[v.minRoleIndex] ? dept.roles[v.minRoleIndex].name : "-",
-            rankQualifies: isChief || match.roleIndex <= v.minRoleIndex,
+            rankQualifies: isChief || access.roleIndex <= v.minRoleIndex,
             unlocked: isChief || v.price === 0 || unlockedIds.includes(v.id)
         }));
 

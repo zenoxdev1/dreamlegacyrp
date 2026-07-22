@@ -242,139 +242,199 @@
     <script>
       var bridge =
         (window.parent && window.parent.dlrpBridge) || window.dlrpBridge;
+
       var ALL_JOBS = [
         {
-          name: "Police Officer",
-          pay: 3500,
-          icon: "\u{1F6A8}",
-          desc: "Protect and serve the city. Respond to emergencies and enforce the law.",
-        },
-        {
-          name: "EMS Paramedic",
-          pay: 3200,
-          icon: "\u{1F691}",
-          desc: "Provide emergency medical care. Save lives across the city.",
-        },
-        {
+          id: "mechanic",
           name: "Mechanic",
-          pay: 2800,
           icon: "\u{1F527}",
-          desc: "Repair and maintain vehicles. Keep the city moving.",
+          pay: 28,
+          yearly: "~$58,000/yr",
+          desc: "Repair, service, and customize vehicles at the city garage. Diagnose issues, replace parts, and keep the city's cars running.",
+          requirements: [{ label: "No license required", license: null }],
         },
         {
-          name: "Rancher",
-          pay: 2500,
-          icon: "\u{1F404}",
-          desc: "Tend to livestock and manage ranch operations.",
-        },
-        {
-          name: "Trucker",
-          pay: 2700,
-          icon: "\u{1F69A}",
-          desc: "Haul cargo across long distances. Deliver goods on time.",
-        },
-        {
+          id: "taxi",
           name: "Taxi Driver",
-          pay: 2400,
           icon: "\u{1F696}",
-          desc: "Transport passengers around the city. Earn fares per trip.",
+          pay: 22,
+          yearly: "~$46,000/yr",
+          desc: "Pick up passengers and drive them across the city. Fares scale with trip distance.",
+          requirements: [{ label: "Driver's License B (Car)", license: "B" }],
         },
         {
+          id: "delivery",
           name: "Delivery Driver",
-          pay: 2200,
-          icon: "\u{1F69C}",
-          desc: "Deliver packages and food to residents. Quick and reliable.",
+          icon: "\u{1F69A}",
+          pay: 21,
+          yearly: "~$44,000/yr",
+          desc: "Deliver packages and food orders to residents across the city, on time and in one piece.",
+          requirements: [{ label: "Driver's License B (Car)", license: "B" }],
         },
         {
-          name: "Construction",
-          pay: 2600,
+          id: "security",
+          name: "Security Guard",
+          icon: "\u{1F482}",
+          pay: 24,
+          yearly: "~$50,000/yr",
+          desc: "Guard private properties, stores, and events. Keep the peace and deter trouble.",
+          requirements: [
+            { label: "Weapons Permit", license: "weapons" },
+            { label: "Clean criminal record", license: null },
+          ],
+        },
+        {
+          id: "bus",
+          name: "Bus Driver",
+          icon: "\u{1F68C}",
+          pay: 27,
+          yearly: "~$56,000/yr",
+          desc: "Operate public transit routes across the city on a fixed schedule. Passenger safety is your priority.",
+          requirements: [
+            { label: "Driver's License D (Passenger Transport)", license: "D" },
+          ],
+        },
+        {
+          id: "trucker",
+          name: "Truck Driver",
+          icon: "\u{1F69B}",
+          pay: 32,
+          yearly: "~$66,000/yr",
+          desc: "Haul heavy cargo across long distances between the city's industrial zones.",
+          requirements: [
+            { label: "Driver's License C (Heavy Goods)", license: "C" },
+          ],
+        },
+        {
+          id: "tow",
+          name: "Tow Truck Operator",
+          icon: "\u{1F6FB}",
+          pay: 29,
+          yearly: "~$60,000/yr",
+          desc: "Recover disabled, abandoned, or illegally parked vehicles across the city.",
+          requirements: [
+            { label: "Driver's License C (Heavy Goods)", license: "C" },
+            { label: "Trailer Endorsement E", license: "E" },
+          ],
+        },
+        {
+          id: "garbage",
+          name: "Garbage Collector",
+          icon: "\u{1F5D1}\uFE0F",
+          pay: 25,
+          yearly: "~$52,000/yr",
+          desc: "Collect and dispose of waste along assigned city routes. Early mornings, steady pay.",
+          requirements: [
+            { label: "Driver's License C (Heavy Goods)", license: "C" },
+          ],
+        },
+        {
+          id: "construction",
+          name: "Construction Worker",
           icon: "\u{1F3D7}\uFE0F",
-          desc: "Build and repair structures. Hard work pays off.",
-        },
-        {
-          name: "Fishing",
-          pay: 2300,
-          icon: "\u{1F3A3}",
-          desc: "Catch and sell fish. A peaceful life on the water.",
-        },
-        {
-          name: "Mining",
-          pay: 2900,
-          icon: "\u{26CF}\uFE0F",
-          desc: "Extract valuable minerals. Dangerous but rewarding.",
-        },
-        {
-          name: "Freelancer",
-          pay: 2000,
-          icon: "\u{1F4BB}",
-          desc: "Take on various gigs. Flexible work for independent souls.",
+          pay: 26,
+          yearly: "~$54,000/yr",
+          desc: "Build and repair structures across the city. Physically demanding, always in demand.",
+          requirements: [
+            { label: "No license required", license: null },
+            { label: "Safety Certification recommended", license: null },
+          ],
         },
       ];
+
+      var jobAppStatus = { status: "none" };
+
+      function getJobById(id) {
+        for (var i = 0; i < ALL_JOBS.length; i++) {
+          if (ALL_JOBS[i].id === id) return ALL_JOBS[i];
+        }
+        return null;
+      }
+
+      function formatNum(n) {
+        return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }
+
       function render() {
         var ud = bridge.getUD();
         var body = document.getElementById("app-body");
+        body.innerHTML =
+          '<div style="text-align:center;padding:30px 0;color:var(--muted);">Loading...</div>';
+
+        bridge
+          .getJobApplicationStatus()
+          .then(function (res) {
+            jobAppStatus = res;
+            renderBody(ud);
+          })
+          .catch(function () {
+            renderBody(ud);
+          });
+      }
+
+      function renderBody(ud) {
+        var body = document.getElementById("app-body");
         var html = "";
-        if (ud) {
-          if (ud.currentJob) {
-            var job = getJobByName(ud.currentJob);
-            var icon = job ? job.icon : "\u{1F4BC}";
-            var pay = job ? job.pay : 0;
-            html +=
-              '<div class="job-current">' +
-              '<div class="jct-icon">' +
-              icon +
-              "</div>" +
-              '<div class="jct-info">' +
-              '<div class="jct-label">Current Job</div>' +
-              '<div class="jct-name">' +
-              bridge.esc(ud.currentJob) +
-              "</div>" +
-              '<div class="jct-pay">$' +
-              formatNum(pay) +
-              "/hr</div>" +
-              "</div>" +
-              '<button class="jct-quit" onclick="quitJob()">Quit</button>' +
-              "</div>";
-          } else if (ud.pendingJob) {
-            html +=
-              '<div class="job-pending">' +
-              '<div class="jp-icon">&#9203;</div>' +
-              '<div class="jp-info">' +
-              '<div class="jp-label">Pending Application</div>' +
-              '<div class="jp-name">' +
-              bridge.esc(ud.pendingJob) +
-              "</div>" +
-              '<div class="jp-msg">Awaiting approval. Check back later.</div>' +
-              "</div>" +
-              "</div>";
-          }
+
+        if (ud && ud.currentJob) {
+          var job = ALL_JOBS.filter(function (j) {
+            return j.name === ud.currentJob;
+          })[0];
+          var icon = job ? job.icon : "\u{1F4BC}";
+          var pay = job ? job.pay : 0;
+          html +=
+            '<div class="job-current">' +
+            '<div class="jct-icon">' +
+            icon +
+            "</div>" +
+            '<div class="jct-info">' +
+            '<div class="jct-label">Current Job</div>' +
+            '<div class="jct-name">' +
+            bridge.esc(ud.currentJob) +
+            "</div>" +
+            '<div class="jct-pay">$' +
+            formatNum(pay) +
+            "/hr</div>" +
+            "</div>" +
+            '<button class="jct-quit" onclick="quitJob()">Quit</button>' +
+            "</div>";
+        } else if (jobAppStatus.status === "pending") {
+          html +=
+            '<div class="job-pending">' +
+            '<div class="jp-icon">&#9203;</div>' +
+            '<div class="jp-info">' +
+            '<div class="jp-label">Pending Application</div>' +
+            '<div class="jp-name">' +
+            bridge.esc(jobAppStatus.jobName) +
+            "</div>" +
+            '<div class="jp-msg">Awaiting staff approval. Check back later.</div>' +
+            "</div></div>";
+        } else if (jobAppStatus.status === "denied") {
+          html +=
+            '<div class="job-pending"><div class="jp-icon">&#10060;</div><div class="jp-info">' +
+            '<div class="jp-label">Application Denied</div>' +
+            '<div class="jp-name">' +
+            bridge.esc(jobAppStatus.jobName) +
+            "</div>" +
+            "</div></div>";
         }
+
         html += '<div class="section-title">Available Jobs</div>';
         for (var i = 0; i < ALL_JOBS.length; i++) {
           var j = ALL_JOBS[i];
           var isActive = ud && ud.currentJob === j.name;
-          var isPending = ud && ud.pendingJob === j.name;
-          var disabled = isActive || isPending || (ud && ud.currentJob);
-          var badge = "";
-          if (isActive) badge = '<span class="job-status hired">Active</span>';
-          else if (isPending)
-            badge = '<span class="job-status pending">Pending</span>';
-          var btnHtml = "";
-          if (isActive) {
-            btnHtml = '<button class="btn-disabled" disabled>Active</button>';
-          } else if (isPending) {
-            btnHtml = '<button class="btn-disabled" disabled>Pending</button>';
-          } else if (ud && ud.currentJob) {
-            btnHtml =
-              '<button class="btn-disabled" disabled>Unavailable</button>';
-          } else {
-            btnHtml =
-              '<button class="btn-apply" onclick="applyJob(\'' +
-              bridge.esc(j.name) +
-              "')\">Apply</button>";
-          }
+          var isPending =
+            jobAppStatus.status === "pending" &&
+            jobAppStatus.jobName === j.name;
+          var badge = isActive
+            ? '<span class="job-status hired">Active</span>'
+            : isPending
+              ? '<span class="job-status pending">Pending</span>'
+              : "";
           html +=
-            '<div class="job-card">' +
+            '<div class="job-card" onclick="openJobDetail(\'' +
+            j.id +
+            '\')" style="cursor:pointer;">' +
             '<div class="jc-icon">' +
             j.icon +
             "</div>" +
@@ -385,43 +445,132 @@
             "</div>" +
             '<div class="job-pay">$' +
             formatNum(j.pay) +
-            "/hr</div>" +
+            '/hr <span style="color:var(--muted);font-weight:400;">(' +
+            j.yearly +
+            ")</span></div>" +
             '<div class="job-desc">' +
-            bridge.esc(j.desc) +
+            bridge.esc(j.requirements[0].label) +
             "</div>" +
-            "</div>" +
-            '<div class="jc-action">' +
-            btnHtml +
             "</div>" +
             "</div>";
         }
         body.innerHTML = html;
       }
-      function getJobByName(name) {
-        for (var i = 0; i < ALL_JOBS.length; i++) {
-          if (ALL_JOBS[i].name === name) return ALL_JOBS[i];
-        }
-        return null;
-      }
-      function formatNum(n) {
-        return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      }
-      function applyJob(name) {
+
+      function openJobDetail(id) {
+        var j = getJobById(id);
+        if (!j) return;
         var ud = bridge.getUD();
-        if (!ud) return;
-        if (ud.currentJob) {
-          bridge.notif("Error", "You already have a job.");
-          return;
-        }
-        if (ud.pendingJob) {
-          bridge.notif("Error", "You already have a pending application.");
-          return;
-        }
-        ud.pendingJob = name;
-        bridge.saveData();
-        bridge.notif("Application Sent", "Applied for " + name + ".");
-        render();
+        var alreadyBusy =
+          !!(ud && ud.currentJob) || jobAppStatus.status === "pending";
+
+        bridge
+          .getMyLicenses()
+          .then(function (licReqs) {
+            var approvedTypes = {};
+            for (var i = 0; i < licReqs.length; i++) {
+              if (licReqs[i].status === "approved")
+                approvedTypes[licReqs[i].licenseType] = true;
+            }
+
+            var missing = [];
+            var reqsHtml = j.requirements
+              .map(function (r) {
+                if (!r.license)
+                  return (
+                    '<li style="margin-bottom:4px;">' +
+                    bridge.esc(r.label) +
+                    "</li>"
+                  );
+                var has = !!approvedTypes[r.license];
+                if (!has) missing.push(r.label);
+                return (
+                  '<li style="margin-bottom:4px;">' +
+                  (has
+                    ? '<span style="color:var(--mint);">&#10003;</span> '
+                    : '<span style="color:var(--red);">&#10007;</span> ') +
+                  bridge.esc(r.label) +
+                  (has
+                    ? ""
+                    : ' <span style="color:var(--muted);font-size:11px;">(apply for this in Government)</span>') +
+                  "</li>"
+                );
+              })
+              .join("");
+
+            var canApply = !alreadyBusy && missing.length === 0;
+
+            bridge.showCustomModal(
+              j.icon + " " + j.name,
+              '<p style="color:var(--muted);font-size:13px;line-height:1.5;margin-bottom:12px;">' +
+                bridge.esc(j.desc) +
+                "</p>" +
+                '<div style="background:rgba(255,255,255,.04);border-radius:8px;padding:10px 12px;margin-bottom:10px;">' +
+                '<div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Pay</div>' +
+                "<div style=\"font-family:'Rajdhani',sans-serif;font-weight:700;font-size:18px;color:var(--mint);\">$" +
+                formatNum(j.pay) +
+                '/hr <span style="font-size:12px;color:var(--muted);font-weight:400;">(' +
+                j.yearly +
+                ")</span></div>" +
+                "</div>" +
+                '<div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Requirements</div>' +
+                '<ul style="padding-left:18px;font-size:13px;color:var(--text);">' +
+                reqsHtml +
+                "</ul>" +
+                (missing.length && !alreadyBusy
+                  ? '<p style="color:var(--red);font-size:12px;margin-top:8px;">Missing required license(s) \u2014 get them in Government first.</p>'
+                  : ""),
+              canApply
+                ? [
+                    { label: "Close", class: "btn", action: function () {} },
+                    {
+                      label: "Apply",
+                      class: "btn primary",
+                      action: function () {
+                        applyJob(j.name);
+                      },
+                    },
+                  ]
+                : [{ label: "Close", class: "btn", action: function () {} }],
+            );
+          })
+          .catch(function () {
+            var reqsHtml = j.requirements
+              .map(function (r) {
+                return (
+                  '<li style="margin-bottom:4px;">' +
+                  bridge.esc(r.label) +
+                  "</li>"
+                );
+              })
+              .join("");
+            bridge.showCustomModal(
+              j.icon + " " + j.name,
+              '<p style="color:var(--muted);font-size:13px;">' +
+                bridge.esc(j.desc) +
+                '</p><ul style="padding-left:18px;font-size:13px;">' +
+                reqsHtml +
+                "</ul>",
+              [{ label: "Close", class: "btn", action: function () {} }],
+            );
+          });
       }
+
+      function applyJob(name) {
+        bridge
+          .applyJob(name)
+          .then(function () {
+            bridge.notif(
+              "Application Sent",
+              "Applied for " + name + ". Awaiting staff approval.",
+            );
+            render();
+          })
+          .catch(function (err) {
+            bridge.notif("Error", err.message || "Could not apply.");
+          });
+      }
+
       function quitJob() {
         bridge.showCustomModal(
           "Quit Job",
@@ -432,20 +581,23 @@
               label: "Quit",
               class: "btn",
               action: function () {
-                var ud = bridge.getUD();
-                if (!ud) return;
-                ud.currentJob = null;
-                ud.pendingJob = null;
-                bridge.saveData();
-                bridge.updateHUD();
-                bridge.loadProfile();
-                bridge.notif("Job", "You have quit your job.");
-                render();
+                bridge
+                  .quitJob()
+                  .then(function () {
+                    bridge.updateHUD();
+                    bridge.loadProfile();
+                    bridge.notif("Job", "You have quit your job.");
+                    render();
+                  })
+                  .catch(function (err) {
+                    bridge.notif("Error", err.message || "Could not quit.");
+                  });
               },
             },
           ],
         );
       }
+
       render();
     </script>
   </body>

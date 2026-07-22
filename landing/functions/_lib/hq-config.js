@@ -20,6 +20,31 @@ export function isAdminRole(discordRoleIds) {
     return discordRoleIds.some((id) => ADMIN_ROLE_IDS.includes(id));
 }
 
+/** Resuelve el acceso de una persona a UN departamento concreto de HQ,
+ *  teniendo en cuenta tanto sus roles reales del departamento como
+ *  si es staff de verdad (Owner/Co-Owner/Developer/Head Admin), que
+ *  tiene acceso total a cualquier departamento sin necesitar el rol
+ *  especifico. */
+export function resolveAccess(discordRoleIds, requestedDepartment) {
+    if (isAdminRole(discordRoleIds)) {
+        const dept = DEPARTMENTS[requestedDepartment];
+        return {
+            allowed: true,
+            rank: "chief",
+            roleIndex: 0,
+            isSuperAdmin: true,
+            department: requestedDepartment,
+            label: dept ? dept.label : requestedDepartment,
+            roleName: "Staff Override"
+        };
+    }
+    const match = resolveDepartment(discordRoleIds);
+    if (match && match.department === requestedDepartment) {
+        return { allowed: true, rank: match.rank, roleIndex: match.roleIndex, isSuperAdmin: false, department: match.department, label: match.label, roleName: match.roleName };
+    }
+    return { allowed: false };
+}
+
 export const DEPARTMENTS = {
     police: {
         label: "LSPD",

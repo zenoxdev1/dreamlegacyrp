@@ -1,5 +1,5 @@
 import { getProfileByToken, getDiscordMemberRoles, corsHeaders, jsonResponse } from "../../_lib/discord.js";
-import { DEPARTMENTS, resolveDepartment } from "../../_lib/hq-config.js";
+import { DEPARTMENTS, resolveAccess } from "../../_lib/hq-config.js";
 
 export async function onRequestOptions(context) {
     return new Response(null, { status: 204, headers: corsHeaders(context.request) });
@@ -15,8 +15,8 @@ export async function onRequestPost(context) {
         if (!profile) return jsonResponse(request, { error: "Session expired." }, 401);
 
         const callerRoleIds = await getDiscordMemberRoles(env, profile.discord_id);
-        const callerMatch = resolveDepartment(callerRoleIds);
-        if (!callerMatch || callerMatch.department !== body.department || callerMatch.rank !== "chief") {
+        const access = resolveAccess(callerRoleIds, body.department);
+        if (!access.allowed || access.rank !== "chief") {
             return jsonResponse(request, { error: "Only the department chief can view the roster." }, 403);
         }
 

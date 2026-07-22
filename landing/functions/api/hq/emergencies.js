@@ -1,5 +1,5 @@
 import { getProfileByToken, getDiscordMemberRoles, supabaseHeaders, corsHeaders, jsonResponse } from "../../_lib/discord.js";
-import { resolveDepartment } from "../../_lib/hq-config.js";
+import { resolveAccess } from "../../_lib/hq-config.js";
 
 export async function onRequestOptions(context) {
     return new Response(null, { status: 204, headers: corsHeaders(context.request) });
@@ -17,8 +17,8 @@ export async function onRequestPost(context) {
         if (!profile) return jsonResponse(request, { error: "Session expired." }, 401);
 
         const roleIds = await getDiscordMemberRoles(env, profile.discord_id);
-        const match = resolveDepartment(roleIds);
-        if (!match || match.department !== body.department) {
+        const access = resolveAccess(roleIds, body.department);
+        if (!access.allowed) {
             return jsonResponse(request, { error: "You don't have access to this department." }, 403);
         }
 
