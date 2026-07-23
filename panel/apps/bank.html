@@ -227,6 +227,69 @@
         margin-bottom: 8px;
         display: none;
       }
+      .tx-history-title {
+        font-family: "Rajdhani", sans-serif;
+        font-weight: 700;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--muted);
+        margin: 18px 0 8px;
+      }
+      .tx-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      }
+      .tx-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        flex-shrink: 0;
+      }
+      .tx-icon.out {
+        background: rgba(239, 68, 68, 0.12);
+        color: var(--red, #ef4444);
+      }
+      .tx-icon.in {
+        background: rgba(52, 211, 153, 0.12);
+        color: var(--mint);
+      }
+      .tx-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .tx-party {
+        font-size: 13px;
+        font-weight: 500;
+      }
+      .tx-date {
+        font-size: 11px;
+        color: var(--dim, #64748b);
+      }
+      .tx-amount {
+        font-family: "Rajdhani", sans-serif;
+        font-weight: 700;
+        font-size: 14px;
+      }
+      .tx-amount.out {
+        color: var(--red, #ef4444);
+      }
+      .tx-amount.in {
+        color: var(--mint);
+      }
+      .tx-empty {
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+        padding: 16px 0;
+      }
     </style>
   </head>
   <body>
@@ -255,6 +318,8 @@
           <span class="ba-label">Transfer</span>
         </div>
       </div>
+      <div class="tx-history-title">Recent Transactions</div>
+      <div id="tx-history-list"></div>
     </div>
     <div class="modal-overlay" id="modal-overlay">
       <div class="modal-box">
@@ -283,7 +348,69 @@
           "$" + formatNum(bank);
         document.getElementById("cash-amount").textContent =
           "$" + formatNum(cash);
+        renderHistory();
       }
+
+      function timeAgoTx(iso) {
+        if (!iso) return "";
+        var diff = (Date.now() - new Date(iso).getTime()) / 1000;
+        if (diff < 60) return "just now";
+        if (diff < 3600) return Math.floor(diff / 60) + "m ago";
+        if (diff < 86400) return Math.floor(diff / 3600) + "h ago";
+        if (diff < 2592000) return Math.floor(diff / 86400) + "d ago";
+        return new Date(iso).toLocaleDateString();
+      }
+
+      function renderHistory() {
+        var list = document.getElementById("tx-history-list");
+        if (!bridge.getBankHistory) {
+          list.innerHTML = "";
+          return;
+        }
+        bridge
+          .getBankHistory()
+          .then(function (txs) {
+            if (!txs || txs.length === 0) {
+              list.innerHTML =
+                '<div class="tx-empty">No transactions yet.</div>';
+              return;
+            }
+            var html = "";
+            for (var i = 0; i < txs.length; i++) {
+              var t = txs[i];
+              var dir = t.outgoing ? "out" : "in";
+              var arrow = t.outgoing ? "&#8599;" : "&#8601;";
+              var sign = t.outgoing ? "-" : "+";
+              html +=
+                '<div class="tx-row">' +
+                '<div class="tx-icon ' +
+                dir +
+                '">' +
+                arrow +
+                "</div>" +
+                '<div class="tx-info"><div class="tx-party">' +
+                (t.outgoing ? "To " : "From ") +
+                bridge.esc(t.otherParty) +
+                "</div>" +
+                '<div class="tx-date">' +
+                timeAgoTx(t.createdAt) +
+                "</div></div>" +
+                '<div class="tx-amount ' +
+                dir +
+                '">' +
+                sign +
+                "$" +
+                formatNum(t.amount) +
+                "</div>" +
+                "</div>";
+            }
+            list.innerHTML = html;
+          })
+          .catch(function () {
+            list.innerHTML = "";
+          });
+      }
+
       function formatNum(n) {
         return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       }

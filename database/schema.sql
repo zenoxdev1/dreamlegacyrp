@@ -181,6 +181,21 @@ create table if not exists public.license_requests (
 create index if not exists idx_license_requests_status on public.license_requests(status);
 alter table public.license_requests enable row level security;
 
+-- Historial de transferencias bancarias entre jugadores.
+create table if not exists public.bank_transactions (
+    id                uuid primary key default gen_random_uuid(),
+    from_profile_id   uuid not null references public.profiles(id) on delete cascade,
+    to_profile_id     uuid not null references public.profiles(id) on delete cascade,
+    from_rp_name      text not null,
+    to_rp_name        text not null,
+    amount            integer not null,
+    created_at        timestamptz not null default now()
+);
+
+create index if not exists idx_bank_tx_from on public.bank_transactions(from_profile_id, created_at desc);
+create index if not exists idx_bank_tx_to on public.bank_transactions(to_profile_id, created_at desc);
+alter table public.bank_transactions enable row level security;
+
 -- Registro de alertas de emergencia (Police/EMS), para que HQ pueda
 -- ver un feed en vivo -- antes solo se mandaban al webhook de Discord
 -- y no quedaba rastro en ningun sitio.
@@ -602,8 +617,39 @@ begin
     update public.profiles set bank = bank - p_amount where id = v_sender.id;
     update public.profiles set bank = bank + p_amount where id = v_receiver_id;
 
+    insert into public.bank_transactions (from_profile_id, to_profile_id, from_rp_name, to_rp_name, amount)
+    values (v_sender.id, v_receiver_id, v_sender.rp_name, p_to_rp_name, p_amount);
+
     select * into v_sender from public.profiles where id = v_sender.id;
     return public._dlrp_profile_json(v_sender);
+end;
+$$;
+
+create or replace function public.dlrp_get_bank_history(p_token uuid)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+    v_profile public.profiles;
+begin
+    v_profile := public._dlrp_profile_from_token(p_token);
+    if v_profile.id is null then raise exception 'Session expired.'; end if;
+
+    return (
+        select coalesce(jsonb_agg(row_to_json(t) order by t."createdAt" desc), '[]'::jsonb)
+        from (
+            select
+                id, amount, created_at as "createdAt",
+                (from_profile_id = v_profile.id) as outgoing,
+                case when from_profile_id = v_profile.id then to_rp_name else from_rp_name end as "otherParty"
+            from public.bank_transactions
+            where from_profile_id = v_profile.id or to_profile_id = v_profile.id
+            order by created_at desc
+            limit 50
+        ) t
+    );
 end;
 $$;
 
@@ -1634,6 +1680,7 @@ grant execute on function
     public.dlrp_save_phone_data(uuid,jsonb),
     public.dlrp_sync_phone_profile(uuid,integer,integer,boolean,text,jsonb),
     public.dlrp_transfer_bank(uuid,text,integer),
+    public.dlrp_get_bank_history(uuid),
     public.dlrp_admin_is(uuid),
     public.dlrp_admin_stats(uuid),
     public.dlrp_admin_list_applications(uuid,text),

@@ -741,6 +741,11 @@ window.dlrpBridge = {
             return profile;
         });
     },
+    getBankHistory: function() {
+        var token = getSessionToken();
+        if (!token) return Promise.reject(new Error("Not logged in."));
+        return api("/api/bank/history", "POST", { key: token }).then(function(r) { return r.transactions; });
+    },
     submitReport: function(reportedName, category, message) {
         var token = getSessionToken();
         if (!token) return Promise.reject(new Error("Not logged in."));
