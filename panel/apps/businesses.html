@@ -1,167 +1,224 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
-    />
-    <title>Businesses</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      :root {
-        --purple: #7c3aed;
-        --purple-dark: #5b21b6;
-        --cyan: #06b6d4;
-        --mint: #34d399;
-        --bg: #0a0a0f;
-        --card: #13131a;
-        --card-border: rgba(124, 58, 237, 0.12);
-        --text: #e2e8f0;
-        --muted: #64748b;
-        --dim: #475569;
-        --red: #ef4444;
-        --green: #22c55e;
-      }
-      html {
-        height: 100%;
-      }
-      body {
-        background: var(--bg);
-        color: var(--text);
-        font-family: "Inter", sans-serif;
-        min-height: 100%;
-        height: 100%;
-        overflow: hidden;
-        padding: 0;
-        margin: 0;
-      }
-      .app-header {
-        display: flex;
-        align-items: center;
-        padding: 6px 10px;
-        background: var(--card);
-        border-bottom: 1px solid var(--card-border);
-        gap: 8px;
-        position: sticky;
-        top: 0;
-        z-index: 10;
-      }
-      .app-header .ah-title {
-        font-family: "Rajdhani", sans-serif;
-        font-weight: 700;
-        font-size: 15px;
-        flex: 1;
-      }
-      .app-body {
-        overflow-y: auto;
-        padding: 8px 12px;
-        height: calc(100% - 40px);
-      }
-      .business-card {
-        background: var(--card);
-        border: 1px solid var(--card-border);
-        border-radius: 12px;
-        padding: 14px;
-        margin-bottom: 10px;
-      }
-      .b-name {
-        font-family: "Rajdhani", sans-serif;
-        font-weight: 700;
-        font-size: 16px;
-        color: #fff;
-      }
-      .b-type {
-        font-size: 12px;
-        color: var(--cyan);
-        margin: 2px 0 4px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-      }
-      .b-profit {
-        font-size: 13px;
-        color: var(--mint);
-        margin-bottom: 4px;
-      }
-      .b-profit span {
-        color: var(--muted);
-      }
-      .b-status {
-        font-family: "Rajdhani", sans-serif;
-        font-weight: 600;
-        font-size: 12px;
-        color: var(--green);
-        background: rgba(34, 197, 94, 0.1);
-        padding: 2px 10px;
-        border-radius: 20px;
-        display: inline-block;
-      }
-      .empty-state {
-        text-align: center;
-        padding: 48px 0;
-        color: var(--muted);
-        font-size: 13px;
-      }
-      .empty-state .empty-icon {
-        font-size: 40px;
-        display: block;
-        margin-bottom: 10px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="app-header">
-      <span class="ah-title">&#127981; Businesses</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Businesses</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet"><style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+    --purple: #7c3aed; --purple-dark: #5b21b6; --cyan: #06b6d4; --mint: #34d399;
+    --bg: #0a0a0f; --card: #13131a; --card-border: rgba(124,58,237,0.12);
+    --text: #e2e8f0; --muted: #64748b; --dim: #475569; --red: #ef4444;
+}
+html { height: 100%; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100%; height: 100%; overflow: hidden; padding: 0; margin: 0; }
+.app-header { display: flex; align-items: center; padding: 6px 10px; background: var(--card); border-bottom: 1px solid var(--card-border); gap: 8px; flex-shrink: 0; }
+.app-header .ah-title { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 15px; flex: 1; }
+.tabs { display: flex; border-bottom: 1px solid var(--card-border); flex-shrink: 0; }
+.tab-btn { flex: 1; padding: 10px; background: none; border: none; color: var(--muted); font-weight: 700; font-size: 12px; text-transform: uppercase; cursor: pointer; border-bottom: 2px solid transparent; }
+.tab-btn.active { color: var(--purple); border-bottom-color: var(--purple); }
+.app-body { overflow-y: auto; padding: 8px 12px; height: calc(100% - 77px); }
+
+.biz-card { display: flex; align-items: center; gap: 12px; background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; padding: 14px; margin-bottom: 10px; }
+.biz-icon { font-size: 28px; width: 40px; text-align: center; flex-shrink: 0; }
+.biz-info { flex: 1; min-width: 0; }
+.biz-name { font-weight: 600; font-size: 14px; }
+.biz-detail { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.biz-income { font-size: 12px; color: var(--mint); margin-top: 2px; font-weight: 600; }
+.biz-actions { display: flex; flex-direction: column; gap: 6px; align-items: stretch; }
+.biz-btn { background: var(--purple); border: none; color: #fff; border-radius: 8px; padding: 7px 12px; font-size: 11px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.biz-btn.collect { background: var(--mint); color: #000; }
+.biz-btn.sell { background: none; border: 1px solid var(--card-border); color: var(--red); }
+.empty-state { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 13px; }
+.empty-icon { font-size: 40px; margin-bottom: 8px; opacity: .4; display: block; }
+
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.7); backdrop-filter: blur(4px); z-index: 999; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.active { display: flex; }
+.modal-box { background: var(--card); border: 1px solid var(--card-border); border-radius: 16px; width: 100%; max-width: 320px; padding: 20px; }
+.modal-title { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 18px; margin-bottom: 12px; }
+.modal-body { margin-bottom: 16px; font-size: 13px; color: var(--muted); line-height: 1.5; }
+.modal-footer { display: flex; gap: 8px; justify-content: flex-end; }
+.modal-footer button { padding: 8px 18px; border-radius: 8px; border: none; font-size: 13px; font-family: 'Rajdhani', sans-serif; font-weight: 600; cursor: pointer; }
+.modal-footer .btn-cancel { background: rgba(255,255,255,.06); color: var(--muted); }
+.modal-footer .btn-confirm { background: linear-gradient(135deg,var(--purple),var(--purple-dark)); color: #fff; }
+</style></head>
+<body>
+<div class="app-header"><span class="ah-title">&#127970; Businesses</span></div>
+<div class="tabs">
+    <button id="tab-mine-btn" class="tab-btn active" onclick="switchTab('mine')">My Businesses</button>
+    <button id="tab-shop-btn" class="tab-btn" onclick="switchTab('shop')">For Sale</button>
+</div>
+<div class="app-body" id="app-body"></div>
+
+<div class="modal-overlay" id="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-title" id="modal-title">Title</div>
+        <div class="modal-body" id="modal-body"></div>
+        <div class="modal-footer" id="modal-footer"></div>
     </div>
-    <div class="app-body"><div id="business-list"></div></div>
-    <script>
-      var bridge =
-        (window.parent && window.parent.dlrpBridge) || window.dlrpBridge;
-      function render() {
-        var ud = bridge.getUD();
-        if (!ud) return;
-        var businesses = ud.businesses || [];
-        var list = document.getElementById("business-list");
-        list.innerHTML = "";
-        if (businesses.length === 0) {
-          list.innerHTML =
-            '<div class="empty-state"><span class="empty-icon">&#127981;</span>You don\'t own any businesses yet.</div>';
-          return;
+</div>
+
+<script>
+var bridge = (window.parent && window.parent.dlrpBridge) || window.dlrpBridge;
+var activeTab = "mine";
+
+var BUSINESS_CATALOG = [
+    { id: "store1", name: "24/7 Convenience Store", icon: "\u{1F3EA}", price: 50000, hourlyIncome: 45 },
+    { id: "autoshop1", name: "Los Santos Auto Shop", icon: "\u{1F527}", price: 90000, hourlyIncome: 75 },
+    { id: "bar1", name: "The Yellow Jack Bar", icon: "\u{1F37A}", price: 70000, hourlyIncome: 60 },
+    { id: "taxi1", name: "Downtown Taxi Depot", icon: "\u{1F695}", price: 60000, hourlyIncome: 55 },
+    { id: "club1", name: "Vinewood Nightclub", icon: "\u{1F3B6}", price: 180000, hourlyIncome: 150 },
+    { id: "warehouse1", name: "Cypress Flats Warehouse", icon: "\u{1F3ED}", price: 120000, hourlyIncome: 100 }
+];
+
+var MAX_ACCRUAL_HOURS = 24; // no se acumula ingreso mas alla de esto, para animar a recoger a menudo
+
+function switchTab(tab) {
+    activeTab = tab;
+    document.getElementById("tab-mine-btn").classList.toggle("active", tab === "mine");
+    document.getElementById("tab-shop-btn").classList.toggle("active", tab === "shop");
+    render();
+}
+
+function formatNum(n) { return Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+
+function pendingIncome(biz) {
+    var last = biz.lastCollected ? new Date(biz.lastCollected).getTime() : Date.now();
+    var hours = Math.min((Date.now() - last) / 3600000, MAX_ACCRUAL_HOURS);
+    return Math.floor(hours * biz.hourlyIncome);
+}
+
+function render() {
+    if (activeTab === "shop") { renderShop(); return; }
+    var ud = bridge.getUD();
+    var body = document.getElementById("app-body");
+    var owned = (ud && ud.businesses) || [];
+
+    if (owned.length === 0) {
+        body.innerHTML = '<div class="empty-state"><span class="empty-icon">&#127970;</span>You don\u2019t own any businesses yet.<br><span style="font-size:11px;">Check the For Sale tab.</span></div>';
+        return;
+    }
+
+    var html = "";
+    for (var i = 0; i < owned.length; i++) {
+        var b = owned[i];
+        var pending = pendingIncome(b);
+        html += '<div class="biz-card">'
+            + '<div class="biz-icon">' + (b.icon || "\u{1F3EA}") + '</div>'
+            + '<div class="biz-info">'
+            + '<div class="biz-name">' + bridge.esc(b.name) + '</div>'
+            + '<div class="biz-detail">$' + formatNum(b.hourlyIncome) + '/hr income</div>'
+            + '<div class="biz-income">$' + formatNum(pending) + ' ready to collect</div>'
+            + '</div>'
+            + '<div class="biz-actions">'
+            + '<button class="biz-btn collect" onclick="collectIncome(' + i + ')"' + (pending <= 0 ? " disabled style=\"opacity:.4;\"" : "") + '>Collect</button>'
+            + '<button class="biz-btn sell" onclick="sellBusiness(' + i + ')">Sell</button>'
+            + '</div>'
+            + '</div>';
+    }
+    body.innerHTML = html;
+}
+
+function renderShop() {
+    var body = document.getElementById("app-body");
+    var ud = bridge.getUD();
+    var ownedIds = ((ud && ud.businesses) || []).map(function(b) { return b.catalogId; });
+
+    var html = "";
+    for (var i = 0; i < BUSINESS_CATALOG.length; i++) {
+        var c = BUSINESS_CATALOG[i];
+        if (ownedIds.indexOf(c.id) !== -1) continue;
+        html += '<div class="biz-card">'
+            + '<div class="biz-icon">' + c.icon + '</div>'
+            + '<div class="biz-info">'
+            + '<div class="biz-name">' + bridge.esc(c.name) + '</div>'
+            + '<div class="biz-detail">$' + formatNum(c.price) + '</div>'
+            + '<div class="biz-income">$' + formatNum(c.hourlyIncome) + '/hr income</div>'
+            + '</div>'
+            + '<div class="biz-actions"><button class="biz-btn" onclick="buyBusiness(\'' + c.id + '\')">Buy</button></div>'
+            + '</div>';
+    }
+    if (!html) html = '<div class="empty-state"><span class="empty-icon">\u2705</span>You already own every business.</div>';
+    body.innerHTML = html;
+}
+
+function buyBusiness(catalogId) {
+    var c = null;
+    for (var i = 0; i < BUSINESS_CATALOG.length; i++) { if (BUSINESS_CATALOG[i].id === catalogId) c = BUSINESS_CATALOG[i]; }
+    if (!c) return;
+    var ud = bridge.getUD();
+    var totalMoney = (ud.bank || 0) + (ud.cash || 0);
+    if (totalMoney < c.price) { bridge.notif("Businesses", "Not enough money."); return; }
+
+    showModal("Confirm Purchase",
+        "Buy <strong>" + bridge.esc(c.name) + "</strong> for <strong style=\"color:var(--mint);\">$" + formatNum(c.price) + "</strong>? It will generate $" + formatNum(c.hourlyIncome) + "/hr for you to collect.",
+        function() {
+            var fromBank = Math.min(ud.bank || 0, c.price);
+            ud.bank = (ud.bank || 0) - fromBank;
+            ud.cash = (ud.cash || 0) - (c.price - fromBank);
+            if (!ud.businesses) ud.businesses = [];
+            ud.businesses.push({ catalogId: c.id, name: c.name, icon: c.icon, hourlyIncome: c.hourlyIncome, lastCollected: new Date().toISOString() });
+            bridge.saveData();
+            bridge.updateHUD();
+            bridge.notif("Businesses", "You bought " + c.name + "!");
+            switchTab("mine");
         }
-        for (var i = 0; i < businesses.length; i++) {
-          var b = businesses[i];
-          var card = document.createElement("div");
-          card.className = "business-card";
-          var profitHtml = "";
-          if (b.profit !== undefined) {
-            profitHtml =
-              '<div class="b-profit">$' +
-              formatNum(b.profit) +
-              " <span>/ hr</span></div>";
-          }
-          card.innerHTML =
-            '<div class="b-name">' +
-            bridge.esc(b.name) +
-            '</div><div class="b-type">' +
-            bridge.esc(b.type || "Business") +
-            "</div>" +
-            profitHtml +
-            '<div><span class="b-status">&#9679; Operational</span></div>';
-          list.appendChild(card);
+    );
+}
+
+function collectIncome(idx) {
+    var ud = bridge.getUD();
+    var b = ud.businesses[idx];
+    if (!b) return;
+    var amount = pendingIncome(b);
+    if (amount <= 0) return;
+    b.lastCollected = new Date().toISOString();
+    ud.bank = (ud.bank || 0) + amount;
+    bridge.saveData();
+    bridge.updateHUD();
+    bridge.notif("Businesses", "Collected $" + formatNum(amount) + " from " + b.name + ".");
+    render();
+}
+
+function sellBusiness(idx) {
+    var ud = bridge.getUD();
+    var b = ud.businesses[idx];
+    if (!b) return;
+    var catalogMatch = null;
+    for (var i = 0; i < BUSINESS_CATALOG.length; i++) { if (BUSINESS_CATALOG[i].id === b.catalogId) catalogMatch = BUSINESS_CATALOG[i]; }
+    var sellPrice = catalogMatch ? Math.floor(catalogMatch.price * 0.5) : 5000;
+
+    showModal("Sell Business",
+        "Sell <strong>" + bridge.esc(b.name) + "</strong> for <strong style=\"color:var(--mint);\">$" + formatNum(sellPrice) + "</strong>? Any uncollected income will be lost.",
+        function() {
+            ud.businesses.splice(idx, 1);
+            ud.bank = (ud.bank || 0) + sellPrice;
+            bridge.saveData();
+            bridge.updateHUD();
+            bridge.notif("Businesses", "Sold for $" + formatNum(sellPrice) + ".");
+            render();
         }
-      }
-      function formatNum(n) {
-        return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      }
-      render();
-    </script>
-  </body>
-</html>
+    );
+}
+
+function showModal(title, bodyHtml, onConfirm) {
+    document.getElementById("modal-title").textContent = title;
+    document.getElementById("modal-body").innerHTML = bodyHtml;
+    var footer = document.getElementById("modal-footer");
+    footer.innerHTML = "";
+    var cancelBtn = document.createElement("button");
+    cancelBtn.className = "btn-cancel";
+    cancelBtn.textContent = "Cancel";
+    cancelBtn.onclick = closeModal;
+    var confirmBtn = document.createElement("button");
+    confirmBtn.className = "btn-confirm";
+    confirmBtn.textContent = "Confirm";
+    confirmBtn.onclick = function() { closeModal(); onConfirm(); };
+    footer.appendChild(cancelBtn);
+    footer.appendChild(confirmBtn);
+    document.getElementById("modal-overlay").classList.add("active");
+}
+
+function closeModal() {
+    document.getElementById("modal-overlay").classList.remove("active");
+}
+
+render();
+setInterval(function() { if (activeTab === "mine") render(); }, 30000);
+</script>
+</body></html>
