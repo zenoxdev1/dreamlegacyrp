@@ -97,12 +97,12 @@ html, body { height: 100%; }
 <div class="app-body" id="app-body">
     <div class="tab-content active" id="tab-feed">
         <div class="new-post-area">
-            <textarea id="post-text" placeholder="What's on your mind?"></textarea>
+            <textarea id="post-text" placeholder="Write a caption..."></textarea>
             <img class="np-preview" id="np-preview" />
             <div class="np-actions">
                 <button class="btn-post" onclick="submitPost()">Post</button>
-                <button class="btn-photo" onclick="pickPhoto()">&#128247; Photo</button>
-                <input type="file" id="photo-input" accept="image/*" style="display: none" onchange="onPhotoPicked(this)" />
+                <button class="btn-photo" onclick="openGalleryPicker()">&#128248; From Gallery</button>
+                <button class="btn-photo" id="np-remove-photo" onclick="clearPickedPhoto()" style="display:none;">Remove Photo</button>
             </div>
         </div>
         <div id="feed-posts"><div class="empty-state">Loading...</div></div>
@@ -126,6 +126,17 @@ html, body { height: 100%; }
                     <button onclick="sendDm()">Send</button>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+<div class="modal-overlay" id="gallery-picker-modal">
+    <div class="modal-box" style="max-width:360px;">
+        <h3>Choose from Gallery</h3>
+        <div id="gallery-picker-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-height:320px;overflow-y:auto;margin-top:8px;">
+            <div class="empty-state" style="grid-column:1/-1;">Loading...</div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeGalleryPicker()">Cancel</button>
         </div>
     </div>
 </div>
@@ -199,18 +210,45 @@ function submitPost() {
     }).catch(function(err) { bridge.notif("Error", err.message || "Could not post."); });
 }
 
-function pickPhoto() { document.getElementById("photo-input").click(); }
+var galleryPickerPhotos = [];
 
-function onPhotoPicked(input) {
-    var file = input.files && input.files[0];
-    if (!file) return;
-    bridge.openCropModal(file, function(dataUrl) {
-        pendingPhotoDataUrl = dataUrl;
-        var prev = document.getElementById("np-preview");
-        prev.src = dataUrl;
-        prev.style.display = "block";
-        input.value = "";
+function openGalleryPicker() {
+    document.getElementById("gallery-picker-modal").classList.add("active");
+    var grid = document.getElementById("gallery-picker-grid");
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">Loading...</div>';
+    bridge.getGalleryPhotos().then(function(photos) {
+        galleryPickerPhotos = photos || [];
+        if (galleryPickerPhotos.length === 0) {
+            grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">No Snapmatic photos yet.<br><span style="font-size:11px;">Take one in-game first.</span></div>';
+            return;
+        }
+        var html = "";
+        for (var i = 0; i < galleryPickerPhotos.length; i++) {
+            html += '<div style="aspect-ratio:1;border-radius:8px;overflow:hidden;cursor:pointer;" onclick="pickGalleryPhoto(' + i + ')"><img src="' + esc(galleryPickerPhotos[i].imageData) + '" style="width:100%;height:100%;object-fit:cover;"></div>';
+        }
+        grid.innerHTML = html;
+    }).catch(function(err) {
+        grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">' + esc(err.message || "Could not load your gallery.") + "</div>";
     });
+}
+
+function closeGalleryPicker() { document.getElementById("gallery-picker-modal").classList.remove("active"); }
+
+function pickGalleryPhoto(index) {
+    var dataUrl = galleryPickerPhotos[index] ? galleryPickerPhotos[index].imageData : null;
+    if (!dataUrl) return;
+    pendingPhotoDataUrl = dataUrl;
+    var prev = document.getElementById("np-preview");
+    prev.src = dataUrl;
+    prev.style.display = "block";
+    document.getElementById("np-remove-photo").style.display = "inline-block";
+    closeGalleryPicker();
+}
+
+function clearPickedPhoto() {
+    pendingPhotoDataUrl = null;
+    document.getElementById("np-preview").style.display = "none";
+    document.getElementById("np-remove-photo").style.display = "none";
 }
 
 function timeAgoPost(iso) {

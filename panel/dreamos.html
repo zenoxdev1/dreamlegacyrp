@@ -550,6 +550,7 @@ var homeApps = [
     { id: "marketplace", icon: "&#128230;", label: "Marketplace", color: "#a855f7" },
     { id: "government", icon: "&#128179;", label: "Government", color: "#06b6d4" },
     { id: "dreamgram", icon: "&#128247;", label: "DreamGram", color: "#e11d48" },
+    { id: "photos", icon: "&#128248;", label: "Photos", color: "#0ea5e9" },
     { id: "emergency", icon: "&#128737;", label: "Emergency", color: "#dc2626" },
     { id: "settings", icon: "&#9881;", label: "Settings", color: "#78716c" }
 ];
@@ -628,7 +629,7 @@ function unlockPhone() {
     document.getElementById("lock-screen").classList.add("unlocked");
 }
 
-var APP_NAME_MAP = { bank:"Bank", jobs:"Jobs", vehicles:"Vehicles", property:"Property", businesses:"Businesses", marketplace:"Marketplace", government:"Government", dreamgram:"DreamGram", emergency:"Emergency", settings:"Settings" };
+var APP_NAME_MAP = { bank:"Bank", jobs:"Jobs", vehicles:"Vehicles", property:"Property", businesses:"Businesses", marketplace:"Marketplace", government:"Government", dreamgram:"DreamGram", photos:"Photos", emergency:"Emergency", settings:"Settings" };
 
 function openApp(id) {
     openAppId = id;
@@ -787,6 +788,28 @@ window.dlrpBridge = {
         var token = getSessionToken();
         if (!token) return Promise.reject(new Error("Not logged in."));
         return api("/api/gram/dm/thread", "POST", { key: token, otherRpName: otherRpName }).then(function(r) { return r.messages; });
+    },
+    getGalleryPhotos: function() {
+        var token = getSessionToken();
+        if (!token) return Promise.reject(new Error("Not logged in."));
+        return fetch("https://dreamlegacyrp.xyz/api/gallery/photos", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ key: token })
+        }).then(function(r) {
+            return r.json().then(function(d) { if (!r.ok) throw new Error(d.error || "Request failed"); return d; });
+        }).then(function(res) { return res.photos; });
+    },
+    deleteGalleryPhoto: function(photoId) {
+        var token = getSessionToken();
+        if (!token) return Promise.reject(new Error("Not logged in."));
+        return fetch("https://dreamlegacyrp.xyz/api/gallery/photos", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ key: token, action: "delete", photoId: photoId })
+        }).then(function(r) {
+            return r.json().then(function(d) { if (!r.ok) throw new Error(d.error || "Request failed"); return d; });
+        });
     },
     myNumber: function() {
         var d = getUD();

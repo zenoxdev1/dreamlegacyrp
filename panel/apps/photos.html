@@ -1,0 +1,95 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Photos</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet"><style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+    --purple: #7c3aed; --purple-dark: #5b21b6; --cyan: #06b6d4; --mint: #34d399;
+    --bg: #0a0a0f; --card: #13131a; --card-border: rgba(124,58,237,0.12);
+    --text: #e2e8f0; --muted: #64748b; --dim: #475569; --red: #ef4444;
+}
+html { height: 100%; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100%; height: 100%; overflow: hidden; padding: 0; margin: 0; }
+.app-header { display: flex; align-items: center; padding: 6px 10px; background: var(--card); border-bottom: 1px solid var(--card-border); gap: 8px; flex-shrink: 0; }
+.app-header .ah-title { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 15px; flex: 1; }
+.app-header button { background: none; border: 1px solid var(--card-border); color: var(--muted); border-radius: 8px; padding: 5px 10px; font-size: 11px; cursor: pointer; }
+.app-body { overflow-y: auto; padding: 10px; height: calc(100% - 43px); }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.thumb { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; cursor: pointer; background: rgba(255,255,255,.04); }
+.thumb img { width: 100%; height: 100%; object-fit: cover; }
+.empty-state { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 13px; }
+.empty-icon { font-size: 40px; margin-bottom: 8px; opacity: .4; display: block; }
+
+.viewer-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.92); z-index: 999; flex-direction: column; }
+.viewer-overlay.active { display: flex; }
+.viewer-top { display: flex; justify-content: flex-end; padding: 10px; gap: 8px; flex-shrink: 0; }
+.viewer-top button { background: rgba(255,255,255,.08); border: none; color: var(--text); border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+.viewer-top .del { color: var(--red); }
+.viewer-img-wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 10px; overflow: hidden; }
+.viewer-img-wrap img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 6px; }
+</style></head>
+<body>
+<div class="app-header"><span class="ah-title">&#128248; Photos</span><button onclick="loadPhotos()">Refresh</button></div>
+<div class="app-body" id="app-body"><div class="empty-state">Loading...</div></div>
+
+<div class="viewer-overlay" id="viewer-overlay">
+    <div class="viewer-top">
+        <button class="del" onclick="deleteCurrentPhoto()">Delete</button>
+        <button onclick="closeViewer()">Close</button>
+    </div>
+    <div class="viewer-img-wrap"><img id="viewer-img" src=""></div>
+</div>
+
+<script>
+var bridge = (window.parent && window.parent.dlrpBridge) || window.dlrpBridge;
+var photos = [];
+var currentPhotoId = null;
+
+function loadPhotos() {
+    var body = document.getElementById("app-body");
+    body.innerHTML = '<div class="empty-state">Loading...</div>';
+    bridge.getGalleryPhotos().then(function(res) {
+        photos = res || [];
+        render();
+    }).catch(function(err) {
+        body.innerHTML = '<div class="empty-state">' + bridge.esc(err.message || "Could not load your gallery.") + '</div>';
+    });
+}
+
+function render() {
+    var body = document.getElementById("app-body");
+    if (photos.length === 0) {
+        body.innerHTML = '<div class="empty-state"><span class="empty-icon">&#128248;</span>No Snapmatic photos synced yet.<br><span style="font-size:11px;">Take a photo in-game and it will show up here.</span></div>';
+        return;
+    }
+    var html = '<div class="grid">';
+    for (var i = 0; i < photos.length; i++) {
+        html += '<div class="thumb" onclick="openViewer(\'' + photos[i].id + '\')"><img src="' + bridge.esc(photos[i].imageData) + '" loading="lazy"></div>';
+    }
+    html += '</div>';
+    body.innerHTML = html;
+}
+
+function openViewer(id) {
+    var p = photos.filter(function(x) { return x.id === id; })[0];
+    if (!p) return;
+    currentPhotoId = id;
+    document.getElementById("viewer-img").src = p.imageData;
+    document.getElementById("viewer-overlay").classList.add("active");
+}
+
+function closeViewer() {
+    document.getElementById("viewer-overlay").classList.remove("active");
+    currentPhotoId = null;
+}
+
+function deleteCurrentPhoto() {
+    if (!currentPhotoId) return;
+    bridge.deleteGalleryPhoto(currentPhotoId).then(function() {
+        photos = photos.filter(function(p) { return p.id !== currentPhotoId; });
+        closeViewer();
+        render();
+        bridge.notif("Photos", "Photo deleted.");
+    }).catch(function(err) { bridge.notif("Error", err.message || "Could not delete the photo."); });
+}
+
+loadPhotos();
+</script>
+</body></html>
