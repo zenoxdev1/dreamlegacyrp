@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>DLRP | Downloads</title>
+<link rel="icon" href="https://dreamlegacyrp.xyz/assets/img/dlrp.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   CONFIGURA AQUÍ los enlaces reales de descarga (Drive, Mega,
+   tu propio servidor, lo que uses). En cuanto tengas el archivo
+   BLUS/NPUB listo, cambia BLUS_READY a true y pon su enlace.
+   ============================================================ */
+</style>
+<script>
+var BLES_DOWNLOAD_URL = "https://example.com/DreamLegacyRP-BLES-NPEB.pkg";
+var BLUS_READY = false;
+var BLUS_DOWNLOAD_URL = "";
+</script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+    --bg: #090a0d; --surface: rgba(18, 22, 29, 0.78); --line: rgba(255, 255, 255, 0.10);
+    --line-strong: rgba(120, 168, 255, 0.35); --text: #f4f7fb; --muted: #aab3c2;
+    --blue: #2f73ff; --blue-dark: #1746a8; --mint: #59f0a7; --radius: 14px;
+}
+body { background: var(--bg); color: var(--text); font-family: "Inter", -apple-system, sans-serif; min-height: 100vh; }
+.glow { position: fixed; top: -300px; left: 50%; transform: translateX(-50%); width: 800px; height: 800px; border-radius: 50%; background: radial-gradient(circle, rgba(47,115,255,.16) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+
+.topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px clamp(18px,4vw,48px); border-bottom: 1px solid var(--line); position: relative; z-index: 5; }
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.brand-badge { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg,var(--blue),var(--blue-dark)); font-weight: 800; font-size: 12px; color: #fff; }
+.brand-title { font-size: 18px; font-weight: 800; text-transform: uppercase; color: var(--text); }
+.lang-select { background: rgba(255,255,255,.06); border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 7px 12px; font-family: "Rajdhani", sans-serif; font-weight: 700; font-size: 13px; cursor: pointer; }
+
+.main-wrap { max-width: 720px; margin: 0 auto; padding: 60px 20px; position: relative; z-index: 1; text-align: center; }
+h1 { font-family: "Rajdhani", sans-serif; font-size: clamp(32px,6vw,48px); font-weight: 800; text-transform: uppercase; margin-bottom: 12px; }
+.lead { color: var(--muted); font-size: 15px; max-width: 480px; margin: 0 auto 40px; line-height: 1.6; }
+
+.cards { display: grid; gap: 16px; }
+.dl-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px 24px; text-align: left; display: flex; align-items: center; gap: 18px; }
+.dl-icon { width: 52px; height: 52px; border-radius: 12px; background: linear-gradient(135deg,var(--blue),var(--blue-dark)); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.dl-info { flex: 1; }
+.dl-region { font-family: "Rajdhani", sans-serif; font-weight: 800; font-size: 19px; text-transform: uppercase; margin-bottom: 2px; }
+.dl-desc { color: var(--muted); font-size: 13px; }
+.dl-btn { padding: 12px 22px; border-radius: 10px; font-family: "Rajdhani", sans-serif; font-weight: 700; font-size: 13px; text-transform: uppercase; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
+.dl-btn.active { background: linear-gradient(135deg,var(--blue),var(--blue-dark)); color: #fff; }
+.dl-btn.disabled { background: rgba(255,255,255,.05); color: var(--muted); cursor: not-allowed; border: 1px solid var(--line); }
+
+.note { margin-top: 32px; font-size: 12px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="glow"></div>
+
+<div class="topbar">
+    <a class="brand" href="https://dreamlegacyrp.xyz"><span class="brand-badge">DLRP</span><span class="brand-title" data-i18n="title">Downloads</span></a>
+    <select class="lang-select" id="lang-select" onchange="setLang(this.value)">
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+        <option value="pt">Português</option>
+    </select>
+</div>
+
+<div class="main-wrap">
+    <h1 data-i18n="heading">Server Files</h1>
+    <p class="lead" data-i18n="lead">Download the package needed to connect to Dream Legacy RP, based on your PS3's region.</p>
+
+    <div class="cards">
+        <div class="dl-card">
+            <div class="dl-icon">&#127466;&#127482;</div>
+            <div class="dl-info">
+                <div class="dl-region">BLES / NPEB</div>
+                <div class="dl-desc" data-i18n="europeDesc">European region PS3 consoles</div>
+            </div>
+            <a class="dl-btn active" id="bles-btn" href="#" data-i18n="download">Download</a>
+        </div>
+
+        <div class="dl-card">
+            <div class="dl-icon">&#127482;&#127480;</div>
+            <div class="dl-info">
+                <div class="dl-region">BLUS / NPUB</div>
+                <div class="dl-desc" data-i18n="usDesc">US region PS3 consoles</div>
+            </div>
+            <a class="dl-btn disabled" id="blus-btn" href="#" data-i18n="comingSoon">Coming Soon</a>
+        </div>
+    </div>
+
+    <p class="note" data-i18n="note">Not sure which region your console is? Check the disc/game case — European copies show "BLES" or "NPEB", US copies show "BLUS" or "NPUB".</p>
+</div>
+
+<script>
+var I18N = {
+    en: {
+        title: "Downloads", heading: "Server Files",
+        lead: "Download the package needed to connect to Dream Legacy RP, based on your PS3's region.",
+        europeDesc: "European region PS3 consoles", usDesc: "US region PS3 consoles",
+        download: "Download", comingSoon: "Coming Soon",
+        note: "Not sure which region your console is? Check the disc/game case — European copies show \"BLES\" or \"NPEB\", US copies show \"BLUS\" or \"NPUB\"."
+    },
+    fr: {
+        title: "Téléchargements", heading: "Fichiers du serveur",
+        lead: "Téléchargez le package nécessaire pour vous connecter à Dream Legacy RP, selon la région de votre PS3.",
+        europeDesc: "Consoles PS3 région Europe", usDesc: "Consoles PS3 région US",
+        download: "Télécharger", comingSoon: "Bientôt disponible",
+        note: "Vous ne savez pas quelle est la région de votre console ? Regardez le disque/boîtier du jeu — les copies européennes affichent \"BLES\" ou \"NPEB\", les copies américaines affichent \"BLUS\" ou \"NPUB\"."
+    },
+    pt: {
+        title: "Downloads", heading: "Arquivos do servidor",
+        lead: "Baixe o pacote necessário para se conectar ao Dream Legacy RP, de acordo com a região do seu PS3.",
+        europeDesc: "Consoles PS3 região Europa", usDesc: "Consoles PS3 região EUA",
+        download: "Baixar", comingSoon: "Em breve",
+        note: "Não sabe qual é a região do seu console? Confira o disco/caixa do jogo — cópias europeias mostram \"BLES\" ou \"NPEB\", cópias americanas mostram \"BLUS\" ou \"NPUB\"."
+    }
+};
+
+function setLang(lang) {
+    var dict = I18N[lang] || I18N.en;
+    var els = document.querySelectorAll("[data-i18n]");
+    for (var i = 0; i < els.length; i++) {
+        var key = els[i].getAttribute("data-i18n");
+        if (dict[key]) els[i].textContent = dict[key];
+    }
+    document.documentElement.lang = lang;
+    localStorage.setItem("dlrp_downloads_lang", lang);
+}
+
+function initDownloadButtons() {
+    var blesBtn = document.getElementById("bles-btn");
+    blesBtn.href = BLES_DOWNLOAD_URL;
+
+    var blusBtn = document.getElementById("blus-btn");
+    if (BLUS_READY && BLUS_DOWNLOAD_URL) {
+        blusBtn.href = BLUS_DOWNLOAD_URL;
+        blusBtn.classList.remove("disabled");
+        blusBtn.classList.add("active");
+        blusBtn.removeAttribute("data-i18n");
+        blusBtn.textContent = I18N[document.documentElement.lang || "en"].download;
+    } else {
+        blusBtn.addEventListener("click", function(e) { e.preventDefault(); });
+    }
+}
+
+(function init() {
+    var saved = localStorage.getItem("dlrp_downloads_lang");
+    var browserLang = (navigator.language || "en").slice(0, 2);
+    var lang = saved || (I18N[browserLang] ? browserLang : "en");
+    document.getElementById("lang-select").value = lang;
+    setLang(lang);
+    initDownloadButtons();
+})();
+</script>
+</body>
+</html>
