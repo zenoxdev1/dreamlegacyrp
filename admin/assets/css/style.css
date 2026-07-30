@@ -1305,3 +1305,16 @@ input, textarea, select { font-size: 16px; }
    la landing) -- todo el contenido se queda visible desde el
    principio, sin depender de un script que nunca se copio aqui. */
 .reveal { opacity: 1 !important; transform: none !important; }
+/* ============================================================
+   Logo real en el navbar (en vez del texto "DLRP")
+   ============================================================ */
+.brand-badge {
+    overflow: hidden;
+    padding: 0;
+}
+.brand-badge img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
