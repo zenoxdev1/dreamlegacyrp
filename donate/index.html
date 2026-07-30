@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Dream Legacy RP — Donate</title>
+<meta name="description" content="Support Dream Legacy RP on Ko-fi.">
+<link rel="icon" type="image/png" href="https://files.dreamlegacyrp.xyz/branding/favicon-32.png">
+<link rel="apple-touch-icon" href="https://files.dreamlegacyrp.xyz/branding/favicon-512.png">
+
+<meta property="og:title" content="Dream Legacy RP — Donate">
+<meta property="og:description" content="Support Dream Legacy RP on Ko-fi.">
+<meta property="og:image" content="https://files.dreamlegacyrp.xyz/branding/dlrp-logo.png">
+<meta property="og:url" content="https://donate.dreamlegacyrp.xyz">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dream Legacy RP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Dream Legacy RP — Donate">
+<meta name="twitter:description" content="Support Dream Legacy RP on Ko-fi.">
+<meta name="twitter:image" content="https://files.dreamlegacyrp.xyz/branding/dlrp-logo.png">
+<meta name="theme-color" content="#2f73ff">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://files.dreamlegacyrp.xyz/css/global.css">
+
+<script>
+/* ============================================================
+   CONFIGURA AQUÍ tu usuario de Ko-fi (ko-fi.com/TU_USUARIO).
+   ============================================================ */
+var KOFI_USERNAME = "supportdreamlegacyrp";
+</script>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--dl-bg); color: var(--dl-text); font-family: "Inter", -apple-system, sans-serif; min-height: 100vh; overflow-x: hidden; }
+h1 { font-family: "Rajdhani", sans-serif; }
+.glow { position: fixed; top: -300px; left: 50%; transform: translateX(-50%); width: 800px; height: 800px; border-radius: 50%; background: radial-gradient(circle, rgba(47,115,255,.16) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+
+.main-wrap { max-width: 640px; margin: 0 auto; padding: clamp(40px,8vw,72px) 20px 60px; position: relative; z-index: 1; text-align: center; }
+.hero-logo { width: clamp(72px,12vw,96px); height: clamp(72px,12vw,96px); border-radius: 22px; margin: 0 auto 20px; display: block; box-shadow: 0 0 0 1px var(--dl-line-strong), 0 20px 60px rgba(47,115,255,.3); }
+.eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border-radius: 999px; background: rgba(47,115,255,.14); border: 1px solid var(--dl-line-strong); color: #9db8ff; font-family: "Rajdhani", sans-serif; font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 16px; }
+h1 { font-size: clamp(30px,6vw,44px); font-weight: 800; text-transform: uppercase; margin-bottom: 12px; }
+.lead { color: var(--dl-muted); font-size: 15px; max-width: 480px; margin: 0 auto 32px; line-height: 1.65; }
+
+.kofi-frame-wrap { background: var(--dl-surface); border: 1px solid var(--dl-line); border-radius: 16px; padding: 8px; margin-bottom: 20px; }
+.kofi-frame-wrap iframe { width: 100%; height: 620px; border: none; border-radius: 12px; display: block; }
+
+.fallback-note { font-size: 12.5px; color: var(--dl-muted); }
+.fallback-note a { color: #9db8ff; }
+</style>
+</head>
+<body>
+<div class="glow"></div>
+
+<div class="dl-navbar">
+    <a class="dl-brand" href="https://dreamlegacyrp.xyz">
+        <img src="https://files.dreamlegacyrp.xyz/branding/dlrp-logo.png" alt="DLRP">
+        <span>Dream Legacy RP</span>
+    </a>
+    <nav class="dl-nav-links" id="dl-nav-links">
+        <a href="https://dreamlegacyrp.xyz">Main Site</a>
+        <a href="https://dreamos.dreamlegacyrp.xyz">DreamOS</a>
+        <a href="https://downloads.dreamlegacyrp.xyz">Downloads</a>
+        <a href="https://donate.dreamlegacyrp.xyz" class="active">Donate</a>
+        <a href="https://links.dreamlegacyrp.xyz">Links</a>
+    </nav>
+    <button class="dl-nav-mobile-toggle" id="dl-nav-mobile-toggle">&#9776;</button>
+</div>
+
+<div class="main-wrap">
+    <img class="hero-logo" src="https://files.dreamlegacyrp.xyz/branding/dlrp-logo.png" alt="Dream Legacy RP">
+    <div class="eyebrow">Support the server</div>
+    <h1>Donate</h1>
+    <p class="lead">Dream Legacy RP is run on love and free time. Any support helps cover hosting costs and keeps the server growing — no perks are sold that affect gameplay or roleplay balance.</p>
+
+    <div class="kofi-frame-wrap">
+        <iframe id="kofi-iframe" src="" title="Ko-fi donation"></iframe>
+    </div>
+
+    <p class="fallback-note">Prefer to open it directly? <a id="kofi-direct-link" href="#" target="_blank" rel="noopener">ko-fi.com</a></p>
+</div>
+
+<script src="https://files.dreamlegacyrp.xyz/js/global.js"></script>
+<script>
+(function () {
+    var url = "https://ko-fi.com/" + KOFI_USERNAME + "/?hidefeed=true&widget=true&embed=true&preview=true";
+    document.getElementById("kofi-iframe").src = url;
+    document.getElementById("kofi-direct-link").href = "https://ko-fi.com/" + KOFI_USERNAME;
+})();
+</script>
+</body>
+</html>
