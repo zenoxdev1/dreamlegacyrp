@@ -319,7 +319,7 @@ function showProfile(data) {
         var adminLink = document.getElementById("go-to-admin-link");
         var key = getSessionKey();
         if (panelLink && key) {
-            panelLink.href = "https://panel.dreamlegacyrp.xyz/?dlrp_session=" + encodeURIComponent(key);
+            panelLink.href = "https://dreamos.dreamlegacyrp.xyz/?dlrp_session=" + encodeURIComponent(key);
         }
         if (key) {
             if (hqLink) hqLink.href = "https://hq.dreamlegacyrp.xyz/?dlrp_session=" + encodeURIComponent(key);
