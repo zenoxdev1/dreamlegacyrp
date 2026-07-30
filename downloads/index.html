@@ -23,6 +23,7 @@
 <meta name="theme-color" content="#7c3aed">
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://files.dreamlegacyrp.xyz/css/global.css">
 
 <script>
 var BLES_DOWNLOAD_URL = "https://files.dreamlegacyrp.xyz/downloads/DreamLegacyRP-BLES-NPEB.pkg";
@@ -53,17 +54,6 @@ h1, h2 { font-family: "Rajdhani", sans-serif; }
 @keyframes float2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-50px,-30px); } }
 .grid-overlay { position: fixed; inset: 0; z-index: 0; background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px); background-size: 42px 42px; pointer-events: none; }
 
-.navbar { display: flex; align-items: center; justify-content: space-between; height: 72px; padding: 0 clamp(16px,4vw,48px); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 50; background: rgba(7,7,12,.75); backdrop-filter: blur(16px); }
-.nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; flex-shrink: 0; }
-.nav-brand img { width: 38px; height: 38px; border-radius: 10px; display: block; }
-.nav-brand span { font-family: "Rajdhani", sans-serif; font-weight: 800; font-size: 17px; text-transform: uppercase; letter-spacing: .01em; color: var(--text); white-space: nowrap; }
-.nav-links { display: flex; align-items: center; gap: 4px; }
-.nav-links a { color: var(--muted); text-decoration: none; font-family: "Rajdhani", sans-serif; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: .03em; padding: 8px 14px; border-radius: 8px; transition: color .15s, background .15s; }
-.nav-links a:hover { color: var(--text); background: rgba(255,255,255,.05); }
-.nav-links a.active { color: #fff; background: linear-gradient(135deg,var(--purple),var(--purple-dark)); }
-.nav-right { display: flex; align-items: center; gap: 10px; }
-.lang-select { background: rgba(255,255,255,.06); border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 8px 12px; font-family: "Rajdhani", sans-serif; font-weight: 700; font-size: 12px; cursor: pointer; }
-.nav-links-mobile-toggle { display: none; background: rgba(255,255,255,.06); border: 1px solid var(--line); color: var(--text); border-radius: 8px; width: 38px; height: 38px; font-size: 16px; cursor: pointer; }
 
 .main-wrap { max-width: 780px; margin: 0 auto; padding: clamp(50px,9vw,90px) 20px 40px; position: relative; z-index: 1; text-align: center; }
 .hero-logo { width: clamp(84px,14vw,120px); height: clamp(84px,14vw,120px); border-radius: 26px; margin: 0 auto 22px; display: block; box-shadow: 0 0 0 1px var(--line-strong), 0 20px 60px rgba(124,58,237,.35); }
@@ -91,12 +81,6 @@ h1 { font-size: clamp(34px,7vw,54px); font-weight: 800; text-transform: uppercas
 footer { text-align: center; padding: 40px 20px 60px; color: var(--muted); font-size: 12px; position: relative; z-index: 1; }
 footer a { color: var(--purple-light); text-decoration: none; }
 
-@media (max-width: 720px) {
-    .nav-links { display: none; }
-    .nav-links-mobile-toggle { display: flex; align-items: center; justify-content: center; }
-    .nav-links.open { display: flex; position: absolute; top: 72px; left: 0; right: 0; flex-direction: column; background: rgba(7,7,12,.97); backdrop-filter: blur(16px); padding: 10px; border-bottom: 1px solid var(--line); gap: 2px; }
-    .nav-links.open a { width: 100%; text-align: center; padding: 12px; }
-}
 @media (max-width: 480px) {
     .dl-card { flex-direction: column; text-align: center; }
     .dl-info { text-align: center; }
@@ -108,24 +92,30 @@ footer a { color: var(--purple-light); text-decoration: none; }
 <div class="bg-glow"><span class="g1"></span><span class="g2"></span><span class="g3"></span></div>
 <div class="grid-overlay"></div>
 
-<div class="navbar">
-    <a class="nav-brand" href="https://dreamlegacyrp.xyz">
-        <img src="/dlrp-logo.png" alt="DLRP">
+<div class="dl-navbar">
+    <a class="dl-brand" href="https://dreamlegacyrp.xyz">
+        <img src="https://files.dreamlegacyrp.xyz/branding/dlrp-logo.png" alt="DLRP">
         <span>Dream Legacy RP</span>
     </a>
-    <nav class="nav-links" id="nav-links">
+    <nav class="dl-nav-links" id="dl-nav-links">
         <a href="https://dreamlegacyrp.xyz">Main Site</a>
         <a href="https://panel.dreamlegacyrp.xyz">Panel</a>
         <a href="https://downloads.dreamlegacyrp.xyz" class="active">Downloads</a>
         <a href="https://links.dreamlegacyrp.xyz">Links</a>
     </nav>
-    <div class="nav-right">
-        <select class="lang-select" id="lang-select" onchange="setLang(this.value)">
-            <option value="en">EN</option>
-            <option value="fr">FR</option>
-            <option value="pt">PT</option>
-        </select>
-        <button class="nav-links-mobile-toggle" onclick="document.getElementById('nav-links').classList.toggle('open')">&#9776;</button>
+    <div class="dl-nav-right">
+        <div class="dl-lang" id="dl-lang">
+            <button type="button" class="dl-lang-btn" id="dl-lang-btn" aria-haspopup="listbox" aria-expanded="false">
+                <span id="dl-lang-current">EN</span>
+                <span class="dl-lang-arrow">&#9662;</span>
+            </button>
+            <ul class="dl-lang-menu hidden" id="dl-lang-menu" role="listbox">
+                <li role="option" data-lang="en" class="active">English</li>
+                <li role="option" data-lang="fr">Fran&ccedil;ais</li>
+                <li role="option" data-lang="pt">Portugu&ecirc;s</li>
+            </ul>
+        </div>
+        <button class="dl-nav-mobile-toggle" id="dl-nav-mobile-toggle">&#9776;</button>
     </div>
 </div>
 
@@ -217,14 +207,22 @@ function initDownloadButtons() {
     }
 }
 
+window.onDlLangChange = setLang;
+
 (function init() {
     var saved = localStorage.getItem("dlrp_lang");
     var browserLang = (navigator.language || "en").slice(0, 2);
     var lang = saved || (I18N[browserLang] ? browserLang : "en");
-    document.getElementById("lang-select").value = lang;
+    var currentEl = document.getElementById("dl-lang-current");
+    if (currentEl) currentEl.textContent = lang.toUpperCase();
+    var opts = document.querySelectorAll("#dl-lang-menu [data-lang]");
+    for (var i = 0; i < opts.length; i++) {
+        opts[i].classList.toggle("active", opts[i].getAttribute("data-lang") === lang);
+    }
     setLang(lang);
     initDownloadButtons();
 })();
 </script>
+<script src="https://files.dreamlegacyrp.xyz/js/global.js"></script>
 </body>
 </html>
