@@ -3,82 +3,150 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>DLRP | Downloads</title>
-<link rel="icon" href="https://dreamlegacyrp.xyz/assets/img/dlrp.png">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-<style>
-/* ============================================================
-   CONFIGURA AQUÍ los enlaces reales de descarga (Drive, Mega,
-   tu propio servidor, lo que uses). En cuanto tengas el archivo
-   BLUS/NPUB listo, cambia BLUS_READY a true y pon su enlace.
-   ============================================================ */
-</style>
+<title>Dream Legacy RP | Downloads</title>
+<meta name="description" content="Download the client package to join Dream Legacy RP — GTA V PS3 roleplay.">
+
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png">
+<link rel="apple-touch-icon" href="/favicon-512.png">
+
+<meta property="og:title" content="Dream Legacy RP — Downloads">
+<meta property="og:description" content="Download the client package to join Dream Legacy RP — GTA V PS3 roleplay.">
+<meta property="og:image" content="https://downloads.dreamlegacyrp.xyz/dlrp-logo.png">
+<meta property="og:url" content="https://downloads.dreamlegacyrp.xyz">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dream Legacy RP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Dream Legacy RP — Downloads">
+<meta name="twitter:description" content="Download the client package to join Dream Legacy RP — GTA V PS3 roleplay.">
+<meta name="twitter:image" content="https://downloads.dreamlegacyrp.xyz/dlrp-logo.png">
+<meta name="theme-color" content="#7c3aed">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700;800&display=swap" rel="stylesheet">
+
 <script>
-var BLES_DOWNLOAD_URL = "https://example.com/DreamLegacyRP-BLES-NPEB.pkg";
+var BLES_DOWNLOAD_URL = "https://files.dreamlegacyrp.xyz/downloads/DreamLegacyRP-BLES-NPEB.pkg";
 var BLUS_READY = false;
 var BLUS_DOWNLOAD_URL = "";
 </script>
+
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-    --bg: #090a0d; --surface: rgba(18, 22, 29, 0.78); --line: rgba(255, 255, 255, 0.10);
-    --line-strong: rgba(120, 168, 255, 0.35); --text: #f4f7fb; --muted: #aab3c2;
-    --blue: #2f73ff; --blue-dark: #1746a8; --mint: #59f0a7; --radius: 14px;
+    --bg: #07070c; --surface: rgba(20, 16, 32, 0.72); --surface-solid: #14101f;
+    --line: rgba(255, 255, 255, 0.10); --line-strong: rgba(168, 110, 255, 0.45);
+    --text: #f6f4fb; --muted: #a8a2b8;
+    --purple: #7c3aed; --purple-dark: #4c1d95; --purple-light: #a78bfa;
+    --orange: #f97316; --cyan: #22d3ee; --mint: #34d399;
+    --radius: 18px;
 }
-body { background: var(--bg); color: var(--text); font-family: "Inter", -apple-system, sans-serif; min-height: 100vh; }
-.glow { position: fixed; top: -300px; left: 50%; transform: translateX(-50%); width: 800px; height: 800px; border-radius: 50%; background: radial-gradient(circle, rgba(47,115,255,.16) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: "Inter", -apple-system, sans-serif; min-height: 100vh; overflow-x: hidden; }
+h1, h2 { font-family: "Rajdhani", sans-serif; }
 
-.topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px clamp(18px,4vw,48px); border-bottom: 1px solid var(--line); position: relative; z-index: 5; }
-.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-.brand-badge { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg,var(--blue),var(--blue-dark)); font-weight: 800; font-size: 12px; color: #fff; }
-.brand-title { font-size: 18px; font-weight: 800; text-transform: uppercase; color: var(--text); }
-.lang-select { background: rgba(255,255,255,.06); border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 7px 12px; font-family: "Rajdhani", sans-serif; font-weight: 700; font-size: 13px; cursor: pointer; }
+.bg-glow { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.bg-glow span { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .35; }
+.bg-glow .g1 { width: 560px; height: 560px; background: var(--purple); top: -220px; left: -140px; animation: float1 16s ease-in-out infinite; }
+.bg-glow .g2 { width: 480px; height: 480px; background: var(--orange); bottom: -200px; right: -120px; animation: float2 20s ease-in-out infinite; }
+.bg-glow .g3 { width: 380px; height: 380px; background: var(--cyan); top: 40%; left: 50%; opacity: .18; animation: float1 24s ease-in-out infinite reverse; }
+@keyframes float1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(60px,40px); } }
+@keyframes float2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-50px,-30px); } }
+.grid-overlay { position: fixed; inset: 0; z-index: 0; background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px); background-size: 42px 42px; pointer-events: none; }
 
-.main-wrap { max-width: 720px; margin: 0 auto; padding: 60px 20px; position: relative; z-index: 1; text-align: center; }
-h1 { font-family: "Rajdhani", sans-serif; font-size: clamp(32px,6vw,48px); font-weight: 800; text-transform: uppercase; margin-bottom: 12px; }
-.lead { color: var(--muted); font-size: 15px; max-width: 480px; margin: 0 auto 40px; line-height: 1.6; }
+.navbar { display: flex; align-items: center; justify-content: space-between; height: 72px; padding: 0 clamp(16px,4vw,48px); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 50; background: rgba(7,7,12,.75); backdrop-filter: blur(16px); }
+.nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; flex-shrink: 0; }
+.nav-brand img { width: 38px; height: 38px; border-radius: 10px; display: block; }
+.nav-brand span { font-family: "Rajdhani", sans-serif; font-weight: 800; font-size: 17px; text-transform: uppercase; letter-spacing: .01em; color: var(--text); white-space: nowrap; }
+.nav-links { display: flex; align-items: center; gap: 4px; }
+.nav-links a { color: var(--muted); text-decoration: none; font-family: "Rajdhani", sans-serif; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: .03em; padding: 8px 14px; border-radius: 8px; transition: color .15s, background .15s; }
+.nav-links a:hover { color: var(--text); background: rgba(255,255,255,.05); }
+.nav-links a.active { color: #fff; background: linear-gradient(135deg,var(--purple),var(--purple-dark)); }
+.nav-right { display: flex; align-items: center; gap: 10px; }
+.lang-select { background: rgba(255,255,255,.06); border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 8px 12px; font-family: "Rajdhani", sans-serif; font-weight: 700; font-size: 12px; cursor: pointer; }
+.nav-links-mobile-toggle { display: none; background: rgba(255,255,255,.06); border: 1px solid var(--line); color: var(--text); border-radius: 8px; width: 38px; height: 38px; font-size: 16px; cursor: pointer; }
 
-.cards { display: grid; gap: 16px; }
-.dl-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px 24px; text-align: left; display: flex; align-items: center; gap: 18px; }
-.dl-icon { width: 52px; height: 52px; border-radius: 12px; background: linear-gradient(135deg,var(--blue),var(--blue-dark)); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
-.dl-info { flex: 1; }
-.dl-region { font-family: "Rajdhani", sans-serif; font-weight: 800; font-size: 19px; text-transform: uppercase; margin-bottom: 2px; }
+.main-wrap { max-width: 780px; margin: 0 auto; padding: clamp(50px,9vw,90px) 20px 40px; position: relative; z-index: 1; text-align: center; }
+.hero-logo { width: clamp(84px,14vw,120px); height: clamp(84px,14vw,120px); border-radius: 26px; margin: 0 auto 22px; display: block; box-shadow: 0 0 0 1px var(--line-strong), 0 20px 60px rgba(124,58,237,.35); }
+.eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border-radius: 999px; background: rgba(124,58,237,.14); border: 1px solid var(--line-strong); color: var(--purple-light); font-family: "Rajdhani", sans-serif; font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 18px; }
+h1 { font-size: clamp(34px,7vw,54px); font-weight: 800; text-transform: uppercase; line-height: 1.05; margin-bottom: 14px; background: linear-gradient(135deg, #fff 30%, var(--purple-light) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.lead { color: var(--muted); font-size: clamp(14px,2.4vw,16px); max-width: 520px; margin: 0 auto 44px; line-height: 1.65; }
+
+.cards { display: grid; gap: 18px; }
+.dl-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(20px,3.5vw,30px); text-align: left; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; position: relative; overflow: hidden; transition: border-color .2s, transform .2s; }
+.dl-card:hover { border-color: var(--line-strong); transform: translateY(-2px); }
+.dl-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--purple-light), transparent); opacity: 0; transition: opacity .2s; }
+.dl-card:hover::before { opacity: 1; }
+.dl-flag { width: 60px; height: 60px; border-radius: 16px; background: linear-gradient(135deg,var(--purple),var(--purple-dark)); display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; box-shadow: 0 10px 24px rgba(124,58,237,.3); }
+.dl-info { flex: 1; min-width: 180px; }
+.dl-region { font-family: "Rajdhani", sans-serif; font-weight: 800; font-size: clamp(18px,3vw,21px); text-transform: uppercase; margin-bottom: 3px; letter-spacing: .02em; }
 .dl-desc { color: var(--muted); font-size: 13px; }
-.dl-btn { padding: 12px 22px; border-radius: 10px; font-family: "Rajdhani", sans-serif; font-weight: 700; font-size: 13px; text-transform: uppercase; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
-.dl-btn.active { background: linear-gradient(135deg,var(--blue),var(--blue-dark)); color: #fff; }
-.dl-btn.disabled { background: rgba(255,255,255,.05); color: var(--muted); cursor: not-allowed; border: 1px solid var(--line); }
+.dl-btn { padding: 13px 26px; border-radius: 12px; font-family: "Rajdhani", sans-serif; font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: .03em; text-decoration: none; white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 8px; }
+.dl-btn.active { background: linear-gradient(135deg,var(--purple),var(--purple-dark)); color: #fff; box-shadow: 0 10px 26px rgba(124,58,237,.35); }
+.dl-btn.active:hover { filter: brightness(1.1); }
+.dl-btn.disabled { background: rgba(255,255,255,.04); color: var(--muted); cursor: not-allowed; border: 1px solid var(--line); }
 
-.note { margin-top: 32px; font-size: 12px; color: var(--muted); }
+.note { margin-top: 36px; font-size: 12.5px; color: var(--muted); line-height: 1.6; max-width: 480px; margin-left: auto; margin-right: auto; }
+.note strong { color: var(--text); }
+
+footer { text-align: center; padding: 40px 20px 60px; color: var(--muted); font-size: 12px; position: relative; z-index: 1; }
+footer a { color: var(--purple-light); text-decoration: none; }
+
+@media (max-width: 720px) {
+    .nav-links { display: none; }
+    .nav-links-mobile-toggle { display: flex; align-items: center; justify-content: center; }
+    .nav-links.open { display: flex; position: absolute; top: 72px; left: 0; right: 0; flex-direction: column; background: rgba(7,7,12,.97); backdrop-filter: blur(16px); padding: 10px; border-bottom: 1px solid var(--line); gap: 2px; }
+    .nav-links.open a { width: 100%; text-align: center; padding: 12px; }
+}
+@media (max-width: 480px) {
+    .dl-card { flex-direction: column; text-align: center; }
+    .dl-info { text-align: center; }
+    .dl-btn { width: 100%; justify-content: center; }
+}
 </style>
 </head>
 <body>
-<div class="glow"></div>
+<div class="bg-glow"><span class="g1"></span><span class="g2"></span><span class="g3"></span></div>
+<div class="grid-overlay"></div>
 
-<div class="topbar">
-    <a class="brand" href="https://dreamlegacyrp.xyz"><span class="brand-badge">DLRP</span><span class="brand-title" data-i18n="title">Downloads</span></a>
-    <select class="lang-select" id="lang-select" onchange="setLang(this.value)">
-        <option value="en">English</option>
-        <option value="fr">Français</option>
-        <option value="pt">Português</option>
-    </select>
+<div class="navbar">
+    <a class="nav-brand" href="https://dreamlegacyrp.xyz">
+        <img src="/dlrp-logo.png" alt="DLRP">
+        <span>Dream Legacy RP</span>
+    </a>
+    <nav class="nav-links" id="nav-links">
+        <a href="https://dreamlegacyrp.xyz">Main Site</a>
+        <a href="https://panel.dreamlegacyrp.xyz">Panel</a>
+        <a href="https://downloads.dreamlegacyrp.xyz" class="active">Downloads</a>
+        <a href="https://links.dreamlegacyrp.xyz">Links</a>
+    </nav>
+    <div class="nav-right">
+        <select class="lang-select" id="lang-select" onchange="setLang(this.value)">
+            <option value="en">EN</option>
+            <option value="fr">FR</option>
+            <option value="pt">PT</option>
+        </select>
+        <button class="nav-links-mobile-toggle" onclick="document.getElementById('nav-links').classList.toggle('open')">&#9776;</button>
+    </div>
 </div>
 
 <div class="main-wrap">
+    <img class="hero-logo" src="/dlrp-logo.png" alt="Dream Legacy RP">
+    <div class="eyebrow" data-i18n="eyebrow">PS3 &middot; GTA V Roleplay</div>
     <h1 data-i18n="heading">Server Files</h1>
     <p class="lead" data-i18n="lead">Download the package needed to connect to Dream Legacy RP, based on your PS3's region.</p>
 
     <div class="cards">
         <div class="dl-card">
-            <div class="dl-icon">&#127466;&#127482;</div>
+            <div class="dl-flag">&#127466;&#127482;</div>
             <div class="dl-info">
                 <div class="dl-region">BLES / NPEB</div>
                 <div class="dl-desc" data-i18n="europeDesc">European region PS3 consoles</div>
             </div>
-            <a class="dl-btn active" id="bles-btn" href="#" data-i18n="download">Download</a>
+            <a class="dl-btn active" id="bles-btn" href="#" data-i18n="download">&#11015; Download</a>
         </div>
 
         <div class="dl-card">
-            <div class="dl-icon">&#127482;&#127480;</div>
+            <div class="dl-flag">&#127482;&#127480;</div>
             <div class="dl-info">
                 <div class="dl-region">BLUS / NPUB</div>
                 <div class="dl-desc" data-i18n="usDesc">US region PS3 consoles</div>
@@ -87,31 +155,38 @@ h1 { font-family: "Rajdhani", sans-serif; font-size: clamp(32px,6vw,48px); font-
         </div>
     </div>
 
-    <p class="note" data-i18n="note">Not sure which region your console is? Check the disc/game case — European copies show "BLES" or "NPEB", US copies show "BLUS" or "NPUB".</p>
+    <p class="note" data-i18n="note">Not sure which region your console is? Check the disc/game case — <strong>European</strong> copies show "BLES" or "NPEB", <strong>US</strong> copies show "BLUS" or "NPUB".</p>
 </div>
+
+<footer>
+    <span data-i18n="footer">Dream Legacy RP &middot; Not affiliated with Rockstar Games or Sony.</span>
+</footer>
 
 <script>
 var I18N = {
     en: {
-        title: "Downloads", heading: "Server Files",
+        eyebrow: "PS3 · GTA V Roleplay", heading: "Server Files",
         lead: "Download the package needed to connect to Dream Legacy RP, based on your PS3's region.",
         europeDesc: "European region PS3 consoles", usDesc: "US region PS3 consoles",
-        download: "Download", comingSoon: "Coming Soon",
-        note: "Not sure which region your console is? Check the disc/game case — European copies show \"BLES\" or \"NPEB\", US copies show \"BLUS\" or \"NPUB\"."
+        download: "\u2b07 Download", comingSoon: "Coming Soon",
+        note: "Not sure which region your console is? Check the disc/game case — <strong>European</strong> copies show \"BLES\" or \"NPEB\", <strong>US</strong> copies show \"BLUS\" or \"NPUB\".",
+        footer: "Dream Legacy RP · Not affiliated with Rockstar Games or Sony."
     },
     fr: {
-        title: "Téléchargements", heading: "Fichiers du serveur",
+        eyebrow: "PS3 · GTA V Roleplay", heading: "Fichiers du serveur",
         lead: "Téléchargez le package nécessaire pour vous connecter à Dream Legacy RP, selon la région de votre PS3.",
         europeDesc: "Consoles PS3 région Europe", usDesc: "Consoles PS3 région US",
-        download: "Télécharger", comingSoon: "Bientôt disponible",
-        note: "Vous ne savez pas quelle est la région de votre console ? Regardez le disque/boîtier du jeu — les copies européennes affichent \"BLES\" ou \"NPEB\", les copies américaines affichent \"BLUS\" ou \"NPUB\"."
+        download: "\u2b07 Télécharger", comingSoon: "Bientôt disponible",
+        note: "Vous ne savez pas quelle est la région de votre console ? Regardez le disque/boîtier du jeu — les copies <strong>européennes</strong> affichent \"BLES\" ou \"NPEB\", les copies <strong>américaines</strong> affichent \"BLUS\" ou \"NPUB\".",
+        footer: "Dream Legacy RP · Non affilié à Rockstar Games ou Sony."
     },
     pt: {
-        title: "Downloads", heading: "Arquivos do servidor",
+        eyebrow: "PS3 · GTA V Roleplay", heading: "Arquivos do servidor",
         lead: "Baixe o pacote necessário para se conectar ao Dream Legacy RP, de acordo com a região do seu PS3.",
         europeDesc: "Consoles PS3 região Europa", usDesc: "Consoles PS3 região EUA",
-        download: "Baixar", comingSoon: "Em breve",
-        note: "Não sabe qual é a região do seu console? Confira o disco/caixa do jogo — cópias europeias mostram \"BLES\" ou \"NPEB\", cópias americanas mostram \"BLUS\" ou \"NPUB\"."
+        download: "\u2b07 Baixar", comingSoon: "Em breve",
+        note: "Não sabe qual é a região do seu console? Confira o disco/caixa do jogo — cópias <strong>europeias</strong> mostram \"BLES\" ou \"NPEB\", cópias <strong>americanas</strong> mostram \"BLUS\" ou \"NPUB\".",
+        footer: "Dream Legacy RP · Não afiliado à Rockstar Games ou Sony."
     }
 };
 
@@ -120,10 +195,10 @@ function setLang(lang) {
     var els = document.querySelectorAll("[data-i18n]");
     for (var i = 0; i < els.length; i++) {
         var key = els[i].getAttribute("data-i18n");
-        if (dict[key]) els[i].textContent = dict[key];
+        if (dict[key]) els[i].innerHTML = dict[key];
     }
     document.documentElement.lang = lang;
-    localStorage.setItem("dlrp_downloads_lang", lang);
+    localStorage.setItem("dlrp_lang", lang);
 }
 
 function initDownloadButtons() {
@@ -136,14 +211,14 @@ function initDownloadButtons() {
         blusBtn.classList.remove("disabled");
         blusBtn.classList.add("active");
         blusBtn.removeAttribute("data-i18n");
-        blusBtn.textContent = I18N[document.documentElement.lang || "en"].download;
+        blusBtn.innerHTML = I18N[document.documentElement.lang || "en"].download;
     } else {
         blusBtn.addEventListener("click", function(e) { e.preventDefault(); });
     }
 }
 
 (function init() {
-    var saved = localStorage.getItem("dlrp_downloads_lang");
+    var saved = localStorage.getItem("dlrp_lang");
     var browserLang = (navigator.language || "en").slice(0, 2);
     var lang = saved || (I18N[browserLang] ? browserLang : "en");
     document.getElementById("lang-select").value = lang;

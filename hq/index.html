@@ -3,8 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>DLRP | HQ</title>
-<link rel="icon" href="https://dreamlegacyrp.xyz/assets/img/dlrp.png">
+<title>Dream Legacy RP — HQ</title>
+<meta name="description" content="Dream Legacy RP department headquarters — LSPD, EMS, and more.">
+<link rel="icon" type="image/png" href="https://dreamlegacyrp.xyz/assets/img/dlrp.png">
+<link rel="apple-touch-icon" href="https://dreamlegacyrp.xyz/assets/img/dlrp.png">
+
+<meta property="og:title" content="Dream Legacy RP — HQ">
+<meta property="og:description" content="Department headquarters — LSPD, EMS, and more.">
+<meta property="og:image" content="https://dreamlegacyrp.xyz/assets/img/dlrp.png">
+<meta property="og:url" content="https://hq.dreamlegacyrp.xyz">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dream Legacy RP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Dream Legacy RP — HQ">
+<meta name="twitter:description" content="Department headquarters — LSPD, EMS, and more.">
+<meta name="twitter:image" content="https://dreamlegacyrp.xyz/assets/img/dlrp.png">
+<meta name="theme-color" content="#2f73ff">
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -14,14 +29,20 @@
     --blue: #2f73ff; --blue-dark: #1746a8; --cyan: #36d6ff; --mint: #59f0a7;
     --amber: #ffd166; --red: #ff4f64; --radius: 10px;
 }
-body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; }
 h1, h2, h3 { font-family: 'Rajdhani', sans-serif; }
 .glow { position: fixed; top: -300px; left: -300px; width: 700px; height: 700px; border-radius: 50%; background: radial-gradient(circle, rgba(47,115,255,.14) 0%, transparent 70%); pointer-events: none; z-index: 0; }
 
-.topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px clamp(18px,4vw,48px); border-bottom: 1px solid var(--line); background: rgba(9,10,13,.82); backdrop-filter: blur(18px); position: relative; z-index: 5; }
-.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-.brand-badge { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg,var(--blue),var(--blue-dark)); font-weight: 800; font-size: 12px; color: #fff; }
-.brand-title { font-size: 18px; font-weight: 800; text-transform: uppercase; }
+.navbar { display: flex; align-items: center; justify-content: space-between; height: 72px; padding: 0 clamp(16px,4vw,48px); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 50; background: rgba(9,10,13,.82); backdrop-filter: blur(18px); }
+.nav-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; flex-shrink: 0; }
+.nav-brand img { width: 38px; height: 38px; border-radius: 10px; display: block; }
+.nav-brand span { font-family: 'Rajdhani', sans-serif; font-weight: 800; font-size: 17px; text-transform: uppercase; letter-spacing: .01em; color: var(--text); white-space: nowrap; }
+.nav-links { display: flex; align-items: center; gap: 4px; }
+.nav-links a { color: var(--muted); text-decoration: none; font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: .03em; padding: 8px 14px; border-radius: 8px; transition: color .15s, background .15s; }
+.nav-links a:hover { color: var(--text); background: rgba(255,255,255,.05); }
+.nav-links a.active { color: #fff; background: linear-gradient(135deg,var(--blue),var(--blue-dark)); }
+.nav-right { display: flex; align-items: center; gap: 10px; }
+.nav-links-mobile-toggle { display: none; background: rgba(255,255,255,.06); border: 1px solid var(--line); color: var(--text); border-radius: 8px; width: 38px; height: 38px; font-size: 16px; cursor: pointer; }
 .user-chip { display: flex; align-items: center; gap: 8px; }
 .user-chip img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
 .logout-btn { background: none; border: 1px solid var(--line); color: var(--muted); padding: 7px 14px; border-radius: var(--radius); cursor: pointer; font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 12px; text-transform: uppercase; }
@@ -35,26 +56,26 @@ h1, h2, h3 { font-family: 'Rajdhani', sans-serif; }
 .btn.small { padding: 7px 14px; font-size: 12px; }
 .btn.red { border-color: rgba(255,79,100,.35); color: var(--red); background: rgba(255,79,100,.08); }
 
-.dept-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+.dept-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; flex-wrap: wrap; }
 .dept-header .dh-icon { font-size: 36px; }
 .dept-header h1 { font-size: 26px; text-transform: uppercase; }
 .dept-header .dh-rank { color: var(--muted); font-size: 13px; }
 
-.tabs { display: flex; gap: 6px; padding: 5px; border: 1px solid var(--line); border-radius: var(--radius); background: rgba(255,255,255,.04); max-width: fit-content; margin-bottom: 24px; }
-.tab-btn { border: 0; background: transparent; color: var(--muted); font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: .03em; text-transform: uppercase; padding: 9px 18px; border-radius: 6px; cursor: pointer; }
+.tabs { display: flex; gap: 6px; padding: 5px; border: 1px solid var(--line); border-radius: var(--radius); background: rgba(255,255,255,.04); max-width: fit-content; margin-bottom: 24px; overflow-x: auto; }
+.tab-btn { border: 0; background: transparent; color: var(--muted); font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: .03em; text-transform: uppercase; padding: 9px 18px; border-radius: 6px; cursor: pointer; white-space: nowrap; }
 .tab-btn.active { background: linear-gradient(135deg,var(--blue),var(--blue-dark)); color: #fff; }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
 
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; margin-bottom: 12px; padding: 16px 18px; }
-.roster-row { display: flex; align-items: center; gap: 12px; }
+.roster-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .roster-row img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: var(--blue); }
 .roster-info { flex: 1; min-width: 0; }
 .roster-name { font-weight: 600; }
 .roster-role { font-size: 12px; color: var(--cyan); }
-.roster-actions { display: flex; gap: 6px; }
+.roster-actions { display: flex; gap: 6px; flex-wrap: wrap; }
 
-.vehicle-row { display: flex; align-items: center; gap: 14px; }
+.vehicle-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 .vehicle-icon { font-size: 26px; width: 36px; text-align: center; }
 .vehicle-info { flex: 1; }
 .vehicle-name { font-weight: 600; }
@@ -66,7 +87,7 @@ h1, h2, h3 { font-family: 'Rajdhani', sans-serif; }
 .announcement-meta { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
 .announcement-body { font-size: 13px; color: var(--text); white-space: pre-wrap; line-height: 1.5; }
 
-.alert-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.alert-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
 .alert-loc { font-weight: 700; color: var(--amber); }
 .alert-meta { font-size: 12px; color: var(--muted); }
 
@@ -77,17 +98,41 @@ h1, h2, h3 { font-family: 'Rajdhani', sans-serif; }
 .form-field input, .form-field textarea { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--line); background: rgba(255,255,255,.05); color: var(--text); font-size: 14px; font-family: inherit; outline: none; }
 .form-field textarea { min-height: 90px; resize: vertical; }
 .hidden { display: none !important; }
+
+@media (max-width: 720px) {
+    .nav-links { display: none; }
+    .nav-links-mobile-toggle { display: flex; align-items: center; justify-content: center; }
+    .nav-links.open { display: flex; position: absolute; top: 72px; left: 0; right: 0; flex-direction: column; background: rgba(9,10,13,.97); backdrop-filter: blur(16px); padding: 10px; border-bottom: 1px solid var(--line); gap: 2px; z-index: 60; }
+    .nav-links.open a { width: 100%; text-align: center; padding: 12px; }
+}
+@media (max-width: 480px) {
+    #dept-switcher { margin-left: 0 !important; width: 100%; }
+    .roster-actions button { flex: 1; }
+}
 </style>
 </head>
 <body>
 <div class="glow"></div>
 
-<div class="topbar">
-    <a class="brand" href="#"><span class="brand-badge">DLRP</span><span class="brand-title">HQ</span></a>
-    <div class="user-chip hidden" id="user-chip">
-        <img id="user-avatar" src="" alt="">
-        <span id="user-name">-</span>
-        <button class="logout-btn" onclick="logout()">Log Out</button>
+<div class="navbar">
+    <a class="nav-brand" href="https://dreamlegacyrp.xyz">
+        <img src="https://dreamlegacyrp.xyz/assets/img/dlrp.png" alt="DLRP">
+        <span>Dream Legacy RP</span>
+    </a>
+    <nav class="nav-links" id="nav-links">
+        <a href="https://dreamlegacyrp.xyz">Main Site</a>
+        <a href="https://panel.dreamlegacyrp.xyz">Panel</a>
+        <a href="https://hq.dreamlegacyrp.xyz" class="active">HQ</a>
+        <a href="https://downloads.dreamlegacyrp.xyz">Downloads</a>
+        <a href="https://links.dreamlegacyrp.xyz">Links</a>
+    </nav>
+    <div class="nav-right">
+        <div class="user-chip hidden" id="user-chip">
+            <img id="user-avatar" src="" alt="">
+            <span id="user-name">-</span>
+            <button class="logout-btn" onclick="logout()">Log Out</button>
+        </div>
+        <button class="nav-links-mobile-toggle" onclick="document.getElementById('nav-links').classList.toggle('open')">&#9776;</button>
     </div>
 </div>
 
