@@ -789,6 +789,25 @@ window.dlrpBridge = {
         if (!token) return Promise.reject(new Error("Not logged in."));
         return api("/api/gram/dm/thread", "POST", { key: token, otherRpName: otherRpName }).then(function(r) { return r.messages; });
     },
+    getMyVehicles: function() {
+        var token = getSessionToken();
+        if (!token) return Promise.reject(new Error("Not logged in."));
+        return api("/api/vehicles/mine", "POST", { key: token }).then(function(r) { return r.vehicles; });
+    },
+    sellVehicle: function(vehicleId) {
+        var token = getSessionToken();
+        if (!token) return Promise.reject(new Error("Not logged in."));
+        return api("/api/vehicles/sell", "POST", { key: token, vehicleId: vehicleId }).then(function(res) {
+            var d = getUD();
+            if (d) d.bank = (d.bank || 0) + res.sellPrice;
+            return res;
+        });
+    },
+    renewInsurance: function(vehicleId, cost) {
+        var token = getSessionToken();
+        if (!token) return Promise.reject(new Error("Not logged in."));
+        return api("/api/vehicles/renew-insurance", "POST", { key: token, vehicleId: vehicleId, cost: cost });
+    },
     getGalleryPhotos: function() {
         var token = getSessionToken();
         if (!token) return Promise.reject(new Error("Not logged in."));

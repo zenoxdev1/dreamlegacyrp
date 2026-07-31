@@ -123,9 +123,13 @@ export async function getProfileByToken(env, token) {
 const ALLOWED_ORIGINS = [
     "https://dreamlegacyrp.xyz",
     "https://www.dreamlegacyrp.xyz",
-    "https://panel.dreamlegacyrp.xyz",
+    "https://dreamos.dreamlegacyrp.xyz",
     "https://hq.dreamlegacyrp.xyz",
-    "https://admin.dreamlegacyrp.xyz"
+    "https://admin.dreamlegacyrp.xyz",
+    "https://downloads.dreamlegacyrp.xyz",
+    "https://links.dreamlegacyrp.xyz",
+    "https://donate.dreamlegacyrp.xyz",
+    "https://ps3.dreamlegacyrp.xyz"
 ];
 
 export function corsHeaders(request) {

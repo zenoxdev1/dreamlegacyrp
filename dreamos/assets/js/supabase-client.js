@@ -317,6 +317,34 @@ function api(path, method, body) {
         });
     }
 
+    if (path === "/api/vehicles/buy") {
+        return sb.rpc("dlrp_buy_vehicle", { p_token: body.key, p_model: body.model, p_vehicle_type: body.vehicleType, p_price: body.price }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
+    if (path === "/api/vehicles/mine") {
+        return sb.rpc("dlrp_get_my_vehicles", { p_token: body.key }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return { vehicles: r.data };
+        });
+    }
+
+    if (path === "/api/vehicles/sell") {
+        return sb.rpc("dlrp_sell_vehicle", { p_token: body.key, p_vehicle_id: body.vehicleId }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
+    if (path === "/api/vehicles/renew-insurance") {
+        return sb.rpc("dlrp_renew_insurance", { p_token: body.key, p_vehicle_id: body.vehicleId, p_cost: body.cost }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
     return Promise.reject(new Error("Unknown endpoint: " + path));
 }
 

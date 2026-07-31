@@ -1,211 +1,108 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
-    />
-    <title>Vehicles</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      :root {
-        --purple: #7c3aed;
-        --purple-dark: #5b21b6;
-        --cyan: #06b6d4;
-        --mint: #34d399;
-        --bg: #0a0a0f;
-        --card: #13131a;
-        --card-border: rgba(124, 58, 237, 0.12);
-        --text: #e2e8f0;
-        --muted: #64748b;
-        --dim: #475569;
-        --red: #ef4444;
-        --green: #22c55e;
-        --yellow: #eab308;
-      }
-      html {
-        height: 100%;
-      }
-      body {
-        background: var(--bg);
-        color: var(--text);
-        font-family: "Inter", sans-serif;
-        min-height: 100%;
-        height: 100%;
-        overflow: hidden;
-        padding: 0;
-        margin: 0;
-      }
-      .app-header {
-        display: flex;
-        align-items: center;
-        padding: 6px 10px;
-        background: var(--card);
-        border-bottom: 1px solid var(--card-border);
-        gap: 8px;
-        position: sticky;
-        top: 0;
-        z-index: 10;
-      }
-      .app-header .ah-title {
-        font-family: "Rajdhani", sans-serif;
-        font-weight: 700;
-        font-size: 15px;
-        flex: 1;
-      }
-      .app-body {
-        overflow-y: auto;
-        padding: 8px 12px;
-        height: calc(100% - 40px);
-      }
-      .vehicle-card {
-        background: var(--card);
-        border: 1px solid var(--card-border);
-        border-radius: 14px;
-        padding: 14px;
-        margin-bottom: 10px;
-        display: flex;
-        align-items: center;
-        gap: 14px;
-      }
-      .vehicle-card .v-icon {
-        font-size: 32px;
-        width: 44px;
-        text-align: center;
-        flex-shrink: 0;
-      }
-      .vehicle-card .v-info {
-        flex: 1;
-        min-width: 0;
-      }
-      .vehicle-card .v-name {
-        font-size: 14px;
-        font-weight: 600;
-      }
-      .vehicle-card .v-plate {
-        font-family: "Rajdhani", sans-serif;
-        font-weight: 600;
-        font-size: 13px;
-        color: var(--cyan);
-        letter-spacing: 1px;
-        margin-top: 1px;
-      }
-      .vehicle-card .v-detail {
-        font-size: 11px;
-        color: var(--muted);
-        margin-top: 2px;
-      }
-      .vehicle-card .v-badge {
-        display: inline-block;
-        font-size: 9px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        padding: 2px 8px;
-        border-radius: 6px;
-        margin-left: 6px;
-        vertical-align: middle;
-      }
-      .vehicle-card .v-badge.insured {
-        background: rgba(6, 182, 212, 0.15);
-        color: var(--cyan);
-      }
-      .vehicle-card .v-badge.uninsured {
-        background: rgba(239, 68, 68, 0.15);
-        color: var(--red);
-      }
-      .empty-state {
-        text-align: center;
-        padding: 50px 20px;
-        color: var(--muted);
-        font-size: 13px;
-      }
-      .empty-state .empty-icon {
-        font-size: 44px;
-        margin-bottom: 10px;
-        opacity: 0.4;
-        display: block;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="app-header">
-      <span class="ah-title">&#128663; Vehicles</span>
-    </div>
-    <div class="app-body" id="app-body"></div>
-    <script>
-      var bridge =
-        (window.parent && window.parent.dlrpBridge) || window.dlrpBridge;
-      var VEHICLE_ICONS = {
-        car: "\u{1F697}",
-        truck: "\u{1F69A}",
-        suv: "\u{1F699}",
-        sports: "\u{1F3CE}\uFE0F",
-        motorcycle: "\u{1F3CD}\uFE0F",
-        bike: "\u{1F6B2}",
-        boat: "\u{26F5}",
-        plane: "\u{2708}\uFE0F",
-        helicopter: "\u{1F681}",
-        van: "\u{1F690}",
-        sedan: "\u{1F697}",
-        coupe: "\u{1F3CE}\uFE0F",
-        default: "\u{1F697}",
-      };
-      function render() {
-        var ud = bridge.getUD();
-        var body = document.getElementById("app-body");
-        var vehicles = ud && ud.vehicles ? ud.vehicles : [];
-        if (vehicles.length === 0) {
-          body.innerHTML =
-            '<div class="empty-state"><span class="empty-icon">&#128663;</span>No vehicles registered.</div>';
-          return;
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Vehicles</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet"><style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+    --purple: #7c3aed; --purple-dark: #5b21b6; --cyan: #06b6d4; --mint: #34d399;
+    --bg: #0a0a0f; --card: #13131a; --card-border: rgba(124,58,237,0.12);
+    --text: #e2e8f0; --muted: #64748b; --dim: #475569; --red: #ef4444;
+}
+html { height: 100%; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100%; height: 100%; overflow: hidden; padding: 0; margin: 0; }
+.app-header { display: flex; align-items: center; padding: 6px 10px; background: var(--card); border-bottom: 1px solid var(--card-border); gap: 8px; flex-shrink: 0; }
+.app-header .ah-title { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 15px; flex: 1; }
+.app-header button { background: none; border: 1px solid var(--card-border); color: var(--muted); border-radius: 8px; padding: 5px 10px; font-size: 11px; cursor: pointer; }
+.app-body { overflow-y: auto; padding: 10px; height: calc(100% - 43px); }
+
+.shop-note { background: rgba(124,58,237,.08); border: 1px solid var(--card-border); border-radius: 10px; padding: 10px 12px; font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+.shop-note a { color: var(--purple); font-weight: 600; }
+
+.vehicle-card { display: flex; align-items: center; gap: 12px; background: var(--card); border: 1px solid var(--card-border); border-radius: 14px; padding: 14px; margin-bottom: 10px; flex-wrap: wrap; }
+.v-icon { font-size: 28px; width: 40px; text-align: center; flex-shrink: 0; }
+.v-info { flex: 1; min-width: 160px; }
+.v-name { font-weight: 600; font-size: 14px; }
+.v-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.v-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; margin-top: 3px; display: inline-block; }
+.v-badge.good { color: var(--mint); }
+.v-badge.bad { color: var(--red); }
+.v-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.v-btn { background: none; border: 1px solid var(--card-border); color: var(--muted); border-radius: 8px; padding: 6px 10px; font-size: 11px; cursor: pointer; }
+.v-btn.sell { color: var(--red); }
+.v-btn.renew { color: var(--mint); }
+
+.empty-state { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 13px; }
+.empty-icon { font-size: 40px; margin-bottom: 8px; opacity: .4; display: block; }
+</style></head>
+<body>
+<div class="app-header"><span class="ah-title">&#128663; Vehicles</span><button onclick="loadVehicles()">Refresh</button></div>
+<div class="app-body" id="app-body"></div>
+
+<script>
+var bridge = (window.parent && window.parent.dlrpBridge) || window.dlrpBridge;
+var VEHICLE_ICONS = { car: "\u{1F697}", truck: "\u{1F69A}", suv: "\u{1F699}", sports: "\u{1F3CE}\uFE0F", motorcycle: "\u{1F3CD}\uFE0F", bike: "\u{1F6B2}", van: "\u{1F690}", sedan: "\u{1F697}", coupe: "\u{1F3CE}\uFE0F", "default": "\u{1F697}" };
+
+function getVehicleIcon(type) { return VEHICLE_ICONS[type] || VEHICLE_ICONS["default"]; }
+function formatNum(n) { return Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+
+function loadVehicles() {
+    var body = document.getElementById("app-body");
+    body.innerHTML = '<div class="empty-state">Loading...</div>';
+    bridge.getMyVehicles().then(function(vehicles) {
+        var html = '<div class="shop-note">Want to buy a vehicle? Head to <a href="https://shop.dreamlegacyrp.xyz" target="_blank">the Shop</a> on your browser.</div>';
+        if (!vehicles || vehicles.length === 0) {
+            html += '<div class="empty-state"><span class="empty-icon">&#128663;</span>No vehicles registered yet.</div>';
+            body.innerHTML = html;
+            return;
         }
-        var html = "";
         for (var i = 0; i < vehicles.length; i++) {
-          var v = vehicles[i];
-          var icon = getVehicleIcon(v.type || v.class || "default");
-          var insured = v.insured === true || v.insured === "true";
-          var badge = insured
-            ? '<span class="v-badge insured">Insured</span>'
-            : '<span class="v-badge uninsured">Uninsured</span>';
-          var color = v.color ? v.color : "N/A";
-          var model = v.model || v.name || "Vehicle";
-          html +=
-            '<div class="vehicle-card">' +
-            '<div class="v-icon">' +
-            icon +
-            "</div>" +
-            '<div class="v-info">' +
-            '<div class="v-name">' +
-            bridge.esc(model) +
-            badge +
-            "</div>" +
-            '<div class="v-plate">' +
-            bridge.esc(v.plate || "NO PLATE") +
-            "</div>" +
-            '<div class="v-detail">' +
-            bridge.esc(color) +
-            "</div>" +
-            "</div>" +
-            "</div>";
+            var v = vehicles[i];
+            var badge = v.insuranceActive
+                ? '<span class="v-badge good">Insured until ' + new Date(v.insuranceExpires).toLocaleDateString() + '</span>'
+                : '<span class="v-badge bad">Insurance expired</span>';
+            html += '<div class="vehicle-card">'
+                + '<div class="v-icon">' + getVehicleIcon(v.vehicleType) + '</div>'
+                + '<div class="v-info">'
+                + '<div class="v-name">' + bridge.esc(v.model) + '</div>'
+                + '<div class="v-meta">VIN ' + bridge.esc(v.vin) + '</div>'
+                + '<div class="v-meta">Plate ' + bridge.esc(v.plate) + '</div>'
+                + badge
+                + '</div>'
+                + '<div class="v-actions">'
+                + (v.insuranceActive ? '' : '<button class="v-btn renew" onclick="renewInsurance(\'' + v.id + '\')">Renew ($500)</button>')
+                + '<button class="v-btn sell" onclick="sellVehicle(\'' + v.id + '\')">Sell</button>'
+                + '</div>'
+                + '</div>';
         }
         body.innerHTML = html;
-      }
-      function getVehicleIcon(type) {
-        if (!type) return VEHICLE_ICONS.default;
-        var t = type.toLowerCase();
-        return VEHICLE_ICONS[t] || VEHICLE_ICONS.default;
-      }
-      render();
-    </script>
-  </body>
-</html>
+    }).catch(function(err) {
+        body.innerHTML = '<div class="empty-state">' + bridge.esc(err.message || "Could not load your vehicles.") + '</div>';
+    });
+}
+
+function sellVehicle(vehicleId) {
+    bridge.showCustomModal("Sell Vehicle", '<p style="color:#64748b;font-size:13px;">Sell this vehicle for half its purchase price?</p>', [
+        { label: "Cancel", "class": "btn", action: function() {} },
+        { label: "Sell", "class": "btn", action: function() {
+            bridge.sellVehicle(vehicleId).then(function(res) {
+                bridge.updateHUD();
+                bridge.notif("Vehicles", "Sold for $" + formatNum(res.sellPrice) + ".");
+                loadVehicles();
+            }).catch(function(err) { bridge.notif("Error", err.message || "Could not sell the vehicle."); });
+        }}
+    ]);
+}
+
+function renewInsurance(vehicleId) {
+    bridge.showCustomModal("Renew Insurance", '<p style="color:#64748b;font-size:13px;">Renew insurance for 30 more days for <strong style="color:var(--mint);">$500</strong>?</p>', [
+        { label: "Cancel", "class": "btn", action: function() {} },
+        { label: "Renew", "class": "btn primary", action: function() {
+            bridge.renewInsurance(vehicleId, 500).then(function() {
+                bridge.updateHUD();
+                bridge.notif("Vehicles", "Insurance renewed.");
+                loadVehicles();
+            }).catch(function(err) { bridge.notif("Error", err.message || "Could not renew insurance."); });
+        }}
+    ]);
+}
+
+loadVehicles();
+</script>
+</body></html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Dream Legacy RP — Shop</title>
+<meta name="description" content="Dream Legacy RP Shop — dealership, properties, electronics, and more.">
+<link rel="icon" type="image/png" href="https://files.dreamlegacyrp.xyz/branding/favicon-32.png">
+<link rel="apple-touch-icon" href="https://files.dreamlegacyrp.xyz/branding/favicon-512.png">
+
+<meta property="og:title" content="Dream Legacy RP — Shop">
+<meta property="og:description" content="Dealership, properties, electronics, and more.">
+<meta property="og:image" content="https://files.dreamlegacyrp.xyz/branding/dlrp-logo.png">
+<meta property="og:url" content="https://shop.dreamlegacyrp.xyz">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dream Legacy RP">
+<meta name="theme-color" content="#2f73ff">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://files.dreamlegacyrp.xyz/css/global.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--dl-bg); color: var(--dl-text); font-family: "Inter", -apple-system, sans-serif; min-height: 100vh; overflow-x: hidden; }
+h1, h2 { font-family: "Rajdhani", sans-serif; }
+
+.main-wrap { max-width: 1000px; margin: 0 auto; padding: 32px 20px 60px; }
+.center-card { max-width: 420px; margin: 80px auto; text-align: center; background: var(--dl-surface); border: 1px solid var(--dl-line); border-radius: 16px; padding: 32px 24px; }
+.center-card h2 { margin-bottom: 10px; }
+.center-card p { color: var(--dl-muted); font-size: 14px; margin-bottom: 20px; }
+
+.shop-header { text-align: center; margin-bottom: 28px; }
+.shop-header h1 { font-size: clamp(28px,5vw,40px); text-transform: uppercase; margin-bottom: 6px; }
+.shop-header p { color: var(--dl-muted); font-size: 14px; }
+
+.cat-tabs { display: flex; gap: 6px; padding: 5px; border: 1px solid var(--dl-line); border-radius: var(--dl-radius); background: rgba(255,255,255,.04); max-width: fit-content; margin: 0 auto 28px; overflow-x: auto; }
+.cat-tab { border: 0; background: transparent; color: var(--dl-muted); font-family: "Rajdhani", sans-serif; font-weight: 700; font-size: 13px; letter-spacing: .03em; text-transform: uppercase; padding: 9px 18px; border-radius: 6px; cursor: pointer; white-space: nowrap; }
+.cat-tab.active { background: linear-gradient(135deg, var(--dl-blue), var(--dl-blue-dark)); color: #fff; }
+.cat-panel { display: none; }
+.cat-panel.active { display: block; }
+
+.sub-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.sub-tab { border: 1px solid var(--dl-line); background: rgba(255,255,255,.04); color: var(--dl-muted); font-family: "Rajdhani", sans-serif; font-weight: 700; font-size: 12px; text-transform: uppercase; padding: 8px 16px; border-radius: 999px; cursor: pointer; }
+.sub-tab.active { color: #fff; border-color: var(--dl-line-strong); background: rgba(47,115,255,.16); }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+.item-card { background: var(--dl-surface); border: 1px solid var(--dl-line); border-radius: 14px; padding: 18px; }
+.item-icon { font-size: 30px; margin-bottom: 8px; }
+.item-name { font-family: "Rajdhani", sans-serif; font-weight: 700; font-size: 17px; margin-bottom: 4px; }
+.item-price { color: var(--dl-mint); font-weight: 700; font-family: "Rajdhani", sans-serif; font-size: 16px; margin-bottom: 12px; }
+.item-buy { width: 100%; }
+
+.owned-row { display: flex; align-items: center; gap: 14px; background: var(--dl-surface); border: 1px solid var(--dl-line); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; flex-wrap: wrap; }
+.owned-icon { font-size: 26px; width: 36px; text-align: center; }
+.owned-info { flex: 1; min-width: 180px; }
+.owned-model { font-weight: 700; font-family: "Rajdhani", sans-serif; font-size: 16px; }
+.owned-meta { font-size: 12px; color: var(--dl-muted); margin-top: 2px; }
+.owned-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.badge-good { color: var(--dl-mint); font-weight: 700; font-size: 11px; text-transform: uppercase; }
+.badge-bad { color: var(--dl-red); font-weight: 700; font-size: 11px; text-transform: uppercase; }
+
+.empty { text-align: center; color: var(--dl-muted); padding: 30px 0; font-size: 13px; }
+.section-title { font-family: "Rajdhani", sans-serif; font-weight: 700; font-size: 18px; text-transform: uppercase; margin: 28px 0 14px; }
+.wallet-strip { text-align: center; color: var(--dl-muted); font-size: 13px; margin-bottom: 20px; }
+.wallet-strip strong { color: var(--dl-mint); }
+</style>
+</head>
+<body>
+<div class="dl-navbar">
+    <a class="dl-brand" href="https://dreamlegacyrp.xyz">
+        <img src="https://files.dreamlegacyrp.xyz/branding/dlrp-logo.png" alt="DLRP">
+        <span>Dream Legacy RP</span>
+    </a>
+    <nav class="dl-nav-links" id="dl-nav-links">
+        <a href="https://dreamlegacyrp.xyz">Main Site</a>
+        <a href="https://dreamos.dreamlegacyrp.xyz">DreamOS</a>
+        <a href="https://shop.dreamlegacyrp.xyz" class="active">Shop</a>
+        <a href="https://hq.dreamlegacyrp.xyz">HQ</a>
+        <a href="https://links.dreamlegacyrp.xyz">Links</a>
+    </nav>
+    <div class="dl-nav-right">
+        <div class="dl-user-menu">
+            <button type="button" class="dl-user-chip hidden" id="user-chip" aria-expanded="false">
+                <img id="user-avatar" src="" alt="">
+                <span id="user-name">-</span>
+                <span class="dl-lang-arrow">&#9662;</span>
+            </button>
+            <ul class="dl-user-dropdown hidden" id="user-dropdown">
+                <li onclick="logout()">Log Out</li>
+            </ul>
+        </div>
+        <button class="dl-nav-mobile-toggle" id="dl-nav-mobile-toggle">&#9776;</button>
+    </div>
+</div>
+
+<div class="main-wrap">
+    <div id="no-access" class="center-card hidden">
+        <h2>Log In Required</h2>
+        <p id="no-access-msg">Log in from the main site first, then come back to the Shop.</p>
+        <a class="dl-btn primary" href="https://dreamlegacyrp.xyz">Back to Main Site</a>
+    </div>
+
+    <div id="shop-app" class="hidden">
+        <div class="shop-header">
+            <h1>Shop</h1>
+            <p>Everything you buy shows up in your DreamOS apps automatically.</p>
+        </div>
+        <div class="wallet-strip">Bank: <strong id="wallet-bank">$0</strong> &middot; Cash: <strong id="wallet-cash">$0</strong></div>
+
+        <div class="cat-tabs" id="cat-tabs">
+            <button class="cat-tab active" data-cat="vehicles" onclick="switchCat('vehicles')">Vehicles</button>
+            <button class="cat-tab" data-cat="electronics" onclick="switchCat('electronics')">Electronics</button>
+            <button class="cat-tab" data-cat="property" onclick="switchCat('property')">Property</button>
+            <button class="cat-tab" data-cat="services" onclick="switchCat('services')">Services</button>
+            <button class="cat-tab" data-cat="marketplace" onclick="switchCat('marketplace')">Marketplace</button>
+            <button class="cat-tab" data-cat="blackmarket" onclick="switchCat('blackmarket')">Black Market</button>
+        </div>
+
+        <div class="cat-panel active" id="cat-vehicles">
+            <div class="sub-tabs">
+                <button class="sub-tab active" id="vsub-dealer-btn" onclick="switchVehicleSub('dealer')">Dealership</button>
+                <button class="sub-tab" id="vsub-mine-btn" onclick="switchVehicleSub('mine')">My Vehicles</button>
+            </div>
+            <div id="vsub-dealer">
+                <div class="grid" id="dealer-grid"></div>
+            </div>
+            <div id="vsub-mine" style="display:none;">
+                <div id="my-vehicles-list"></div>
+            </div>
+        </div>
+
+        <div class="cat-panel" id="cat-electronics"><div class="empty">Coming soon.</div></div>
+        <div class="cat-panel" id="cat-property"><div class="empty">Coming soon — for now, buy properties from the Property app in DreamOS.</div></div>
+        <div class="cat-panel" id="cat-services"><div class="empty">Coming soon.</div></div>
+        <div class="cat-panel" id="cat-marketplace"><div class="empty">Coming soon.</div></div>
+        <div class="cat-panel" id="cat-blackmarket"><div class="empty">???</div></div>
+    </div>
+</div>
+
+<script src="https://files.dreamlegacyrp.xyz/js/global.js"></script>
+<script>
+var SUPABASE_URL = "https://cpdljnqhuealpxhpwsqk.supabase.co";
+var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNwZGxqbnFodWVhbHB4aHB3c3FrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2MjYzNjksImV4cCI6MjA5OTIwMjM2OX0.7Mkz8nOL35iOI9M55zq-CnCOd88Skc_2-voqG3c8UlE";
+var SESSION_KEY = "dlrp_panel_session";
+var _sb = null;
+
+function getSupabase() {
+    if (!_sb) _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    return _sb;
+}
+
+(function pickUpSession() {
+    var params = new URLSearchParams(window.location.search);
+    var token = params.get("dlrp_session");
+    if (token) {
+        localStorage.setItem(SESSION_KEY, JSON.stringify({ key: token }));
+        params.delete("dlrp_session");
+        var clean = window.location.pathname + (params.toString() ? "?" + params.toString() : "");
+        window.history.replaceState({}, document.title, clean);
+    }
+})();
+
+function getSessionKey() {
+    try { var raw = JSON.parse(localStorage.getItem(SESSION_KEY)); return raw && raw.key ? raw.key : null; }
+    catch (e) { return null; }
+}
+
+function logout() {
+    localStorage.removeItem(SESSION_KEY);
+    window.location.href = "https://dreamlegacyrp.xyz";
+}
+
+function esc(s) { if (typeof s !== "string") return s; var d = document.createElement("div"); d.appendChild(document.createTextNode(s)); return d.innerHTML; }
+
+function rpc(name, params) {
+    return getSupabase().rpc(name, params).then(function (r) {
+        if (r.error) throw new Error(r.error.message || "Database error.");
+        return r.data;
+    });
+}
+
+var currentProfile = null;
+
+function init() {
+    var key = getSessionKey();
+    if (!key) { showNoAccess(); return; }
+
+    rpc("dlrp_get_profile", { p_token: key }).then(function (profile) {
+        currentProfile = profile;
+        document.getElementById("no-access").classList.add("hidden");
+        document.getElementById("shop-app").classList.remove("hidden");
+        document.getElementById("user-chip").classList.remove("hidden");
+        document.getElementById("user-avatar").src = profile.discordAvatar || "";
+        document.getElementById("user-name").textContent = profile.rpName || profile.discordUsername;
+        updateWallet(profile.bank || 0, profile.cash || 0);
+        renderDealer();
+        loadMyVehicles();
+    }).catch(function () {
+        showNoAccess();
+    });
+}
+
+function showNoAccess() {
+    document.getElementById("no-access").classList.remove("hidden");
+    document.getElementById("shop-app").classList.add("hidden");
+}
+
+function updateWallet(bank, cash) {
+    document.getElementById("wallet-bank").textContent = "$" + formatNum(bank);
+    document.getElementById("wallet-cash").textContent = "$" + formatNum(cash);
+}
+
+function formatNum(n) { return Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+
+function switchCat(cat) {
+    var tabs = document.querySelectorAll(".cat-tab");
+    for (var i = 0; i < tabs.length; i++) tabs[i].classList.toggle("active", tabs[i].getAttribute("data-cat") === cat);
+    var panels = document.querySelectorAll(".cat-panel");
+    for (var j = 0; j < panels.length; j++) panels[j].classList.toggle("active", panels[j].id === "cat-" + cat);
+}
+
+function switchVehicleSub(sub) {
+    document.getElementById("vsub-dealer-btn").classList.toggle("active", sub === "dealer");
+    document.getElementById("vsub-mine-btn").classList.toggle("active", sub === "mine");
+    document.getElementById("vsub-dealer").style.display = sub === "dealer" ? "block" : "none";
+    document.getElementById("vsub-mine").style.display = sub === "mine" ? "block" : "none";
+    if (sub === "mine") loadMyVehicles();
+}
+
+var VEHICLE_ICONS = { car: "\u{1F697}", truck: "\u{1F69A}", suv: "\u{1F699}", sports: "\u{1F3CE}\uFE0F", motorcycle: "\u{1F3CD}\uFE0F", bike: "\u{1F6B2}", van: "\u{1F690}", sedan: "\u{1F697}", coupe: "\u{1F3CE}\uFE0F", "default": "\u{1F697}" };
+
+var DEALERSHIP_CATALOG = [
+    { id: "sedan1", model: "Karin Asterope", type: "sedan", price: 14000 },
+    { id: "suv1", model: "Gallivanter Baller", type: "suv", price: 32000 },
+    { id: "sports1", model: "Ocelot Jugular", type: "sports", price: 68000 },
+    { id: "truck1", model: "Vapid Sadler", type: "truck", price: 26000 },
+    { id: "van1", model: "Bravado Rumpo", type: "van", price: 18000 },
+    { id: "motorcycle1", model: "Western Bagger", type: "motorcycle", price: 9000 },
+    { id: "bike1", model: "BMX", type: "bike", price: 250 },
+    { id: "coupe1", model: "Obey Tailgater", type: "coupe", price: 22000 }
+];
+
+function getVehicleIcon(type) { return VEHICLE_ICONS[type] || VEHICLE_ICONS["default"]; }
+
+function renderDealer() {
+    var grid = document.getElementById("dealer-grid");
+    var html = "";
+    for (var i = 0; i < DEALERSHIP_CATALOG.length; i++) {
+        var c = DEALERSHIP_CATALOG[i];
+        html += '<div class="item-card">'
+            + '<div class="item-icon">' + getVehicleIcon(c.type) + '</div>'
+            + '<div class="item-name">' + esc(c.model) + '</div>'
+            + '<div class="item-price">$' + formatNum(c.price) + '</div>'
+            + '<button class="dl-btn primary item-buy" onclick="buyVehicle(\'' + c.id + '\')">Buy</button>'
+            + '</div>';
+    }
+    grid.innerHTML = html;
+}
+
+function buyVehicle(catalogId) {
+    var c = null;
+    for (var i = 0; i < DEALERSHIP_CATALOG.length; i++) { if (DEALERSHIP_CATALOG[i].id === catalogId) c = DEALERSHIP_CATALOG[i]; }
+    if (!c) return;
+    var totalMoney = (currentProfile.bank || 0) + (currentProfile.cash || 0);
+    if (totalMoney < c.price) { alert("Not enough money."); return; }
+    if (!confirm("Buy " + c.model + " for $" + formatNum(c.price) + "? This will generate a VIN, plate, and 30 days of insurance.")) return;
+
+    var key = getSessionKey();
+    rpc("dlrp_buy_vehicle", { p_token: key, p_model: c.model, p_vehicle_type: c.type, p_price: c.price }).then(function (res) {
+        alert("Purchase complete!\nVIN: " + res.vin + "\nPlate: " + res.plate + "\nInsured until: " + new Date(res.insuranceExpires).toLocaleDateString());
+        return rpc("dlrp_get_profile", { p_token: key });
+    }).then(function (profile) {
+        currentProfile = profile;
+        updateWallet(profile.bank || 0, profile.cash || 0);
+        switchVehicleSub("mine");
+    }).catch(function (err) {
+        alert(err.message || "Could not complete the purchase.");
+    });
+}
+
+function loadMyVehicles() {
+    var key = getSessionKey();
+    if (!key) return;
+    var list = document.getElementById("my-vehicles-list");
+    list.innerHTML = '<div class="empty">Loading...</div>';
+    rpc("dlrp_get_my_vehicles", { p_token: key }).then(function (vehicles) {
+        if (!vehicles.length) { list.innerHTML = '<div class="empty">You don\u2019t own any vehicles yet.</div>'; return; }
+        var html = "";
+        for (var i = 0; i < vehicles.length; i++) {
+            var v = vehicles[i];
+            var insBadge = v.insuranceActive
+                ? '<span class="badge-good">Insured until ' + new Date(v.insuranceExpires).toLocaleDateString() + '</span>'
+                : '<span class="badge-bad">Insurance expired</span>';
+            html += '<div class="owned-row">'
+                + '<div class="owned-icon">' + getVehicleIcon(v.vehicleType) + '</div>'
+                + '<div class="owned-info">'
+                + '<div class="owned-model">' + esc(v.model) + '</div>'
+                + '<div class="owned-meta">VIN ' + esc(v.vin) + ' &middot; Plate ' + esc(v.plate) + '</div>'
+                + '<div class="owned-meta">' + insBadge + '</div>'
+                + '</div>'
+                + '<div class="owned-actions">'
+                + (v.insuranceActive ? '' : '<button class="dl-btn small" onclick="renewInsurance(\'' + v.id + '\')">Renew Insurance ($500)</button>')
+                + '<button class="dl-btn small red" onclick="sellVehicle(\'' + v.id + '\')">Sell</button>'
+                + '</div>'
+                + '</div>';
+        }
+        list.innerHTML = html;
+    }).catch(function (err) {
+        list.innerHTML = '<div class="empty">' + esc(err.message) + '</div>';
+    });
+}
+
+function renewInsurance(vehicleId) {
+    var key = getSessionKey();
+    rpc("dlrp_renew_insurance", { p_token: key, p_vehicle_id: vehicleId, p_cost: 500 }).then(function () {
+        loadMyVehicles();
+        return rpc("dlrp_get_profile", { p_token: key });
+    }).then(function (profile) {
+        currentProfile = profile;
+        updateWallet(profile.bank || 0, profile.cash || 0);
+    }).catch(function (err) { alert(err.message || "Could not renew insurance."); });
+}
+
+function sellVehicle(vehicleId) {
+    if (!confirm("Sell this vehicle for half its purchase price?")) return;
+    var key = getSessionKey();
+    rpc("dlrp_sell_vehicle", { p_token: key, p_vehicle_id: vehicleId }).then(function (res) {
+        alert("Sold for $" + formatNum(res.sellPrice) + ".");
+        loadMyVehicles();
+        return rpc("dlrp_get_profile", { p_token: key });
+    }).then(function (profile) {
+        currentProfile = profile;
+        updateWallet(profile.bank || 0, profile.cash || 0);
+    }).catch(function (err) { alert(err.message || "Could not sell the vehicle."); });
+}
+
+/* ---- User menu dropdown ---- */
+(function setupUserMenu() {
+    document.addEventListener("DOMContentLoaded", function () {
+        var chip = document.getElementById("user-chip");
+        var dropdown = document.getElementById("user-dropdown");
+        if (!chip || !dropdown) return;
+        chip.addEventListener("click", function (e) {
+            e.stopPropagation();
+            dropdown.classList.toggle("hidden");
+        });
+        document.addEventListener("click", function (e) {
+            if (!chip.contains(e.target)) dropdown.classList.add("hidden");
+        });
+    });
+})();
+
+init();
+</script>
+</body>
+</html>
