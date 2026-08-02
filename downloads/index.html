@@ -26,9 +26,9 @@
 <link rel="stylesheet" href="https://files.dreamlegacyrp.xyz/css/global.css">
 
 <script>
-var BLES_DOWNLOAD_URL = "https://files.dreamlegacyrp.xyz/downloads/DreamLegacyRP-BLES-NPEB.pkg";
-var BLUS_READY = false;
-var BLUS_DOWNLOAD_URL = "";
+var SHARED_RPF_URL = "https://files.dreamlegacyrp.xyz/downloads/shared/update.rpf";
+var BLES_EBOOT_URL = "https://files.dreamlegacyrp.xyz/downloads/bles/EBOOT.BIN";
+var NPEB_EBOOT_URL = "https://files.dreamlegacyrp.xyz/downloads/npeb/EBOOT.BIN";
 </script>
 
 <style>
@@ -74,6 +74,8 @@ h1 { font-size: clamp(34px,7vw,54px); font-weight: 800; text-transform: uppercas
 .dl-btn.active { background: linear-gradient(135deg,var(--purple),var(--purple-dark)); color: #fff; box-shadow: 0 10px 26px rgba(124,58,237,.35); }
 .dl-btn.active:hover { filter: brightness(1.1); }
 .dl-btn.disabled { background: rgba(255,255,255,.04); color: var(--muted); cursor: not-allowed; border: 1px solid var(--line); }
+
+.shared-file-card { background: linear-gradient(135deg, rgba(124,58,237,.14), rgba(124,58,237,.04)); border: 1px solid var(--line-strong); border-radius: var(--radius); padding: clamp(20px,3.5vw,30px); text-align: left; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin-bottom: 18px; }
 
 .note { margin-top: 36px; font-size: 12.5px; color: var(--muted); line-height: 1.6; max-width: 480px; margin-left: auto; margin-right: auto; }
 .note strong { color: var(--text); }
@@ -125,27 +127,54 @@ footer a { color: var(--purple-light); text-decoration: none; }
     <h1 data-i18n="heading">Server Files</h1>
     <p class="lead" data-i18n="lead">Download the package needed to connect to Dream Legacy RP, based on your PS3's region.</p>
 
+    <div class="shared-file-card">
+        <div class="dl-flag">&#128230;</div>
+        <div class="dl-info">
+            <div class="dl-region" data-i18n="sharedTitle">update.rpf</div>
+            <div class="dl-desc" data-i18n="sharedDesc">Same for every region — download this once.</div>
+        </div>
+        <a class="dl-btn active" id="shared-rpf-btn" href="#" download>&#11015; Download</a>
+    </div>
+
     <div class="cards">
         <div class="dl-card">
             <div class="dl-flag">&#127466;&#127482;</div>
             <div class="dl-info">
-                <div class="dl-region">BLES / NPEB</div>
-                <div class="dl-desc" data-i18n="europeDesc">European region PS3 consoles</div>
+                <div class="dl-region">BLES</div>
+                <div class="dl-desc" data-i18n="europeDesc">European region PS3 consoles (disc)</div>
             </div>
-            <a class="dl-btn active" id="bles-btn" href="#" data-i18n="download">&#11015; Download</a>
+            <a class="dl-btn active" id="bles-eboot-btn" href="#" download>EBOOT.BIN</a>
+        </div>
+
+        <div class="dl-card">
+            <div class="dl-flag">&#127466;&#127482;</div>
+            <div class="dl-info">
+                <div class="dl-region">NPEB</div>
+                <div class="dl-desc" data-i18n="europeDescDigital">European region PS3 consoles (PSN digital)</div>
+            </div>
+            <a class="dl-btn active" id="npeb-eboot-btn" href="#" download>EBOOT.BIN</a>
         </div>
 
         <div class="dl-card">
             <div class="dl-flag">&#127482;&#127480;</div>
             <div class="dl-info">
-                <div class="dl-region">BLUS / NPUB</div>
-                <div class="dl-desc" data-i18n="usDesc">US region PS3 consoles</div>
+                <div class="dl-region">BLUS</div>
+                <div class="dl-desc" data-i18n="usDesc">US region PS3 consoles (disc)</div>
             </div>
-            <a class="dl-btn disabled" id="blus-btn" href="#" data-i18n="comingSoon">Coming Soon</a>
+            <span class="dl-btn disabled" data-i18n="comingSoon">Coming Soon</span>
+        </div>
+
+        <div class="dl-card">
+            <div class="dl-flag">&#127482;&#127480;</div>
+            <div class="dl-info">
+                <div class="dl-region">NPUB</div>
+                <div class="dl-desc" data-i18n="usDescDigital">US region PS3 consoles (PSN digital)</div>
+            </div>
+            <span class="dl-btn disabled" data-i18n="comingSoon">Coming Soon</span>
         </div>
     </div>
 
-    <p class="note" data-i18n="note">Not sure which region your console is? Check the disc/game case — <strong>European</strong> copies show "BLES" or "NPEB", <strong>US</strong> copies show "BLUS" or "NPUB".</p>
+    <p class="note" data-i18n="note">Not sure which region your console is? Check the disc/game case — <strong>European</strong> copies show "BLES" or "NPEB", <strong>US</strong> copies show "BLUS" or "NPUB". You need the shared update.rpf above PLUS your region's EBOOT.BIN below.</p>
 </div>
 
 <footer>
@@ -157,7 +186,7 @@ var I18N = {
     en: {
         eyebrow: "PS3 · GTA V Roleplay", heading: "Server Files",
         lead: "Download the package needed to connect to Dream Legacy RP, based on your PS3's region.",
-        europeDesc: "European region PS3 consoles", usDesc: "US region PS3 consoles",
+        europeDesc: "European region PS3 consoles (disc)", europeDescDigital: "European region PS3 consoles (PSN digital)", usDesc: "US region PS3 consoles (disc)", usDescDigital: "US region PS3 consoles (PSN digital)", sharedTitle: "update.rpf", sharedDesc: "Same for every region — download this once.",
         download: "\u2b07 Download", comingSoon: "Coming Soon",
         note: "Not sure which region your console is? Check the disc/game case — <strong>European</strong> copies show \"BLES\" or \"NPEB\", <strong>US</strong> copies show \"BLUS\" or \"NPUB\".",
         footer: "Dream Legacy RP · Not affiliated with Rockstar Games or Sony."
@@ -165,7 +194,7 @@ var I18N = {
     fr: {
         eyebrow: "PS3 · GTA V Roleplay", heading: "Fichiers du serveur",
         lead: "Téléchargez le package nécessaire pour vous connecter à Dream Legacy RP, selon la région de votre PS3.",
-        europeDesc: "Consoles PS3 région Europe", usDesc: "Consoles PS3 région US",
+        europeDesc: "Consoles PS3 région Europe (disque)", europeDescDigital: "Consoles PS3 région Europe (PSN numérique)", usDesc: "Consoles PS3 région US (disque)", usDescDigital: "Consoles PS3 région US (PSN numérique)", sharedTitle: "update.rpf", sharedDesc: "Identique pour toutes les régions — à télécharger une seule fois.",
         download: "\u2b07 Télécharger", comingSoon: "Bientôt disponible",
         note: "Vous ne savez pas quelle est la région de votre console ? Regardez le disque/boîtier du jeu — les copies <strong>européennes</strong> affichent \"BLES\" ou \"NPEB\", les copies <strong>américaines</strong> affichent \"BLUS\" ou \"NPUB\".",
         footer: "Dream Legacy RP · Non affilié à Rockstar Games ou Sony."
@@ -173,7 +202,7 @@ var I18N = {
     pt: {
         eyebrow: "PS3 · GTA V Roleplay", heading: "Arquivos do servidor",
         lead: "Baixe o pacote necessário para se conectar ao Dream Legacy RP, de acordo com a região do seu PS3.",
-        europeDesc: "Consoles PS3 região Europa", usDesc: "Consoles PS3 região EUA",
+        europeDesc: "Consoles PS3 região Europa (disco)", europeDescDigital: "Consoles PS3 região Europa (PSN digital)", usDesc: "Consoles PS3 região EUA (disco)", usDescDigital: "Consoles PS3 região EUA (PSN digital)", sharedTitle: "update.rpf", sharedDesc: "O mesmo para todas as regiões — baixe apenas uma vez.",
         download: "\u2b07 Baixar", comingSoon: "Em breve",
         note: "Não sabe qual é a região do seu console? Confira o disco/caixa do jogo — cópias <strong>europeias</strong> mostram \"BLES\" ou \"NPEB\", cópias <strong>americanas</strong> mostram \"BLUS\" ou \"NPUB\".",
         footer: "Dream Legacy RP · Não afiliado à Rockstar Games ou Sony."
@@ -192,19 +221,9 @@ function setLang(lang) {
 }
 
 function initDownloadButtons() {
-    var blesBtn = document.getElementById("bles-btn");
-    blesBtn.href = BLES_DOWNLOAD_URL;
-
-    var blusBtn = document.getElementById("blus-btn");
-    if (BLUS_READY && BLUS_DOWNLOAD_URL) {
-        blusBtn.href = BLUS_DOWNLOAD_URL;
-        blusBtn.classList.remove("disabled");
-        blusBtn.classList.add("active");
-        blusBtn.removeAttribute("data-i18n");
-        blusBtn.innerHTML = I18N[document.documentElement.lang || "en"].download;
-    } else {
-        blusBtn.addEventListener("click", function(e) { e.preventDefault(); });
-    }
+    document.getElementById("shared-rpf-btn").href = SHARED_RPF_URL;
+    document.getElementById("bles-eboot-btn").href = BLES_EBOOT_URL;
+    document.getElementById("npeb-eboot-btn").href = NPEB_EBOOT_URL;
 }
 
 window.onDlLangChange = setLang;

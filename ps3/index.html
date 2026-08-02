@@ -5,12 +5,12 @@
 <title>Dream Legacy RP - Downloads</title>
 <script type="text/javascript">
 /* ============================================================
-   CONFIGURA AQUI el enlace real del .pkg (igual que en
+   CONFIGURA AQUI los enlaces reales (mismos que en
    downloads.dreamlegacyrp.xyz).
    ============================================================ */
-var BLES_DOWNLOAD_URL = "https://files.dreamlegacyrp.xyz/downloads/DreamLegacyRP-BLES-NPEB.pkg";
-var BLUS_READY = false;
-var BLUS_DOWNLOAD_URL = "";
+var SHARED_RPF_URL = "https://files.dreamlegacyrp.xyz/downloads/shared/update.rpf";
+var BLES_EBOOT_URL = "https://files.dreamlegacyrp.xyz/downloads/bles/EBOOT.BIN";
+var NPEB_EBOOT_URL = "https://files.dreamlegacyrp.xyz/downloads/npeb/EBOOT.BIN";
 
 /* Si NO es una PS3, no hace falta esta version tan simple --
    mandamos directamente a la pagina normal, mas bonita. Se hace
@@ -40,12 +40,12 @@ if (ua.indexOf("PLAYSTATION 3") === -1) {
 
 <br>
 
-<table width="600" cellpadding="14" cellspacing="0" border="1" bordercolor="#2a2a3a" bgcolor="#141420">
+<table width="600" cellpadding="14" cellspacing="0" border="1" bordercolor="#7ea6ff" bgcolor="#141420">
 <tr><td>
-<font size="4" color="#ffffff"><b>BLES / NPEB</b></font><br>
-<font size="2" color="#a8a2b8">European region PS3 consoles</font><br><br>
-<a href="https://files.dreamlegacyrp.xyz/downloads/DreamLegacyRP-BLES-NPEB.pkg">
-<font size="3" color="#7ea6ff"><b>&gt;&gt; Download .pkg &lt;&lt;</b></font>
+<font size="4" color="#ffffff"><b>update.rpf</b></font><br>
+<font size="2" color="#a8a2b8">Same for every region -- download this once</font><br><br>
+<a href="https://files.dreamlegacyrp.xyz/downloads/shared/update.rpf">
+<font size="3" color="#7ea6ff"><b>&gt;&gt; Download update.rpf &lt;&lt;</b></font>
 </a>
 </td></tr>
 </table>
@@ -54,8 +54,42 @@ if (ua.indexOf("PLAYSTATION 3") === -1) {
 
 <table width="600" cellpadding="14" cellspacing="0" border="1" bordercolor="#2a2a3a" bgcolor="#141420">
 <tr><td>
-<font size="4" color="#ffffff"><b>BLUS / NPUB</b></font><br>
-<font size="2" color="#a8a2b8">US region PS3 consoles</font><br><br>
+<font size="4" color="#ffffff"><b>BLES</b></font><br>
+<font size="2" color="#a8a2b8">European region PS3 consoles (disc)</font><br><br>
+<a href="https://files.dreamlegacyrp.xyz/downloads/bles/EBOOT.BIN">
+<font size="3" color="#7ea6ff"><b>&gt;&gt; Download EBOOT.BIN &lt;&lt;</b></font>
+</a>
+</td></tr>
+</table>
+
+<br>
+
+<table width="600" cellpadding="14" cellspacing="0" border="1" bordercolor="#2a2a3a" bgcolor="#141420">
+<tr><td>
+<font size="4" color="#ffffff"><b>NPEB</b></font><br>
+<font size="2" color="#a8a2b8">European region PS3 consoles (PSN digital)</font><br><br>
+<a href="https://files.dreamlegacyrp.xyz/downloads/npeb/EBOOT.BIN">
+<font size="3" color="#7ea6ff"><b>&gt;&gt; Download EBOOT.BIN &lt;&lt;</b></font>
+</a>
+</td></tr>
+</table>
+
+<br>
+
+<table width="600" cellpadding="14" cellspacing="0" border="1" bordercolor="#2a2a3a" bgcolor="#141420">
+<tr><td>
+<font size="4" color="#ffffff"><b>BLUS</b></font><br>
+<font size="2" color="#a8a2b8">US region PS3 consoles (disc)</font><br><br>
+<font size="3" color="#6f6f80"><b>Coming Soon</b></font>
+</td></tr>
+</table>
+
+<br>
+
+<table width="600" cellpadding="14" cellspacing="0" border="1" bordercolor="#2a2a3a" bgcolor="#141420">
+<tr><td>
+<font size="4" color="#ffffff"><b>NPUB</b></font><br>
+<font size="2" color="#a8a2b8">US region PS3 consoles (PSN digital)</font><br><br>
 <font size="3" color="#6f6f80"><b>Coming Soon</b></font>
 </td></tr>
 </table>
@@ -67,6 +101,7 @@ if (ua.indexOf("PLAYSTATION 3") === -1) {
 <font size="2" color="#a8a2b8">
 Not sure which region your console is? Check the disc/game case --
 European copies show "BLES" or "NPEB", US copies show "BLUS" or "NPUB".
+You need the shared update.rpf PLUS your region's EBOOT.BIN.
 </font>
 </td></tr>
 </table>
