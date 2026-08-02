@@ -315,11 +315,15 @@ function showProfile(data) {
     if (status === "approved") {
         showApplicationCard("application-approved-card");
         var panelLink = document.getElementById("go-to-panel-link");
+        var shopLink = document.getElementById("go-to-shop-link");
         var hqLink = document.getElementById("go-to-hq-link");
         var adminLink = document.getElementById("go-to-admin-link");
         var key = getSessionKey();
         if (panelLink && key) {
             panelLink.href = "https://dreamos.dreamlegacyrp.xyz/?dlrp_session=" + encodeURIComponent(key);
+        }
+        if (shopLink && key) {
+            shopLink.href = "https://shop.dreamlegacyrp.xyz/?dlrp_session=" + encodeURIComponent(key);
         }
         if (key) {
             if (hqLink) hqLink.href = "https://hq.dreamlegacyrp.xyz/?dlrp_session=" + encodeURIComponent(key);
