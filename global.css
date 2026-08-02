@@ -1,0 +1,293 @@
+/* ============================================================
+   Dream Legacy RP — global.css
+   ------------------------------------------------------------
+   Alojado en files.dreamlegacyrp.xyz/css/global.css
+   Usado por TODOS los subdominios. Contiene:
+     1. Tokens de color (mismos valores que ya usaba landing)
+     2. El navbar compartido (.dl-navbar)
+     3. El desplegable de idioma hecho a mano (.dl-lang)
+        -- sustituye a cualquier <select> nativo, que no se puede
+        pintar del todo (por eso salia con fondo blanco).
+     4. Botones basicos (.dl-btn)
+
+   No toca nada de landing/panel/admin (siguen con su
+   assets/css/style.css de siempre) -- lo pueden ir adoptando
+   poco a poco sin prisa. hq/downloads/links SI lo usan entero.
+   ============================================================ */
+
+:root {
+    --dl-bg: #090a0d;
+    --dl-surface: rgba(18, 22, 29, 0.78);
+    --dl-surface-strong: rgba(22, 28, 38, 0.94);
+    --dl-line: rgba(255, 255, 255, 0.10);
+    --dl-line-strong: rgba(120, 168, 255, 0.35);
+    --dl-text: #f4f7fb;
+    --dl-muted: #aab3c2;
+    --dl-dim: #6f7888;
+    --dl-blue: #2f73ff;
+    --dl-blue-dark: #1746a8;
+    --dl-cyan: #36d6ff;
+    --dl-mint: #59f0a7;
+    --dl-amber: #ffd166;
+    --dl-red: #ff4f64;
+    --dl-radius: 8px;
+    --dl-shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+    --dl-ease: cubic-bezier(.2, .8, .2, 1);
+}
+
+/* ============================================================
+   NAVBAR COMPARTIDO
+   ============================================================ */
+.dl-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    height: 72px;
+    padding: 0 clamp(16px, 4vw, 48px);
+    border-bottom: 1px solid var(--dl-line);
+    background: rgba(9, 10, 13, 0.82);
+    backdrop-filter: blur(18px);
+    box-shadow: 0 16px 54px rgba(0, 0, 0, .36);
+}
+
+.dl-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    flex-shrink: 0;
+    min-width: 0;
+}
+
+.dl-brand img {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: block;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.dl-brand span {
+    font-family: "Rajdhani", "Arial Narrow", sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: .01em;
+    color: var(--dl-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dl-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.dl-nav-links a {
+    color: var(--dl-muted);
+    text-decoration: none;
+    font-family: "Rajdhani", "Arial Narrow", sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    padding: 8px 14px;
+    border-radius: var(--dl-radius);
+    transition: color .15s, background .15s;
+    white-space: nowrap;
+}
+
+.dl-nav-links a:hover { color: #fff; background: rgba(255, 255, 255, .05); }
+.dl-nav-links a.active { color: #fff; background: linear-gradient(135deg, var(--dl-blue), var(--dl-blue-dark)); }
+
+.dl-nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.dl-nav-mobile-toggle {
+    display: none;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid var(--dl-line);
+    color: var(--dl-text);
+    border-radius: var(--dl-radius);
+    width: 38px;
+    height: 38px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+@media (max-width: 720px) {
+    .dl-nav-links { display: none; }
+    .dl-nav-mobile-toggle { display: flex; align-items: center; justify-content: center; }
+    .dl-nav-links.open {
+        display: flex;
+        position: absolute;
+        top: 72px;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        background: rgba(9, 10, 13, .97);
+        backdrop-filter: blur(16px);
+        padding: 10px;
+        border-bottom: 1px solid var(--dl-line);
+        gap: 2px;
+        z-index: 60;
+    }
+    .dl-nav-links.open a { width: 100%; text-align: center; padding: 12px; }
+}
+
+/* ============================================================
+   DESPLEGABLE DE IDIOMA (hecho a mano, sustituye a <select>)
+   ============================================================ */
+.dl-lang {
+    position: relative;
+}
+
+.dl-lang-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid var(--dl-line);
+    color: var(--dl-text);
+    font-family: "Rajdhani", "Arial Narrow", sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    border-radius: var(--dl-radius);
+    padding: 8px 12px;
+    cursor: pointer;
+    outline: none;
+    transition: border-color .2s, background .2s;
+}
+
+.dl-lang-btn:hover, .dl-lang-btn:focus-visible {
+    border-color: var(--dl-line-strong);
+    background: rgba(255, 255, 255, .09);
+}
+
+.dl-lang-arrow { font-size: 9px; color: var(--dl-muted); transition: transform .18s var(--dl-ease); }
+.dl-lang-btn[aria-expanded="true"] .dl-lang-arrow { transform: rotate(180deg); }
+
+.dl-lang-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 148px;
+    list-style: none;
+    margin: 0;
+    padding: 6px;
+    background: var(--dl-surface-strong);
+    border: 1px solid var(--dl-line);
+    border-radius: var(--dl-radius);
+    box-shadow: var(--dl-shadow);
+    backdrop-filter: blur(18px);
+    z-index: 60;
+}
+
+.dl-lang-menu.hidden { display: none; }
+
+.dl-lang-menu li {
+    padding: 9px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--dl-muted);
+    cursor: pointer;
+    transition: background .15s, color .15s;
+}
+
+.dl-lang-menu li:hover { background: rgba(255, 255, 255, .06); color: #fff; }
+.dl-lang-menu li.active { color: #fff; background: linear-gradient(135deg, var(--dl-blue), var(--dl-blue-dark)); }
+
+/* ============================================================
+   BOTONES BASICOS
+   ============================================================ */
+.dl-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 22px;
+    border-radius: var(--dl-radius);
+    border: 1px solid var(--dl-line);
+    background: rgba(255, 255, 255, .06);
+    color: var(--dl-text);
+    font-family: "Rajdhani", "Arial Narrow", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform .18s var(--dl-ease), border-color .18s, box-shadow .18s;
+}
+
+.dl-btn:hover { transform: translateY(-2px); border-color: var(--dl-line-strong); box-shadow: 0 18px 42px rgba(0,0,0,.34); }
+.dl-btn.primary { background: linear-gradient(135deg, var(--dl-blue), var(--dl-blue-dark)); border-color: rgba(151, 195, 255, .28); }
+.dl-btn.small { padding: 7px 14px; font-size: 12px; }
+.dl-btn.red { border-color: rgba(255, 79, 100, .35); color: var(--dl-red); background: rgba(255, 79, 100, .08); }
+
+/* ============================================================
+   CHIP DE USUARIO / LOGIN DE DISCORD (compartido)
+   ============================================================ */
+.dl-status-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--dl-dim);
+    flex-shrink: 0;
+}
+.dl-status-dot.online { background: var(--dl-mint); box-shadow: 0 0 6px var(--dl-mint); }
+.dl-status-dot.offline { background: var(--dl-red); box-shadow: 0 0 6px var(--dl-red); }
+
+.dl-discord-login-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #5865f2; color: #fff; border: none;
+    padding: 10px 18px; border-radius: var(--dl-radius);
+    font-family: "Rajdhani", "Arial Narrow", sans-serif; font-weight: 700; font-size: 14px;
+    cursor: pointer; text-decoration: none;
+}
+.dl-discord-login-btn:hover { filter: brightness(1.1); }
+.dl-discord-icon { width: 16px; height: 16px; flex-shrink: 0; }
+
+.dl-user-menu { position: relative; }
+
+.dl-user-chip {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255, 255, 255, .04); border: 1px solid var(--dl-line);
+    border-radius: 999px; padding: 5px 12px 5px 5px; cursor: pointer;
+    font-family: "Rajdhani", "Arial Narrow", sans-serif; font-weight: 700; font-size: 13px;
+    color: var(--dl-text); transition: border-color .18s, background .18s;
+}
+.dl-user-chip:hover, .dl-user-chip[aria-expanded="true"] { border-color: var(--dl-line-strong); background: rgba(255, 255, 255, .07); }
+.dl-user-chip img { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; }
+.dl-user-chip span:not(.dl-lang-arrow) { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dl-user-chip .dl-lang-arrow { color: var(--dl-muted); }
+.dl-user-chip[aria-expanded="true"] .dl-lang-arrow { transform: rotate(180deg); }
+
+.dl-user-dropdown {
+    position: absolute; top: calc(100% + 8px); right: 0; min-width: 160px;
+    list-style: none; margin: 0; padding: 6px;
+    background: var(--dl-surface-strong); border: 1px solid var(--dl-line);
+    border-radius: var(--dl-radius); box-shadow: var(--dl-shadow);
+    backdrop-filter: blur(18px); z-index: 60;
+}
+.dl-user-dropdown.hidden { display: none; }
+.dl-user-dropdown li {
+    padding: 9px 12px; border-radius: 6px; font-size: 13px; font-weight: 600;
+    color: var(--dl-muted); cursor: pointer; transition: background .15s, color .15s;
+}
+.dl-user-dropdown li:hover { background: rgba(255, 255, 255, .06); color: #fff; }
+
+@media (max-width: 480px) {
+    .dl-user-chip span:not(.dl-lang-arrow) { max-width: 72px; }
+}

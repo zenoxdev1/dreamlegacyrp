@@ -17,7 +17,7 @@
 <meta name="theme-color" content="#2f73ff">
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://files.dreamlegacyrp.xyz/css/global.css">
+<link rel="stylesheet" href="https://files.dreamlegacyrp.xyz/css/global.css?v=2">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -64,6 +64,12 @@ h1, h2 { font-family: "Rajdhani", sans-serif; }
 .section-title { font-family: "Rajdhani", sans-serif; font-weight: 700; font-size: 18px; text-transform: uppercase; margin: 28px 0 14px; }
 .wallet-strip { text-align: center; color: var(--dl-muted); font-size: 13px; margin-bottom: 20px; }
 .wallet-strip strong { color: var(--dl-mint); }
+
+/* Interruptor de acceso, definido AQUI (no en global.css) para que
+   nunca dependa de que esa hoja de estilos externa haya cargado o
+   este actualizada -- si algo falla con el cache de global.css,
+   esto sigue funcionando igual. */
+.gate-hidden { display: none !important; }
 </style>
 </head>
 <body>
@@ -95,13 +101,13 @@ h1, h2 { font-family: "Rajdhani", sans-serif; }
 </div>
 
 <div class="main-wrap">
-    <div id="no-access" class="center-card hidden">
+    <div id="no-access" class="center-card gate-hidden">
         <h2>Log In Required</h2>
         <p id="no-access-msg">Log in from the main site first, then come back to the Shop.</p>
         <a class="dl-btn primary" href="https://dreamlegacyrp.xyz">Back to Main Site</a>
     </div>
 
-    <div id="shop-app" class="hidden">
+    <div id="shop-app" class="gate-hidden">
         <div class="shop-header">
             <h1>Shop</h1>
             <p>Everything you buy shows up in your DreamOS apps automatically.</p>
@@ -138,7 +144,7 @@ h1, h2 { font-family: "Rajdhani", sans-serif; }
     </div>
 </div>
 
-<script src="https://files.dreamlegacyrp.xyz/js/global.js"></script>
+<script src="https://files.dreamlegacyrp.xyz/js/global.js?v=2"></script>
 <script>
 var SUPABASE_URL = "https://cpdljnqhuealpxhpwsqk.supabase.co";
 var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNwZGxqbnFodWVhbHB4aHB3c3FrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2MjYzNjksImV4cCI6MjA5OTIwMjM2OX0.7Mkz8nOL35iOI9M55zq-CnCOd88Skc_2-voqG3c8UlE";
@@ -188,8 +194,7 @@ function init() {
 
     rpc("dlrp_get_profile", { p_token: key }).then(function (profile) {
         currentProfile = profile;
-        document.getElementById("no-access").classList.add("hidden");
-        document.getElementById("shop-app").classList.remove("hidden");
+        showShopApp();
         document.getElementById("user-chip").classList.remove("hidden");
         document.getElementById("user-avatar").src = profile.discordAvatar || "";
         document.getElementById("user-name").textContent = profile.rpName || profile.discordUsername;
@@ -202,8 +207,21 @@ function init() {
 }
 
 function showNoAccess() {
-    document.getElementById("no-access").classList.remove("hidden");
-    document.getElementById("shop-app").classList.add("hidden");
+    var na = document.getElementById("no-access");
+    var sa = document.getElementById("shop-app");
+    na.style.display = "block";
+    na.classList.remove("gate-hidden");
+    sa.style.display = "none";
+    sa.classList.add("gate-hidden");
+}
+
+function showShopApp() {
+    var na = document.getElementById("no-access");
+    var sa = document.getElementById("shop-app");
+    na.style.display = "none";
+    na.classList.add("gate-hidden");
+    sa.style.display = "block";
+    sa.classList.remove("gate-hidden");
 }
 
 function updateWallet(bank, cash) {
