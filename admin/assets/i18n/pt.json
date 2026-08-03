@@ -174,7 +174,9 @@
     "subtabIdRequests": "Solicitações de ID",
     "idRequestsEmpty": "Nenhuma solicitação de ID corresponde a este filtro.",
     "subtabJobApps": "Candidaturas de emprego",
-    "jobAppsEmpty": "Nenhuma candidatura de emprego corresponde a este filtro."
+    "jobAppsEmpty": "Nenhuma candidatura de emprego corresponde a este filtro.",
+    "requestChanges": "Solicitar alterações",
+    "requestChangesPrompt": "O que eles precisam mudar? (enviado por DM, eles poderão editar e reenviar)"
   },
   "rules": {
     "kicker": "Leitura obrigatória",

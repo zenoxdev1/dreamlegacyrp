@@ -174,7 +174,9 @@
     "subtabIdRequests": "ID Requests",
     "idRequestsEmpty": "No ID requests match this filter.",
     "subtabJobApps": "Job Applications",
-    "jobAppsEmpty": "No job applications match this filter."
+    "jobAppsEmpty": "No job applications match this filter.",
+    "requestChanges": "Request Changes",
+    "requestChangesPrompt": "What do they need to change? (sent to their DM, they'll be able to edit and resubmit)"
   },
   "rules": {
     "kicker": "Must read",

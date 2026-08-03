@@ -179,6 +179,7 @@
 
 .dl-lang-arrow { font-size: 9px; color: var(--dl-muted); transition: transform .18s var(--dl-ease); }
 .dl-lang-btn[aria-expanded="true"] .dl-lang-arrow { transform: rotate(180deg); }
+.dl-lang-globe { font-size: 14px; line-height: 1; }
 
 .dl-lang-menu {
     position: absolute;

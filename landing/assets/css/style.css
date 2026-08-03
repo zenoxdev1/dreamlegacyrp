@@ -756,6 +756,8 @@ h1, h2, h3 { margin: 0; font-family: "Rajdhani","Arial Narrow",sans-serif; lette
 .lang-switch[data-open="true"] .lang-switch-arrow,
 .lang-switch-btn[aria-expanded="true"] + .lang-switch-menu ~ .lang-switch-arrow { transform: rotate(180deg); }
 
+.lang-switch-globe { font-size: 14px; line-height: 1; }
+
 .lang-switch-menu {
     position: absolute;
     top: calc(100% + 8px);

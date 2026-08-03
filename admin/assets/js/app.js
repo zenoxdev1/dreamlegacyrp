@@ -137,6 +137,8 @@ function adminCardHtml(a) {
             DLRP_I18N.t("admin.approve", "Approve") + '</button>';
         actions += '<button type="button" class="btn admin-action-btn deny" onclick="setApplicationStatus(\'' + a.id + '\',\'denied\')">' +
             DLRP_I18N.t("admin.deny", "Deny") + '</button>';
+        actions += '<button type="button" class="btn admin-action-btn reset" onclick="requestApplicationChanges(\'' + a.id + '\')">' +
+            DLRP_I18N.t("admin.requestChanges", "Request Changes") + '</button>';
     } else {
         actions += '<button type="button" class="btn admin-action-btn reset" onclick="setApplicationStatus(\'' + a.id + '\',\'pending\')">' +
             DLRP_I18N.t("admin.resetPending", "Reset to pending") + '</button>';
@@ -212,6 +214,22 @@ function setApplicationStatus(profileId, status) {
 
     api("/api/admin/set-status", "POST", { key: key, profileId: profileId, status: status, reason: reason }).then(function() {
         notify("Admin", "Application updated.");
+        loadAdminStats();
+        loadAdminApplications();
+    }).catch(function(err) {
+        notify("Admin", err.message);
+    });
+}
+
+function requestApplicationChanges(profileId) {
+    var key = getSessionKey();
+    if (!key) return;
+
+    var note = window.prompt(DLRP_I18N.t("admin.requestChangesPrompt", "What do they need to change? (sent to their DM, they'll be able to edit and resubmit)"), "");
+    if (!note || !note.trim()) return;
+
+    api("/api/admin/request-changes", "POST", { key: key, profileId: profileId, note: note.trim() }).then(function() {
+        notify("Admin", "Change request sent.");
         loadAdminStats();
         loadAdminApplications();
     }).catch(function(err) {
