@@ -93,9 +93,8 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
         <span class="brand-title">Dream Legacy RP</span>
     </a>
     <div class="nav-links">
-        <a href="index.html" data-i18n="nav.panel">Panel</a>
-        <a href="shop.html" data-i18n="nav.phoneShop">Phone Shop</a>
-        <a href="dreamos.html" class="active" data-i18n="nav.dreamOs">DreamOS</a>
+        <a href="index.html" data-i18n="nav.panel">DreamOS</a>
+        <a href="dreamos.html" class="active" data-i18n="nav.dreamOs">Open Phone</a>
     </div>
     <div class="top-right-group">
         <div class="lang-switch" id="lang-switch">
@@ -137,8 +136,8 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
         <p style="color:var(--muted);font-size:13px;margin-bottom:16px;" id="os-login-msg" data-i18n="dreamos.loginMsg">Log in from the Panel to access your phone.</p>
         <p id="os-login-error" style="color:var(--red);font-size:12px;margin-bottom:16px;display:none;"></p>
         <div id="os-no-phone" class="hidden">
-            <p style="color:var(--muted);font-size:13px;margin-bottom:16px;" data-i18n="dreamos.noPhoneMsg">You don't own a phone yet. Buy one from the Phone Shop to access DreamOS.</p>
-            <a class="btn primary" href="shop.html" style="width:100%;display:block;box-sizing:border-box;text-decoration:none;margin-bottom:8px;" data-i18n="dreamos.goToShop">Go to Phone Shop</a>
+            <p style="color:var(--muted);font-size:13px;margin-bottom:16px;" data-i18n="dreamos.noPhoneMsg">You don't own a phone yet. Buy one from the Shop (Electronics) to access DreamOS.</p>
+            <a class="btn primary" href="https://shop.dreamlegacyrp.xyz" style="width:100%;display:block;box-sizing:border-box;text-decoration:none;margin-bottom:8px;" data-i18n="dreamos.goToShop">Go to Shop</a>
         </div>
         <a class="btn" href="index.html" style="width:100%;display:block;box-sizing:border-box;text-decoration:none;" data-i18n="dreamos.goToPanel">Go to Panel</a>
     </div>
@@ -807,6 +806,20 @@ window.dlrpBridge = {
         var token = getSessionToken();
         if (!token) return Promise.reject(new Error("Not logged in."));
         return api("/api/vehicles/renew-insurance", "POST", { key: token, vehicleId: vehicleId, cost: cost });
+    },
+    getMyProperties: function() {
+        var token = getSessionToken();
+        if (!token) return Promise.reject(new Error("Not logged in."));
+        return api("/api/property/mine", "POST", { key: token }).then(function(r) { return r.properties; });
+    },
+    sellProperty: function(propertyId) {
+        var token = getSessionToken();
+        if (!token) return Promise.reject(new Error("Not logged in."));
+        return api("/api/property/sell", "POST", { key: token, propertyId: propertyId }).then(function(res) {
+            var d = getUD();
+            if (d) d.bank = (d.bank || 0) + res.sellPrice;
+            return res;
+        });
     },
     getGalleryPhotos: function() {
         var token = getSessionToken();

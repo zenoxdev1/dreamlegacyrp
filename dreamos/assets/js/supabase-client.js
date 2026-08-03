@@ -345,6 +345,27 @@ function api(path, method, body) {
         });
     }
 
+    if (path === "/api/property/buy") {
+        return sb.rpc("dlrp_buy_property", { p_token: body.key, p_property_key: body.propertyKey, p_name: body.name, p_location: body.location, p_price: body.price }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
+    if (path === "/api/property/mine") {
+        return sb.rpc("dlrp_get_my_properties", { p_token: body.key }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return { properties: r.data };
+        });
+    }
+
+    if (path === "/api/property/sell") {
+        return sb.rpc("dlrp_sell_property", { p_token: body.key, p_property_id: body.propertyId }).then(function (r) {
+            if (r.error) rpcFail(r.error);
+            return r.data;
+        });
+    }
+
     return Promise.reject(new Error("Unknown endpoint: " + path));
 }
 

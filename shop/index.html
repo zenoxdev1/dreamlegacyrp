@@ -136,8 +136,22 @@ h1, h2 { font-family: "Rajdhani", sans-serif; }
             </div>
         </div>
 
-        <div class="cat-panel" id="cat-electronics"><div class="empty">Coming soon.</div></div>
-        <div class="cat-panel" id="cat-property"><div class="empty">Coming soon — for now, buy properties from the Property app in DreamOS.</div></div>
+        <div class="cat-panel" id="cat-electronics">
+            <div class="sub-tabs">
+                <button class="sub-tab active" id="esub-phones-btn" onclick="switchElectronicsSub('phones')">Phones</button>
+            </div>
+            <div id="esub-phones">
+                <div class="grid" id="phones-grid"></div>
+            </div>
+        </div>
+        <div class="cat-panel" id="cat-property">
+            <div class="sub-tabs">
+                <button class="sub-tab active" id="psub-buy-btn" onclick="switchPropertySub('buy')">For Sale</button>
+                <button class="sub-tab" id="psub-mine-btn" onclick="switchPropertySub('mine')">My Properties</button>
+            </div>
+            <div id="psub-buy"><div class="grid" id="property-grid"></div></div>
+            <div id="psub-mine" style="display:none;"><div id="my-properties-list"></div></div>
+        </div>
         <div class="cat-panel" id="cat-services"><div class="empty">Coming soon.</div></div>
         <div class="cat-panel" id="cat-marketplace"><div class="empty">Coming soon.</div></div>
         <div class="cat-panel" id="cat-blackmarket"><div class="empty">???</div></div>
@@ -200,7 +214,9 @@ function init() {
         document.getElementById("user-name").textContent = profile.rpName || profile.discordUsername;
         updateWallet(profile.bank || 0, profile.cash || 0);
         renderDealer();
+        renderPhones();
         loadMyVehicles();
+        loadMyPropertyKeys().then(renderPropertyGrid);
     }).catch(function () {
         showNoAccess();
     });
@@ -231,6 +247,107 @@ function updateWallet(bank, cash) {
 
 function formatNum(n) { return Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
 
+var PROPERTY_CATALOG = [
+    { id: "beecher_cabin", name: "Beecher's Hope Cabin", location: "Great Plains", price: 25000 },
+    { id: "delperro_apt4", name: "Del Perro Apt 4", location: "Del Perro", price: 75000 },
+    { id: "vinewood_villa", name: "Vinewood Hills Villa", location: "Vinewood Hills", price: 150000 },
+    { id: "paleto_house", name: "Paleto Bay House", location: "Paleto Bay", price: 45000 },
+    { id: "sandy_trailer", name: "Sandy Shores Trailer", location: "Sandy Shores", price: 12000 },
+    { id: "rockford_mansion", name: "Rockford Hills Mansion", location: "Rockford Hills", price: 350000 }
+];
+
+function switchPropertySub(sub) {
+    document.getElementById("psub-buy-btn").classList.toggle("active", sub === "buy");
+    document.getElementById("psub-mine-btn").classList.toggle("active", sub === "mine");
+    document.getElementById("psub-buy").style.display = sub === "buy" ? "block" : "none";
+    document.getElementById("psub-mine").style.display = sub === "mine" ? "block" : "none";
+    if (sub === "mine") loadMyProperties();
+    else renderPropertyGrid();
+}
+
+var myPropertyKeys = [];
+
+function renderPropertyGrid() {
+    var grid = document.getElementById("property-grid");
+    var html = "";
+    for (var i = 0; i < PROPERTY_CATALOG.length; i++) {
+        var c = PROPERTY_CATALOG[i];
+        var owned = myPropertyKeys.indexOf(c.id) !== -1;
+        html += '<div class="item-card">'
+            + '<div class="item-icon">&#127968;</div>'
+            + '<div class="item-name">' + esc(c.name) + '</div>'
+            + '<div class="item-price">$' + formatNum(c.price) + '</div>'
+            + (owned
+                ? '<button class="dl-btn item-buy" disabled style="opacity:.5;cursor:not-allowed;">Owned</button>'
+                : '<button class="dl-btn primary item-buy" onclick="buyProperty(\'' + c.id + '\')">Buy</button>')
+            + '</div>';
+    }
+    grid.innerHTML = html;
+}
+
+function buyProperty(propertyKey) {
+    var c = null;
+    for (var i = 0; i < PROPERTY_CATALOG.length; i++) { if (PROPERTY_CATALOG[i].id === propertyKey) c = PROPERTY_CATALOG[i]; }
+    if (!c) return;
+    var totalMoney = (currentProfile.bank || 0) + (currentProfile.cash || 0);
+    if (totalMoney < c.price) { alert("Not enough money."); return; }
+    if (!confirm("Buy " + c.name + " for $" + formatNum(c.price) + "?")) return;
+
+    var key = getSessionKey();
+    rpc("dlrp_buy_property", { p_token: key, p_property_key: c.id, p_name: c.name, p_location: c.location, p_price: c.price }).then(function () {
+        alert("Purchase complete!");
+        return rpc("dlrp_get_profile", { p_token: key });
+    }).then(function (profile) {
+        currentProfile = profile;
+        updateWallet(profile.bank || 0, profile.cash || 0);
+        return loadMyPropertyKeys();
+    }).then(function () {
+        renderPropertyGrid();
+    }).catch(function (err) {
+        alert(err.message || "Could not complete the purchase.");
+    });
+}
+
+function loadMyPropertyKeys() {
+    var key = getSessionKey();
+    return rpc("dlrp_get_my_properties", { p_token: key }).then(function (properties) {
+        myPropertyKeys = properties.map(function (p) { return p.propertyKey; });
+    });
+}
+
+function loadMyProperties() {
+    var key = getSessionKey();
+    var list = document.getElementById("my-properties-list");
+    list.innerHTML = '<div class="empty">Loading...</div>';
+    rpc("dlrp_get_my_properties", { p_token: key }).then(function (properties) {
+        myPropertyKeys = properties.map(function (p) { return p.propertyKey; });
+        if (!properties.length) { list.innerHTML = '<div class="empty">You don\u2019t own any properties yet.</div>'; return; }
+        var html = "";
+        for (var i = 0; i < properties.length; i++) {
+            var p = properties[i];
+            html += '<div class="owned-row">'
+                + '<div class="owned-icon">&#127968;</div>'
+                + '<div class="owned-info"><div class="owned-model">' + esc(p.name) + '</div><div class="owned-meta">' + esc(p.location || "") + ' &middot; Bought for $' + formatNum(p.pricePaid) + '</div></div>'
+                + '<div class="owned-actions"><button class="dl-btn small red" onclick="sellProperty(\'' + p.id + '\')">Sell</button></div>'
+                + '</div>';
+        }
+        list.innerHTML = html;
+    }).catch(function (err) { list.innerHTML = '<div class="empty">' + esc(err.message) + '</div>'; });
+}
+
+function sellProperty(propertyId) {
+    if (!confirm("Sell this property for 60% of its purchase price?")) return;
+    var key = getSessionKey();
+    rpc("dlrp_sell_property", { p_token: key, p_property_id: propertyId }).then(function (res) {
+        alert("Sold for $" + formatNum(res.sellPrice) + ".");
+        loadMyProperties();
+        return rpc("dlrp_get_profile", { p_token: key });
+    }).then(function (profile) {
+        currentProfile = profile;
+        updateWallet(profile.bank || 0, profile.cash || 0);
+    }).catch(function (err) { alert(err.message || "Could not sell the property."); });
+}
+
 function switchCat(cat) {
     var tabs = document.querySelectorAll(".cat-tab");
     for (var i = 0; i < tabs.length; i++) tabs[i].classList.toggle("active", tabs[i].getAttribute("data-cat") === cat);
@@ -258,6 +375,59 @@ var DEALERSHIP_CATALOG = [
     { id: "bike1", model: "BMX", type: "bike", price: 250 },
     { id: "coupe1", model: "Obey Tailgater", type: "coupe", price: 22000 }
 ];
+
+var PHONE_CATALOG = [
+    { id: "iglitch", model: "iGlitch 15", price: 2200 },
+    { id: "samsung", model: "Samsung Vertex", price: 1900 },
+    { id: "pixel", model: "Google Pinnacle", price: 1600 },
+    { id: "oneplus", model: "OnePlus Rocket", price: 1400 },
+    { id: "huawei", model: "Huawei Nova Prime", price: 1200 },
+    { id: "sony", model: "Sony Xperia Pro", price: 1800 }
+];
+
+function switchElectronicsSub(sub) {
+    document.getElementById("esub-phones-btn").classList.toggle("active", sub === "phones");
+}
+
+function renderPhones() {
+    var grid = document.getElementById("phones-grid");
+    var html = "";
+    var ownedModel = currentProfile.phoneOwned ? (currentProfile.phoneData && currentProfile.phoneData.purchasedPhone) : null;
+    for (var i = 0; i < PHONE_CATALOG.length; i++) {
+        var c = PHONE_CATALOG[i];
+        var already = currentProfile.phoneOwned;
+        html += '<div class="item-card">'
+            + '<div class="item-icon">&#128241;</div>'
+            + '<div class="item-name">' + esc(c.model) + '</div>'
+            + '<div class="item-price">$' + formatNum(c.price) + '</div>'
+            + (already
+                ? '<button class="dl-btn item-buy" disabled style="opacity:.5;cursor:not-allowed;">' + (ownedModel === c.model ? "Owned" : "Already own a phone") + '</button>'
+                : '<button class="dl-btn primary item-buy" onclick="buyPhone(\'' + c.id + '\')">Buy</button>')
+            + '</div>';
+    }
+    grid.innerHTML = html;
+}
+
+function buyPhone(catalogId) {
+    var c = null;
+    for (var i = 0; i < PHONE_CATALOG.length; i++) { if (PHONE_CATALOG[i].id === catalogId) c = PHONE_CATALOG[i]; }
+    if (!c) return;
+    var totalMoney = (currentProfile.bank || 0) + (currentProfile.cash || 0);
+    if (totalMoney < c.price) { alert("Not enough money."); return; }
+    if (!confirm("Buy " + c.model + " for $" + formatNum(c.price) + "?")) return;
+
+    var key = getSessionKey();
+    rpc("dlrp_buy_phone", { p_token: key, p_model: c.model, p_price: c.price }).then(function () {
+        alert("Purchase complete! Open DreamOS on your phone to start using it.");
+        return rpc("dlrp_get_profile", { p_token: key });
+    }).then(function (profile) {
+        currentProfile = profile;
+        updateWallet(profile.bank || 0, profile.cash || 0);
+        renderPhones();
+    }).catch(function (err) {
+        alert(err.message || "Could not complete the purchase.");
+    });
+}
 
 function getVehicleIcon(type) { return VEHICLE_ICONS[type] || VEHICLE_ICONS["default"]; }
 
