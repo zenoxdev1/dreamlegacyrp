@@ -37,6 +37,12 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-ser
 
 <script>
 var bridge = (window.parent && window.parent.dlrpBridge) || window.dlrpBridge;
+
+if (!bridge) {
+    document.getElementById("app-body").innerHTML = '<div class="empty-state" style="color:#ef4444;">ERROR: bridge is missing. The parent DreamOS page did not expose window.dlrpBridge.</div>';
+} else if (typeof bridge.getMyVehicles !== "function") {
+    document.getElementById("app-body").innerHTML = '<div class="empty-state" style="color:#ef4444;">ERROR: bridge.getMyVehicles is not defined. dreamos.html is running an outdated version without vehicle support.</div>';
+}
 var VEHICLE_ICONS = { car: "\u{1F697}", truck: "\u{1F69A}", suv: "\u{1F699}", sports: "\u{1F3CE}\uFE0F", motorcycle: "\u{1F3CD}\uFE0F", bike: "\u{1F6B2}", van: "\u{1F690}", sedan: "\u{1F697}", coupe: "\u{1F3CE}\uFE0F", "default": "\u{1F697}" };
 
 function getVehicleIcon(type) { return VEHICLE_ICONS[type] || VEHICLE_ICONS["default"]; }
@@ -103,6 +109,8 @@ function renewInsurance(vehicleId) {
     ]);
 }
 
-loadVehicles();
+if (bridge && typeof bridge.getMyVehicles === "function") {
+    loadVehicles();
+}
 </script>
 </body></html>

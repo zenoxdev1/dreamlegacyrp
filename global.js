@@ -74,13 +74,41 @@
         });
     }
 
+    /* Los subdominios no comparten localStorage entre si (cada uno es
+       un origen distinto para el navegador) -- asi que si saltamos de
+       un sitio a otro por un enlace normal del navbar, sin pasar el
+       token, el destino no sabe quien eres hasta que lo visitas una
+       vez con ?dlrp_session=... en la URL. Para que esto no dependa
+       de acordarse de usar siempre el boton correcto del perfil,
+       cualquier sitio que YA tenga sesion activa se la pasa el solo
+       a los demas subdominios de DLRP al pinchar un enlace del navbar. */
+    function setupNavTokenPropagation() {
+        var key = null;
+        try {
+            var raw = JSON.parse(localStorage.getItem("dlrp_panel_session"));
+            key = raw && raw.key ? raw.key : null;
+        } catch (e) {}
+        if (!key) return;
+
+        var links = document.querySelectorAll(".dl-nav-links a[href^='https://']");
+        for (var i = 0; i < links.length; i++) {
+            var href = links[i].getAttribute("href");
+            if (href.indexOf("dreamlegacyrp.xyz") === -1) continue;
+            if (href.indexOf("?") === -1) {
+                links[i].setAttribute("href", href + "?dlrp_session=" + encodeURIComponent(key));
+            }
+        }
+    }
+
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", function () {
             setupLangDropdown();
             setupMobileNav();
+            setupNavTokenPropagation();
         });
     } else {
         setupLangDropdown();
         setupMobileNav();
+        setupNavTokenPropagation();
     }
 })();
