@@ -15,7 +15,7 @@
    Así, cuando apruebas o rechazas a alguien desde el Table Editor
    de Supabase, este endpoint se dispara solo y manda el DM.
    ============================================================ */
-import { sendDiscordDM, dlrpEmbed, DLRP_COLORS, dmText } from "../../_lib/discord.js";
+import { sendDiscordDM, dlrpEmbed, DLRP_COLORS, dmText, supabaseHeaders } from "../../_lib/discord.js";
 
 export async function onRequestPost(context) {
     const { request, env } = context;
@@ -59,6 +59,13 @@ export async function onRequestPost(context) {
         const t = dmText(record.preferred_language);
 
         if (record.status === "approved") {
+            // Balance inicial de $10,000, solo la primera vez que se
+            // aprueba a alguien en toda su vida (no cada vez que se
+            // reaprueba tras salir/reentrar en Discord).
+            if (!record.starter_balance_given) {
+                await grantStarterBalance(env, record.id, record.bank || 0);
+            }
+
             embed = dlrpEmbed({
                 title: t.approvedTitle,
                 description: t.approvedDesc,
@@ -118,5 +125,25 @@ async function syncGameServer(env, path, body) {
         });
     } catch (err) {
         console.error("Game server sync failed:", err.message);
+    }
+}
+
+async function grantStarterBalance(env, profileId, currentBank) {
+    const STARTER_BALANCE = 10000;
+    try {
+        const res = await fetch(
+            env.SUPABASE_URL + "/rest/v1/profiles?id=eq." + profileId,
+            {
+                method: "PATCH",
+                headers: { ...supabaseHeaders(env), Prefer: "return=minimal" },
+                body: JSON.stringify({
+                    bank: currentBank + STARTER_BALANCE,
+                    starter_balance_given: true
+                })
+            }
+        );
+        if (!res.ok) console.error("Could not grant starter balance:", await res.text());
+    } catch (err) {
+        console.error("grantStarterBalance error:", err.message);
     }
 }
