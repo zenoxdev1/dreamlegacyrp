@@ -256,6 +256,7 @@ function onAuthenticated(profile) {
     if (profile.musicFavorites && profile.musicFavorites.length > 0) renderFavorites(profile.musicFavorites);
     showDiscordChip(profile);
     showProfile(profile);
+    syncPreferredLanguage(DLRP_I18N.getLang());
     if (window.DLRP_FRESH_LOGIN) {
         window.DLRP_FRESH_LOGIN = false;
         setTab("profile");
@@ -519,6 +520,20 @@ function setupTilt() {
 
 /* ---- Custom language dropdown ---- */
 
+/* Guarda el idioma elegido en el perfil, para que los DMs de
+   Discord lleguen en ese idioma. Si no ha iniciado sesion
+   todavia, no hace nada -- se sincroniza la proxima vez que
+   cambie el idioma estando conectado. */
+function syncPreferredLanguage(lang) {
+    var key = getSessionKey();
+    if (!key) return;
+    fetch("/api/profile/set-language", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key: key, lang: lang })
+    }).catch(function() {});
+}
+
 function setupLangSwitch() {
     var wrap = document.getElementById("lang-switch");
     var btn = document.getElementById("lang-switch-btn");
@@ -545,6 +560,7 @@ function setupLangSwitch() {
         options[i].addEventListener("click", function() {
             var lang = this.getAttribute("data-lang");
             DLRP_I18N.setLang(lang);
+            syncPreferredLanguage(lang);
             close();
         });
     }

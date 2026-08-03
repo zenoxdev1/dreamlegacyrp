@@ -15,7 +15,7 @@
    Así, cuando apruebas o rechazas a alguien desde el Table Editor
    de Supabase, este endpoint se dispara solo y manda el DM.
    ============================================================ */
-import { sendDiscordDM } from "../../_lib/discord.js";
+import { sendDiscordDM, dlrpEmbed, DLRP_COLORS, dmText } from "../../_lib/discord.js";
 
 export async function onRequestPost(context) {
     const { request, env } = context;
@@ -55,28 +55,55 @@ export async function onRequestPost(context) {
     }
 
     if (statusChanged) {
-        let message = null;
+        let embed = null;
+        const t = dmText(record.preferred_language);
+
         if (record.status === "approved") {
-            message = "**Dream Legacy RP** — Your whitelist application has been **approved**! " +
-                "You can now log in at https://panel.dreamlegacyrp.xyz to access the Panel and DreamOS. Welcome to DLRP!";
+            embed = dlrpEmbed({
+                title: t.approvedTitle,
+                description: t.approvedDesc,
+                color: DLRP_COLORS.success,
+                fields: [
+                    { name: t.approvedNextStep, value: t.approvedLink }
+                ],
+                footer: t.approvedFooter
+            });
         } else if (record.status === "denied") {
-            message = "**Dream Legacy RP** — Your whitelist application was **not approved** this time." +
-                (record.deny_reason ? "\n\n**Reason:** " + record.deny_reason : "") +
-                "\n\nYou're welcome to reach out on our Discord server if you have questions or want to re-apply.";
+            embed = dlrpEmbed({
+                title: t.deniedTitle,
+                description: t.deniedDesc,
+                color: DLRP_COLORS.danger,
+                fields: record.deny_reason ? [{ name: t.deniedReason, value: record.deny_reason }] : undefined,
+                footer: t.deniedFooter
+            });
         } else if (record.status === "pending" && oldRecord.status === "approved") {
-            message = "**Dream Legacy RP** — Your Panel access was put back on hold because you're no longer a " +
-                "member of our Discord server. Rejoin the server and your access will be reviewed again.";
+            embed = dlrpEmbed({
+                title: t.holdTitle,
+                description: t.holdDesc,
+                color: DLRP_COLORS.warning,
+                footer: t.holdFooter
+            });
         }
-        if (message) await sendDiscordDM(env, record.discord_id, message);
+        if (embed) await sendDiscordDM(env, record.discord_id, embed);
     }
 
     if (banChanged && record.is_banned) {
-        await sendDiscordDM(env, record.discord_id,
-            "**Dream Legacy RP** — Your access has been **revoked**." +
-            (record.ban_reason ? "\n\n**Reason:** " + record.ban_reason : "") +
-            "\n\nContact staff on Discord if you believe this is a mistake.");
+        const t = dmText(record.preferred_language);
+        await sendDiscordDM(env, record.discord_id, dlrpEmbed({
+            title: t.revokedTitle,
+            description: t.revokedDesc,
+            color: DLRP_COLORS.danger,
+            fields: record.ban_reason ? [{ name: t.revokedReason, value: record.ban_reason }] : undefined,
+            footer: t.revokedFooter
+        }));
     } else if (banChanged && !record.is_banned) {
-        await sendDiscordDM(env, record.discord_id, "**Dream Legacy RP** — Your access has been **restored**.");
+        const t = dmText(record.preferred_language);
+        await sendDiscordDM(env, record.discord_id, dlrpEmbed({
+            title: t.restoredTitle,
+            description: t.restoredDesc,
+            color: DLRP_COLORS.success,
+            footer: t.restoredFooter
+        }));
     }
 
     return new Response("ok", { status: 200 });

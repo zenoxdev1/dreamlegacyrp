@@ -3,7 +3,7 @@
    Ruta: POST /api/whitelist/submit
    Body JSON: { key: sessionToken, rpName, psn, story, extraInfo }
    ============================================================ */
-import { sendDiscordDM, sendDiscordChannelMessage, supabaseHeaders, getProfileByToken } from "../../_lib/discord.js";
+import { sendDiscordDM, sendDiscordChannelMessage, supabaseHeaders, getProfileByToken, dlrpEmbed, DLRP_COLORS, dmText } from "../../_lib/discord.js";
 
 export async function onRequestPost(context) {
     const { request, env } = context;
@@ -49,11 +49,20 @@ export async function onRequestPost(context) {
         const updated = rows[0];
 
         if (profile.discord_id) {
+            const t = dmText(profile.preferred_language);
             await sendDiscordDM(
                 env,
                 profile.discord_id,
-                "**Dream Legacy RP** — We've received your whitelist application, " + rpName +
-                ". We'll DM you here as soon as it's reviewed. Thanks for applying!"
+                dlrpEmbed({
+                    title: t.receivedTitle,
+                    description: t.receivedDesc(rpName),
+                    color: DLRP_COLORS.info,
+                    fields: [
+                        { name: "RP Name", value: rpName, inline: true },
+                        { name: "PSN", value: psn, inline: true }
+                    ],
+                    footer: t.receivedFooter
+                })
             );
         }
 
