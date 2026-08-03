@@ -129,7 +129,7 @@ async function syncGameServer(env, path, body) {
 }
 
 async function grantStarterBalance(env, profileId, currentBank) {
-    const STARTER_BALANCE = 10000;
+    const STARTER_BALANCE = 5000;
     try {
         const res = await fetch(
             env.SUPABASE_URL + "/rest/v1/profiles?id=eq." + profileId,

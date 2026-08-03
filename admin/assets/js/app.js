@@ -70,7 +70,11 @@ function loadAdminApplications() {
     document.getElementById("admin-empty-msg").classList.add("hidden");
 
     api("/api/admin/list", "POST", { key: key, status: null }).then(function(res) {
-        ADMIN_APPLICATIONS = res.applications || [];
+        // Solo mostramos aqui a quien de verdad haya enviado la
+        // solicitud (appliedAt presente) -- alguien que solo inicio
+        // sesion con Discord pero nunca relleno el formulario no
+        // deberia poder aprobarse/denegarse por error.
+        ADMIN_APPLICATIONS = (res.applications || []).filter(function(a) { return !!a.appliedAt; });
         renderAdminList();
     }).catch(function(err) {
         notify("Admin", err.message);
