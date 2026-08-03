@@ -8,11 +8,6 @@ function getSessionKey() {
     return raw;
 }
 
-// Nota: la función api(path, method, body) vive en supabase-client.js.
-// El login/registro con nombre de usuario+contraseña (whitelist) se
-// eliminó; ahora la única forma de entrar es con Discord (ver
-// discord-auth.js y functions/api/discord/callback.js).
-
 /* ---- Music Player ---- */
 
 var ytPlayer = null;
@@ -156,7 +151,6 @@ function renderFavorites(favorites) {
     list.innerHTML = html;
 }
 
-// Load YouTube IFrame API
 var tag = document.createElement("script");
 tag.src = "https://www.youtube.com/iframe_api";
 var firstScript = document.getElementsByTagName("script")[0];
@@ -244,9 +238,6 @@ function setTab(tab) {
 }
 
 /* ---- Discord login / session ---- */
-// loginWithDiscord() vive en discord-auth.js. Aqui solo gestionamos
-// lo que pasa una vez que ya tenemos un token de sesion guardado
-// (localStorage), venga de un login nuevo o de una sesion anterior.
 
 function restoreSession() {
     var key = getSessionKey();
@@ -281,11 +272,12 @@ function showDiscordChip(profile) {
 
 /* ---- Perfil / estado de la solicitud de whitelist ---- */
 
-var CARD_IDS = ["join-server-card", "application-form-card", "application-pending-card", "application-approved-card", "application-denied-card"];
+var CARD_IDS = ["join-server-card", "application-form-card", "application-pending-card", "application-approved-card", "application-denied-card", "application-changes-card"];
 
 function showApplicationCard(id) {
     for (var i = 0; i < CARD_IDS.length; i++) {
-        document.getElementById(CARD_IDS[i]).classList.toggle("hidden", CARD_IDS[i] !== id);
+        var el = document.getElementById(CARD_IDS[i]);
+        if (el) el.classList.toggle("hidden", CARD_IDS[i] !== id);
     }
 }
 
@@ -293,8 +285,6 @@ function showProfile(data) {
     document.getElementById("profile-rpname").textContent = data.rpName || data.discordUsername || "-";
     document.getElementById("profile-avatar").src = data.discordAvatar || "";
 
-    // Primero que nada: tiene que estar en el servidor de Discord.
-    // Sin esto, ni siquiera puede ver el formulario de solicitud.
     if (!data.discordInGuild) {
         showApplicationCard("join-server-card");
         return;
@@ -304,10 +294,7 @@ function showProfile(data) {
     var hasApplied = !!data.appliedAt;
 
     if (!hasApplied) {
-        document.getElementById("apply-rp-name").value = data.rpName || "";
-        document.getElementById("apply-psn").value = data.psn || "";
-        document.getElementById("apply-story").value = data.story || "";
-        document.getElementById("apply-extra").value = data.extraInfo || "";
+        fillApplicationForm(data);
         showApplicationCard("application-form-card");
         return;
     }
@@ -355,8 +342,44 @@ function showProfile(data) {
             reasonEl.style.display = "none";
         }
     } else {
-        showApplicationCard("application-pending-card");
+        checkReviewNote(data);
     }
+}
+
+function fillApplicationForm(data) {
+    document.getElementById("apply-rp-name").value = data.rpName || "";
+    document.getElementById("apply-psn").value = data.psn || "";
+    document.getElementById("apply-story").value = data.story || "";
+    document.getElementById("apply-extra").value = data.extraInfo || "";
+}
+
+/* ---- "Request Changes" del admin ---- */
+
+function checkReviewNote(data) {
+    var key = getSessionKey();
+    if (!key) { showApplicationCard("application-pending-card"); return; }
+
+    fetch("/api/profile/review-note", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key: key })
+    }).then(function(r) { return r.json(); }).then(function(res) {
+        if (res.reviewNote) {
+            var noteEl = document.getElementById("changes-note-text");
+            if (noteEl) noteEl.textContent = res.reviewNote;
+            fillApplicationForm(data);
+            showApplicationCard("application-changes-card");
+        } else {
+            showApplicationCard("application-pending-card");
+        }
+    }).catch(function() {
+        showApplicationCard("application-pending-card");
+    });
+}
+
+function openChangesForm() {
+    document.getElementById("application-changes-card").classList.add("hidden");
+    document.getElementById("application-form-card").classList.remove("hidden");
 }
 
 function recheckGuildMembership() {
@@ -422,6 +445,11 @@ if (applicationForm) {
             return r.json().then(function(d) { if (!r.ok) throw new Error(d.error || "Request failed"); return d; });
         }).then(function(res) {
             notify("Application Sent", "Check your Discord DMs for confirmation.");
+            fetch("/api/profile/clear-review-note", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ key: key })
+            }).catch(function() {});
             showProfile({
                 rpName: res.profile.rpName,
                 discordAvatar: document.getElementById("profile-avatar").src,
@@ -536,11 +564,6 @@ function setupLangSwitch() {
         }
     });
 
-    // El idioma puede haberse detectado/aplicado ANTES de que este
-    // desplegable terminara de montarse (init() de i18n.js arranca en
-    // cuanto se carga el script, no espera a DOMContentLoaded), asi
-    // que sincronizamos el estado visible ya mismo en vez de esperar
-    // a un futuro cambio que quiza no llegue.
     var syncedLang = DLRP_I18N.getLang();
     current.textContent = syncedLang.toUpperCase();
     var initialOpts = menu.querySelectorAll("[data-lang]");
@@ -580,10 +603,6 @@ function closeUserMenu() {
     document.getElementById("discord-user-dropdown").classList.add("hidden");
     document.getElementById("discord-user-chip").setAttribute("aria-expanded", "false");
 }
-
-/* ============================================================
-   Panel de administración
-   ============================================================ */
 
 document.addEventListener("DOMContentLoaded", function() {
     setupReveals();

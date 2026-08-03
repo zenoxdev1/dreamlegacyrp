@@ -416,6 +416,17 @@
                 </div>
             </div>
 
+            <!-- Estado: el admin pidio cambios -->
+            <div id="application-changes-card" class="card reveal hidden" style="max-width:640px;margin:0 auto;">
+                <div class="card-inner" style="text-align:center;">
+                    <div class="section-kicker text-accent" data-i18n="apply.changesKicker">Changes requested</div>
+                    <h3 style="margin:8px 0;" data-i18n="apply.changesTitle">Please update your application</h3>
+                    <p style="color:var(--muted);margin-bottom:14px;" data-i18n="apply.changesDesc">A staff member reviewed your application and needs you to update something before it can be approved:</p>
+                    <p id="changes-note-text" style="color:var(--text);padding:14px;border:1px solid var(--line);border-radius:var(--radius);text-align:left;margin-bottom:20px;"></p>
+                    <button type="button" class="btn primary" onclick="openChangesForm()" data-i18n="apply.editApplication">Edit Application</button>
+                </div>
+            </div>
+
             <!-- Estado: aprobada -->
             <div id="application-approved-card" class="card reveal hidden" style="max-width:640px;margin:0 auto;">
                 <div class="card-inner" style="text-align:center;">
