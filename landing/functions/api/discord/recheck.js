@@ -37,6 +37,38 @@ export async function onRequestPost(context) {
             "https://discord.com/api/v10/guilds/" + guildId + "/members/" + profile.discord_id,
             { headers: { Authorization: "Bot " + env.DISCORD_BOT_TOKEN } }
         );
+
+        // IMPORTANTE: solo un 404 de verdad significa "ya no esta en
+        // el servidor". Cualquier otra respuesta que no sea 200
+        // (limite de peticiones, fallo puntual de la API de Discord,
+        // permisos del bot, etc.) es un fallo desconocido -- NO
+        // debemos asumir que se fue del servidor solo porque la
+        // comprobacion en si fallo. En ese caso dejamos su estado
+        // actual tal cual estaba, sin tocarlo, y avisamos del error.
+        if (memberRes.status !== 200 && memberRes.status !== 404) {
+            const errText = await memberRes.text().catch(() => "");
+            console.error("Discord member lookup returned an unexpected status:", memberRes.status, errText);
+            return jsonResponse(request, {
+                discordInGuild: profile.discord_in_guild,
+                status: profile.status,
+                appliedAt: profile.applied_at,
+                rpName: profile.rp_name,
+                psn: profile.psn,
+                story: profile.story,
+                extraInfo: profile.extra_info,
+                bank: profile.bank,
+                cash: profile.cash,
+                phoneOwned: profile.phone_owned,
+                phoneNumber: profile.phone_number,
+                phoneData: profile.phone_data,
+                discordUsername: profile.discord_username,
+                discordAvatar: profile.discord_avatar,
+                isBanned: profile.is_banned,
+                banReason: profile.ban_reason,
+                checkInconclusive: true
+            });
+        }
+
         const inGuild = memberRes.status === 200;
 
         // Si ya no esta en el servidor y tenia una solicitud aprobada,
